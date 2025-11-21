@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: 500e2cdd01db76b4d98b0d44b0280b36
-AssetOrigin:
-  serializedVersion: 1
-  productId: 328170
-  packageName: Cartoon City Free
-  packageVersion: 1.0
-  assetPath: Assets/ithappy/Cartoon_City_Free/Textures/Tiles_2_Roughness.png
-  uploadId: 776826
+guid: b0b296dea1dfd48b781979c0eac5c66e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
