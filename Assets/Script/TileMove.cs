@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TileMove : MonoBehaviour
 {
-    public TileGenerate tileGenerate;
+    private TileGenerate tileGenerate;
     
     void Start()
     {

@@ -10,11 +10,14 @@ public class TileGenerate : MonoBehaviour
     public GameObject[] obstacles;  // 장애물 배열
     public float tileSpeed; // 타일 다가오는 속도
     float TileLength;   // 타일 길이
+    public float carSpeed;  //  차 다가오는 속도
     void Start()
     {
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
+
+        lastObstacle = -1;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -23,7 +26,7 @@ public class TileGenerate : MonoBehaviour
         if(other.gameObject.tag == "Tile")
         {
             moveOldTile(other);
-            makeObstacle(other);
+            // makeObstacle(other);
         }
     }
 
@@ -46,7 +49,7 @@ public class TileGenerate : MonoBehaviour
     }
 
     //  장애물 랜덤으로 타일에 생성
-    int lastObstacle = -1;
+    int lastObstacle;
     private void makeObstacle(Collider oldTile)
     {
         Transform obstacle = oldTile.transform.GetChild(0);
@@ -66,9 +69,9 @@ public class TileGenerate : MonoBehaviour
         // 기존 자식 오브젝트 삭제
         obstacle.SetParent(null);
         Destroy(obstacle.gameObject);
+        lastObstacle = nextObstacle;
 
         // 새로운 obstacle 생성
         Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
-        lastObstacle = nextObstacle;
     }
 }

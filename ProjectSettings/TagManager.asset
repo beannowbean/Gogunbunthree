@@ -6,6 +6,9 @@ TagManager:
   tags:
   - TileGenerator
   - Tile
+  - Car
+  - BackgroundTile
+  - Obstacle
   layers:
   - Default
   - TransparentFX
