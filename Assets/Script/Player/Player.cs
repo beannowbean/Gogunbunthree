@@ -178,9 +178,18 @@ public class Player : MonoBehaviour
     // 갈고리 해제 메소드
     void ReleaseHook()
     {
-        if (currentHook != null && isHooked == false)
+        if (currentHook != null && isHooked == true)
         {
             Destroy(currentHook);
+            isHooked = false;
+            currentHook = null;
+
+            lineRenderer.enabled = false;
+        }
+        else if (isHooked == false)
+        {
+            Destroy(currentHook);
+            isHooked = false;
             currentHook = null;
 
             lineRenderer.enabled = false;
@@ -193,8 +202,6 @@ public class Player : MonoBehaviour
         float distance = Vector3.Distance(transform.position, currentHook.transform.position);
         if (distance <= 2)
         {
-            currentHook = null;
-            isHooked = false;
             ReleaseHook();
         }
     }

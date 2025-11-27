@@ -9,6 +9,7 @@ TagManager:
   - Car
   - BackgroundTile
   - Obstacle
+  - StreetLight
   layers:
   - Default
   - TransparentFX

@@ -804,6 +804,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Right_hanger1
       objectReference: {fileID: 0}
+    - target: {fileID: 136064325414844882, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
+      propertyPath: m_TagString
+      value: StreetLight
+      objectReference: {fileID: 0}
     - target: {fileID: 768063181531915112, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5
@@ -843,6 +847,10 @@ PrefabInstance:
     - target: {fileID: 768063181531915112, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218258425436528230, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6018040337554572707, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_Enabled

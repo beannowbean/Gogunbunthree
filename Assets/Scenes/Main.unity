@@ -176,6 +176,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6490136728237138907, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
+      propertyPath: laneDistance
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -667,6 +675,14 @@ PrefabInstance:
     - target: {fileID: 2582380310186171871, guid: f491c2453f4f83d45814a4175a32fc6b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655437030175561874, guid: f491c2453f4f83d45814a4175a32fc6b, type: 3}
+      propertyPath: carSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4655437030175561874, guid: f491c2453f4f83d45814a4175a32fc6b, type: 3}
+      propertyPath: tileSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4655437030175561874, guid: f491c2453f4f83d45814a4175a32fc6b, type: 3}
       propertyPath: 'tiles.Array.data[0]'

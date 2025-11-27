@@ -10,7 +10,7 @@ public class Hook : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -19,17 +19,17 @@ public class Hook : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
+    // Is Trigger가 체크되어 있을 경우 사용
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag(streetLightTag))
+        if (other.CompareTag(streetLightTag))
         {
-            Debug.Log("Contact!");
+            // 로직은 동일
+            Debug.Log("Contact via Trigger!");
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.velocity = Vector3.zero;
-            rb.isKinematic = true;
 
-            // 갈고리가 닿았을 때 위치가 가로등에 종속되도
-            transform.SetParent(collision.transform);
+            transform.SetParent(other.transform);
             player.isHooked = true;
         }
     }
