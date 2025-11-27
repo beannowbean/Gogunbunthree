@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 722260097192551820}
-  - component: {fileID: 5941469084325293651}
+  - component: {fileID: 7740173777472461017}
+  - component: {fileID: 9209360331467917039}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Helicopter
@@ -27,13 +28,13 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 4, z: 6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8880748561296496894}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5941469084325293651
+--- !u!114 &7740173777472461017
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,11 +46,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b9185cbab4f40b0930ecfeb4d89299, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetHeight: 4
-  skyHeight: 30
-  zOffset: 6
-  moveSpeed: 5
-  stayDuration: 5
+--- !u!65 &9209360331467917039
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3223541147463892719}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.3270917, y: 2.2071445, z: 17.98833}
+  m_Center: {x: 0, y: 1.4607853, z: -1.7349946}
 --- !u!1 &7386322035779964775
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,8 +178,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9152262925688467029}
   - {fileID: 4999382060897498415}
