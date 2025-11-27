@@ -25,9 +25,12 @@ public class Hook : MonoBehaviour
         if (other.CompareTag(streetLightTag))
         {
             // 로직은 동일
-            Debug.Log("Contact via Trigger!");
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.velocity = Vector3.zero;
+
+            BoxCollider box;
+            box = other.gameObject.GetComponent<BoxCollider>();
+            transform.position = box.transform.TransformPoint(box.center);
 
             transform.SetParent(other.transform);
             player.isHooked = true;
