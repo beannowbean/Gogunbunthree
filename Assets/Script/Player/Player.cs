@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     private float minSwipeDistance = 50.0f;
 
     // 점프
-    public float jumpForce = 7.0f;
+    public float jumpForce = 6.0f;
     private bool isGrounded = true;
 
     // 바닥 tag 입력
@@ -35,6 +35,12 @@ public class Player : MonoBehaviour
     public int hookAngle = 30;
     public float hookPullSpeed = 30.0f;
 
+    //헬리콥터 관련 변수
+    public GameObject helicopterPrefab;
+    public float heliSpawnChance = 0.05f;
+    private GameObject currentHelicopter;
+    public bool isEnding = false;
+
     // 컴포넌트 선언
     private Rigidbody rb;
     private Animator anim;
@@ -46,6 +52,8 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         lineRenderer.enabled = false;
+        anim.SetBool("isGrounded", true);
+
     }
 
     // Update is called once per frame
@@ -69,7 +77,7 @@ public class Player : MonoBehaviour
         // PC에서는 방향키로 스와이프 이동
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.RightArrow)) ChangeLane(1);
-        if (Input.GetKeyDown(KeyCode.UpArrow)) Jump();
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
         if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
         if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
 
@@ -198,11 +206,18 @@ public class Player : MonoBehaviour
 
     void MoveToHook()
     {
-        transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
-        float distance = Vector3.Distance(transform.position, currentHook.transform.position);
-        if (distance <= 2)
+        if (isEnding)
         {
-            ReleaseHook();
+            StartCoroutine(Ending());
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
+            float distance = Vector3.Distance(transform.position, currentHook.transform.position);
+            if (distance <= 2)
+            {
+                ReleaseHook();
+            }
         }
     }
 
@@ -214,5 +229,41 @@ public class Player : MonoBehaviour
             anim.SetBool("isGrounded", true);
             isHooked = false;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Coin"))
+        {
+            Destroy(other.gameObject);
+
+            TrySpawnHelicopter();
+        }
+    }
+
+    void TrySpawnHelicopter()
+    {
+
+        if (currentHelicopter != null)
+        {
+            return;
+        }
+
+        // 2. 확률 계산
+        float randomValue = Random.value;
+        if (randomValue <= heliSpawnChance)
+        {
+            // 3. 헬리콥터 생성 (위치는 헬리콥터 스크립트가 Start에서 알아서 잡음)
+            currentHelicopter = Instantiate(helicopterPrefab);
+        }
+    }
+
+    IEnumerator Ending()
+    {
+        rb.useGravity = false;
+        Helicopter helicopter = currentHook.transform.parent.GetComponent<Helicopter>();
+        helicopter.StopChasing();
+        transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
+        yield return new WaitForSeconds(5);
     }
 }
