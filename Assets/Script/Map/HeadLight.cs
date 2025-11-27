@@ -1,0 +1,31 @@
+using UnityEngine;
+
+public class HeadLight : MonoBehaviour
+{
+    public DayNightCycle dayNightCycle;   // isNight 을 가진 스크립트
+
+    public float maxIntensity = 2.5f;      // 밤일 때 밝기
+    public float changeSpeed = 2f;        // 밝기 변화 속도
+
+    private Light headLight;
+
+    private void Start()
+    {
+        // 같은 오브젝트에 있는 Light 자동으로 가져오기
+        headLight = GetComponent<Light>();
+        dayNightCycle = GameObject.FindGameObjectWithTag("Light").GetComponent<DayNightCycle>();
+    }
+
+    private void Update()
+    {
+        // isNight에 따라 목표 밝기 결정
+        float targetIntensity = dayNightCycle.isNight ? maxIntensity : 0f;
+
+        // 점점 밝기 변화
+        headLight.intensity = Mathf.Lerp(
+            headLight.intensity,
+            targetIntensity,
+            Time.deltaTime * changeSpeed
+        );
+    }
+}

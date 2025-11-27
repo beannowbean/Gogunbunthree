@@ -10,6 +10,7 @@ TagManager:
   - BackgroundTile
   - Obstacle
   - StreetLight
+  - Light
   layers:
   - Default
   - TransparentFX

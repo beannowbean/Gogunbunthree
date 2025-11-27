@@ -7,15 +7,24 @@ using UnityEngine.Tilemaps;
 public class TileGenerate : MonoBehaviour
 {
     public GameObject[] tiles;  // 바닥 도로 배열
-    public GameObject[] obstacles;  // 장애물 배열
     public float tileSpeed; // 타일 다가오는 속도
     float TileLength;   // 타일 길이
     public float carSpeed;  //  차 다가오는 속도
+
+    // public ScoreManager scoreManager;
     void Start()
     {
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
+    }
+
+    void Update()
+    {
+        // if (scoreManager.Instance != null)
+        // {
+        //     scoreManager.Instance.UpdateCarSpeed(carSpeed);
+        // }
     }
 
     private void OnTriggerEnter(Collider other)
