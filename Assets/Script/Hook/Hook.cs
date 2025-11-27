@@ -22,7 +22,7 @@ public class Hook : MonoBehaviour
     // Is Trigger가 체크되어 있을 경우 사용
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(streetLightTag))
+        if (other.CompareTag(streetLightTag) || other.CompareTag("Helicopter"))
         {
             // 로직은 동일
             Rigidbody rb = GetComponent<Rigidbody>();
@@ -33,7 +33,13 @@ public class Hook : MonoBehaviour
             transform.position = box.transform.TransformPoint(box.center);
 
             transform.SetParent(other.transform);
+
             player.isHooked = true;
+
+            if (other.CompareTag("Helicopter"))
+            {
+                player.isEnding = true;
+            }
         }
     }
 }
