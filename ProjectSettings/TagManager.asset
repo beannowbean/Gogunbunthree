@@ -11,6 +11,8 @@ TagManager:
   - Obstacle
   - StreetLight
   - Light
+  - Helicopter
+  - Coin
   layers:
   - Default
   - TransparentFX
