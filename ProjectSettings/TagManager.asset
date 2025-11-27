@@ -12,6 +12,7 @@ TagManager:
   - StreetLight
   - Helicopter
   - Coin
+  - Light
   layers:
   - Default
   - TransparentFX
