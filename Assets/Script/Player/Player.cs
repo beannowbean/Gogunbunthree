@@ -41,6 +41,9 @@ public class Player : MonoBehaviour
     private GameObject currentHelicopter;
     public bool isEnding = false;
 
+    //GameOver관련변수
+    private bool isGameOver = false;
+
     // 컴포넌트 선언
     private Rigidbody rb;
     private Animator anim;
@@ -59,6 +62,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isGameOver) return;
         if (isHooked && currentHook != null) MoveToHook();
         // Space.world는 캐릭터의 방향과 관계없이 +로 이동하도
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime, Space.World);
@@ -275,6 +279,7 @@ public class Player : MonoBehaviour
 
     IEnumerator GameOver()
     {
+        isGameOver = true;
         //Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(3.0f);
         Time.timeScale = 0f;

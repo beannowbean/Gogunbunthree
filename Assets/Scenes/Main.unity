@@ -986,7 +986,7 @@ PrefabInstance:
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: 'obstacles.Array.data[1]'
       value: 
-      objectReference: {fileID: 2083111532654073419, guid: 701f05d88094def47852768dad196edb, type: 3}
+      objectReference: {fileID: 2083111532654073419, guid: 348ccc1d07b2fab459df79721e6deaee, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
