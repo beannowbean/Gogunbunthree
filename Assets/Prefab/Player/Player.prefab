@@ -2254,7 +2254,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6490136728237138907}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2311,6 +2311,7 @@ MonoBehaviour:
   moveSpeed: 0
   laneDistance: 1.5
   crossSpeed: 10
+  diveSpeed: 20
   jumpForce: 6
   groundTag: Tile
   hookPrefab: {fileID: 1197467703278805145, guid: d47826aec3e298a499d4957dd517e6c5, type: 3}
@@ -2323,6 +2324,9 @@ MonoBehaviour:
   helicopterPrefab: {fileID: 0}
   heliSpawnChance: 0.05
   isEnding: 0
+  isInvincible: 1
+  carImpactForce: 20
+  invincibleMaterial: {fileID: 2100000, guid: c03f914600086417dabdfbf1bb977a83, type: 2}
 --- !u!1 &6494276987261500578
 GameObject:
   m_ObjectHideFlags: 0
