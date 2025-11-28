@@ -5,30 +5,30 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-/***************************************************************
-
-게임오브젝트(empty) (예: GameManager) 생성 후 Component로 추가
-
-****************************************************************/
+/*
+ * 튜토리얼 타일 생성 method 들어있는 script에서 참조 필요
+ * 변수 형식: boolean
+ * UIController.Instance.IsFirstPlay
+ */
 
 public class UIController : MonoBehaviour
 {
-    // -- Public Variables --
+    public static UIController Instance;
 
-    public GameObject gamePauseRoot;            // GamePause GameObject
-    public GameObject inGameUIRoot;             // 인게임 UI 루트 (일시정지 시 비활성화용)
-    public GameObject gameStartRoot;          // 게임 시작 UI 루트
-    public GameObject confirmationPanel;      // 종료 확인 패널
+    public GameObject gamePauseRoot;            // PauseePanel Root
+    public GameObject inGameUIRoot;             // InGamePanel Root
+    public GameObject gameStartRoot;            // StartPanel Root
+    public GameObject confirmationPanel;        // QuitReconfirm Root
+    public GameObject gameOverRoot;             // GameOverPanel Root
 
-    public GameObject gameOverRoot;
-
-    public TextMeshProUGUI scoreValueText;      // 점수 표시용 Text
-    public TextMeshProUGUI gameOverScoreText;
+    public TextMeshProUGUI PasueScoreText;      // PausePanel의 점수 text
+    public TextMeshProUGUI gameOverScoreText;   // GameOverPanel의 점수 text
+    public TextMeshProUGUI countdownText;       // Text_ResumeDelay
     public TextMeshProUGUI gameOverOrClearText; // "GAME OVER" or "GAME CLEAR" 텍스트
     public GameObject newRecordText;
 
-    public GameObject[] musicOnIcons;  // 소리 켜짐 아이콘들 (메인 + 일시정지)
-    public GameObject[] musicOffIcons; // 소리 꺼짐 아이콘들 (메인 + 일시정지)
+    public GameObject[] musicOnIcons;           // 소리 켜짐 아이콘들 (메인 + 일시정지)
+    public GameObject[] musicOffIcons;          // 소리 꺼짐 아이콘들 (메인 + 일시정지)
     public GameObject[] sfxOnIcons;
     public GameObject[] sfxOffIcons;
 
@@ -36,35 +36,39 @@ public class UIController : MonoBehaviour
 
     // Audio volume levels
     private const int MAX_VOLUME_LEVEL = 10;
+
     private int currentMusicVolumeLevel = 3;
     private int currentSFXVolumeLevel = 4;
 
+    // 음소거 전 저장용
     private int previousMusicVolumeLevel = MAX_VOLUME_LEVEL;
     private int previousSFXVolumeLevel = MAX_VOLUME_LEVEL;
 
-    private bool isGameStarted = false;
-    private bool isNewRecord = false;
-
     // 재개 지연 시간
-    private bool isCountingDown = false;
-    public float resumeDelay = 3f; // 재개 지연 시간
-    public TextMeshProUGUI countdownText; // 카운트다운 표시용 TMP 텍스트
+    public float resumeDelay = 3f;
 
+    private bool isGameStarted = false;     // 게임 시작 여부
+    private bool isCountingDown = false;    // 재개 카운트다운 여부
+    
+    public bool isFirstPlay = true;         // 첫 플레이 여부
+
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
-        // 1. 시작 시 Pause 메뉴는 끄고
-        if (gamePauseRoot != null) gamePauseRoot.SetActive(false);
-        if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        // 시작 메뉴만 활성화
+        gameStartRoot.SetActive(true);
 
-        // 2. 시작 시 인게임 UI도 끈다
-        if (inGameUIRoot != null) inGameUIRoot.SetActive(false);
+        gamePauseRoot.SetActive(false);
+        confirmationPanel.SetActive(false);
+        inGameUIRoot.SetActive(false);
+        countdownText.gameObject.SetActive(false);
+        gameOverRoot.SetActive(false);
 
-        if (countdownText != null) countdownText.gameObject.SetActive(false);
-
-        if (gameOverRoot != null) gameOverRoot.SetActive(false);
-
-        if (gameStartRoot != null) gameStartRoot.SetActive(true);
 
         Time.timeScale = 0f;
 
@@ -74,85 +78,67 @@ public class UIController : MonoBehaviour
 
     void Update()
     {
-        
-        
-        // Esc 키를 누르면 일시 정지/재개 기능을 토글합니다.
+        // 게임시작 후에, ResumeCountdown이 아닐 때, Escape 키로 일시정지 토글
         if (Input.GetKeyDown(KeyCode.Escape) && !isCountingDown && isGameStarted)
         {
-            if (gamePauseRoot.activeSelf) ResumeGame();
+            if (confirmationPanel.activeSelf) confirmationPanel.SetActive(false); 
+            else if (gamePauseRoot.activeSelf) ResumeGame();
             else PauseGame();
         }
 
+        // Test: GameOver with S key
         if (Input.GetKeyDown(KeyCode.S))
         {
-            GameOver();
+            EndGame();
         }
     }
 
-    // 게임 일시정지 후 메뉴 활성화
+    // 게임 일시정지
     public void PauseGame()
     {
-        // 인게임 UI 비활성화
-        if (inGameUIRoot != null) inGameUIRoot.SetActive(false);
-
-        if (gamePauseRoot != null)
-        {
-            gamePauseRoot.SetActive(true);
-        }
-
-        
-        // 최신 점수 업데이트
-        if (ScoreManager.Instance != null)
-        {
-            UpdateScoreDisplay(ScoreManager.Instance.GetCurrentScore());
-        }
-        
-
         // 시간 멈춤
         Time.timeScale = 0f;
+
+        inGameUIRoot.SetActive(false);
+        gamePauseRoot.SetActive(true);
+
+        // 최신 점수 업데이트
+        UpdateScoreDisplay(ScoreManager.Instance.GetCurrentScore());
     }
 
     // 게임 재개
     public void ResumeGame()
     {
-        if (isCountingDown)
-            return;
+        // Countdown이 진행 중이면, confirmationPanel이 켜져있으면 무시
+        if (isCountingDown) return;
+        if (confirmationPanel.activeSelf) return;
 
         StartCoroutine(ResumeAfterDelay());
     }
 
-    // 버튼의 OnClick 이벤트에 연결될 함수 (ResumeButton에 연결)
-    public void OnResumeButtonClicked()
-    {
-        ResumeGame();
-    }
-
+    // Countdown 후 Resume
     private IEnumerator ResumeAfterDelay()
     {
         isCountingDown = true;
         float timer = resumeDelay;
 
-        if (gamePauseRoot != null) gamePauseRoot.SetActive(false);
+        // Ui 전환
+        gamePauseRoot.SetActive(false);
+        inGameUIRoot.SetActive(true);
 
-        if (inGameUIRoot != null) inGameUIRoot.SetActive(true);
-
-        if (countdownText != null) countdownText.gameObject.SetActive(true);
+        // Countdown text 활성화
+        countdownText.gameObject.SetActive(true);
 
         // Time.realtimeSinceStartup을 사용하여 TimeScale = 0f 상태에서도 타이머가 작동하게 합니다.
         while (timer > 0)
         {
-            if (countdownText != null)
-            {
-                countdownText.text = $"STARTING IN\n{Mathf.CeilToInt(timer)}";
-            }
+            countdownText.text = $"STARTING IN\n{Mathf.CeilToInt(timer)}";
             yield return null; // 다음 프레임까지 대기
             timer -= Time.unscaledDeltaTime; // TimeScale에 영향을 받지 않는 시간 사용
         }
 
-        if (countdownText != null)
-        {
-            countdownText.gameObject.SetActive(false);
-        }
+        // Countdown text 비활성화
+        countdownText.gameObject.SetActive(false);
 
         isCountingDown = false;
 
@@ -160,87 +146,93 @@ public class UIController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // 메인 메뉴로 이동
-    public void ConfirmQuitGame()
-    {
-        if (ScoreManager.Instance != null)
-        {
-            ScoreManager.Instance.ResetScore();
-        }
-
-        if (gamePauseRoot != null) gamePauseRoot.SetActive(false);
-        if (confirmationPanel != null) confirmationPanel.SetActive(false);
-        if (gameOverRoot != null) gameOverRoot.SetActive(false);
-        if (gameStartRoot != null) gameStartRoot.gameObject.SetActive(true);
-    }
-
+    // 재확인 팝업만 끄고, 뒤에 있는 Pause 메뉴를 유지
     public void CancelQuit()
     {
-        // 재확인 팝업만 끄고, 뒤에 있는 Pause 메뉴를 유지합니다.
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(false);
-        }
+        confirmationPanel.SetActive(false);
     }
 
+    // 종료 재확인 팝업 켜기
     public void QuitGame()
     {
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(true);
-        }
+        confirmationPanel.SetActive(true);
     }
 
-    public void GameOver()
+    // 게임 종료 후, 메인 메뉴로 이동
+    public void ConfirmQuitGame()
     {
-        // 1. 모든 인게임/팝업 UI 숨기기
-        if (inGameUIRoot != null) inGameUIRoot.SetActive(false);
-        if (gamePauseRoot != null) gamePauseRoot.SetActive(false);
-        if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        isGameStarted = false;
 
-        // 2. 게임 오버 화면 켜기
-        if (gameOverRoot != null) gameOverRoot.SetActive(true);
+        ScoreManager.Instance.ResetScore();
 
-        // 3. 점수 및 기록 표시
-        if (ScoreManager.Instance != null)
-        {
-            UpdateScoreDisplay(ScoreManager.Instance.GetCurrentScore());
-        }
+        // UI 정리
+        gamePauseRoot.SetActive(false);
+        confirmationPanel.SetActive(false);
+        gameOverRoot.SetActive(false);
 
-        // 4. 뉴 레코드 메시지 활성화/비활성화
-        if (newRecordText != null)
-        {
-            isNewRecord = ScoreManager.Instance != null && ScoreManager.Instance.GetIsNewRecord();
-            newRecordText.SetActive(isNewRecord);
-        }
+        // 시작 메뉴로 돌아가기
+        gameStartRoot.gameObject.SetActive(true);
+    }
 
-        // 5. 게임 시간 멈추기 (TimeScale이 0인 상태에서 이 함수를 호출할 경우도 대비)
+    // 게임 오버 혹은 클리어 처리
+    public void EndGame()
+    {
         Time.timeScale = 0f;
         isGameStarted = false;
-        if (ScoreManager.Instance != null)
+
+        // in-game UI 및 일시정지 UI 비활성화
+        inGameUIRoot.SetActive(false);
+        gamePauseRoot.SetActive(false);
+        confirmationPanel.SetActive(false);
+
+        // game over UI 활성화
+        gameOverRoot.SetActive(true);
+
+        // Game Over / Game Clear 텍스트 설정
+        if (ScoreManager.Instance.isCleared)
         {
-            ScoreManager.Instance.ResetScore();
+            gameOverOrClearText.text = "GAME\nCLEAR";
         }
+        else
+        {
+            gameOverOrClearText.text = "GAME\nOVER";
+        }
+
+        // 점수 표시
+        UpdateScoreDisplay(ScoreManager.Instance.GetFinalScore());
+
+        // 4. 뉴 레코드 메시지 활성화/비활성화
+        bool isNewRecord = ScoreManager.Instance != null && ScoreManager.Instance.GetIsNewRecord();
+        newRecordText.SetActive(isNewRecord);
+
+        // 점수 초기화
+        ScoreManager.Instance.ResetScore();
     }
 
     // 점수 표시
     public void UpdateScoreDisplay(int Score)
     {
-        if (scoreValueText != null)
+        if (isGameStarted)
         {
-            scoreValueText.text = Score.ToString();
+            // PausePanel 점수 업데이트
+            PasueScoreText.text = Score.ToString();
+        }
+        else
+        {
+            // GameOverPanel 점수 업데이트
+            gameOverScoreText.text = Score.ToString();
         }
     }
 
     public void StartGame()
     {
-        if (gameStartRoot != null) gameStartRoot.SetActive(false);
-        if (inGameUIRoot != null) inGameUIRoot.SetActive(true);
+        gameStartRoot.SetActive(false);
+        gameOverRoot.SetActive(false);
+        inGameUIRoot.SetActive(true);
 
         isGameStarted = true;
         Time.timeScale = 1f;
     }
-
 
     // --- Audio Control Methods ---
 
