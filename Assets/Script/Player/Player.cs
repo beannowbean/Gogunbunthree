@@ -229,6 +229,12 @@ public class Player : MonoBehaviour
             anim.SetBool("isGrounded", true);
             isHooked = false;
         }
+        else if (collision.collider.CompareTag("Car"))
+        {
+            anim.SetTrigger("isCrashed");
+            rb.constraints = RigidbodyConstraints.None;
+            StartCoroutine(GameOver());
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -265,5 +271,12 @@ public class Player : MonoBehaviour
         helicopter.StopChasing();
         transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
         yield return new WaitForSeconds(5);
+    }
+
+    IEnumerator GameOver()
+    {
+        //Time.timeScale = 0.1f;
+        yield return new WaitForSecondsRealtime(3.0f);
+        Time.timeScale = 0f;
     }
 }
