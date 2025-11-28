@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public float crossSpeed = 10.0f;
     private int currentLane = 2;
     private Vector3 targetPosition;
+    public float diveSpeed = 20.0f;
 
     // 터치 시작 위치, 종료 위치, 스와이프 속도 감지
     private Vector2 touchStartPos;
@@ -84,6 +85,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
         if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
         if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
+        if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded) QuickDive();
 
         if (Input.touchCount > 0)
         {
@@ -266,6 +268,16 @@ public class Player : MonoBehaviour
             // 3. 헬리콥터 생성 (위치는 헬리콥터 스크립트가 Start에서 알아서 잡음)
             currentHelicopter = Instantiate(helicopterPrefab);
         }
+    }
+
+    void QuickDive()
+    {
+        // 현재의 전진/좌우 속도는 유지하되(rb.velocity.x, z), 
+        // 수직 속도(y)만 강제로 마이너스로 설정하여 바닥으로 꽂음
+        rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
+
+        // (선택사항) 만약 'Drop' 같은 전용 애니메이션이 있다면 여기서 트리거 실행
+        // anim.SetTrigger("Dive"); 
     }
 
     IEnumerator Ending()

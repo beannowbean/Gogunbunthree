@@ -1854,7 +1854,7 @@ Transform:
   m_GameObject: {fileID: 5840475246953645531}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.001, y: 0.504, z: 0.044}
+  m_LocalPosition: {x: -0.001, y: 0.844, z: 0.273}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -2201,7 +2201,7 @@ GameObject:
   - component: {fileID: 6502128198573726866}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2309,16 +2309,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 0
-  laneDistance: 3
+  laneDistance: 1.5
   crossSpeed: 10
-  jumpForce: 7
+  jumpForce: 6
   groundTag: Tile
   hookPrefab: {fileID: 1197467703278805145, guid: d47826aec3e298a499d4957dd517e6c5, type: 3}
   hookStartingPoint: {fileID: 7084073858312634730}
-  hookSpeed: 20
+  hookSpeed: 40
   isHooked: 0
   lineRenderer: {fileID: 5989779946320784498}
   hookAngle: 15
+  hookPullSpeed: 30
+  helicopterPrefab: {fileID: 0}
+  heliSpawnChance: 0.05
+  isEnding: 0
 --- !u!1 &6494276987261500578
 GameObject:
   m_ObjectHideFlags: 0
