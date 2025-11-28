@@ -177,6 +177,8 @@ public class UIController : MonoBehaviour
     // 게임 오버 혹은 클리어 처리
     public void EndGame()
     {
+        isFirstPlay = false;
+
         Time.timeScale = 0f;
         isGameStarted = false;
 
