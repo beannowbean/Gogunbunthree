@@ -233,9 +233,11 @@ public class Player : MonoBehaviour
             anim.SetBool("isGrounded", true);
             isHooked = false;
         }
-        else if (collision.collider.CompareTag("Tile"))
+        if (collision.collider.CompareTag(groundTag))
         {
-            gameObject.SetActive(false);
+            isGrounded = true;
+            anim.SetBool("isGrounded", true);
+            isHooked = false;
         }
         // 자동차 코드는 삭제됨
     }
@@ -365,6 +367,9 @@ public class Player : MonoBehaviour
         yield return new WaitForSecondsRealtime(3.0f);
         Time.timeScale = 0f;
         UIController.Instance.EndGame();
-        currentHelicopter.SetActive(false);
+        if(currentHelicopter != null)
+        {
+            currentHelicopter.SetActive(false);
+        }
     }
 }
