@@ -15,6 +15,8 @@ public class Star : MonoBehaviour
 
     private bool isCollected = false;   // 중복 획득 방지 변수
 
+    public GameObject starEffectPrefab; //이펙
+
     void Update()
     {
         // 1. Z축을 기준으로 뱅글뱅글 회전
@@ -42,6 +44,8 @@ public class Star : MonoBehaviour
                 // 지속시간은 위에서 설정한 invincibilityDuration을 그대로 사용
                 ItemUIController.Instance.ActivateNextAvailableItem(invincibilityDuration, iconSprite);
             }
+            GameObject effect = Instantiate(starEffectPrefab, transform.position, Quaternion.identity);
+            Destroy(effect, 1.0f); // 1초 뒤 삭제
 
             // 별 아이템 삭제
             Destroy(gameObject);

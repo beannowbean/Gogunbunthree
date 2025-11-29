@@ -50,9 +50,14 @@ public class Player : MonoBehaviour
     public float carImpactForce = 20.0f;
     public Material invincibleMaterial;
 
+    // coin effect 관련 변수
+    public GameObject coinEffectPrefab;
+
     // [수정됨] 하나가 아니라 '모든' 렌더러와 재질을 저장하기 위한 배열 선언
     private Renderer[] allRenderers;
     private Material[] originalMaterials;
+
+    
 
     // 컴포넌트 선언
     private Rigidbody rb;
@@ -241,6 +246,9 @@ public class Player : MonoBehaviour
         // 1. 코인
         if (other.CompareTag("Coin"))
         {
+            GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
+            // 1초 뒤에 이펙트 삭제 (파티클 길이에 맞춰 시간 조절하세요)
+            Destroy(effect, 1.0f);
             Destroy(other.gameObject);
             TrySpawnHelicopter();
             ScoreManager.Instance.AddCoin(1);
@@ -279,7 +287,6 @@ public class Player : MonoBehaviour
                 // --- 게임 오버 로직 ---
                 if (isGameOver) return;
                 ScoreManager.Instance.isCleared = false;
-                UIController.Instance.EndGame();
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;
                 StartCoroutine(GameOver());
@@ -347,6 +354,8 @@ public class Player : MonoBehaviour
         helicopter.StopChasing();
         transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
         yield return new WaitForSeconds(5);
+        UIController.Instance.EndGame();
+        currentHelicopter.SetActive(false);
     }
 
     IEnumerator GameOver()
@@ -355,5 +364,7 @@ public class Player : MonoBehaviour
         //Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(3.0f);
         Time.timeScale = 0f;
+        UIController.Instance.EndGame();
+        currentHelicopter.SetActive(false);
     }
 }

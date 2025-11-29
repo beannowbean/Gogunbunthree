@@ -2327,6 +2327,7 @@ MonoBehaviour:
   isInvincible: 1
   carImpactForce: 20
   invincibleMaterial: {fileID: 2100000, guid: c03f914600086417dabdfbf1bb977a83, type: 2}
+  coinEffectPrefab: {fileID: 9035389033025327860, guid: a5030b96398a749c182cc73b42009d3e, type: 3}
 --- !u!1 &6494276987261500578
 GameObject:
   m_ObjectHideFlags: 0
