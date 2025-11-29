@@ -243,6 +243,7 @@ public class Player : MonoBehaviour
         {
             Destroy(other.gameObject);
             TrySpawnHelicopter();
+            ScoreManager.Instance.AddCoin(1);
         }
         // 3. [이동됨] 자동차 (Car)
         else if (other.CompareTag("Car"))
@@ -277,6 +278,7 @@ public class Player : MonoBehaviour
             {
                 // --- 게임 오버 로직 ---
                 if (isGameOver) return;
+                ScoreManager.Instance.isCleared = false;
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;
                 StartCoroutine(GameOver());
@@ -338,6 +340,7 @@ public class Player : MonoBehaviour
 
     IEnumerator Ending()
     {
+        ScoreManager.Instance.isCleared = true;
         rb.useGravity = false;
         Helicopter helicopter = currentHook.transform.parent.GetComponent<Helicopter>();
         helicopter.StopChasing();

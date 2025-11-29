@@ -10,6 +10,9 @@ public class Star : MonoBehaviour
     // 무적 지속 시간
     public float invincibilityDuration = 5.0f;
 
+    // ★ [추가 1] 인스펙터에서 아이콘 이미지를 넣을 변수
+    public Sprite iconSprite;
+
     void Update()
     {
         // 1. Z축을 기준으로 뱅글뱅글 회전
@@ -23,9 +26,15 @@ public class Star : MonoBehaviour
         {
             // 플레이어 스크립트를 가져와서 무적 함수 실행
             Player playerScript = other.GetComponent<Player>();
+
             if (playerScript != null)
             {
+                // 실제 플레이어 무적 로직 실행
                 playerScript.ActivateInvincibility(invincibilityDuration);
+
+                // ★ [추가 2] UI 매니저에게 "UI 슬롯에 아이콘 띄워줘!" 라고 요청
+                // 지속시간은 위에서 설정한 invincibilityDuration을 그대로 사용
+                ItemUIController.Instance.ActivateNextAvailableItem(invincibilityDuration, iconSprite);
             }
 
             // 별 아이템 삭제
