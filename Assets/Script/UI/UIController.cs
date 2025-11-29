@@ -47,6 +47,7 @@ public class UIController : MonoBehaviour
     // 재개 지연 시간
     public float resumeDelay = 3f;
 
+    public static bool isRestarting = false;
     private bool isGameStarted = false;     // 게임 시작 여부
     private bool isCountingDown = false;    // 재개 카운트다운 여부
     
@@ -61,19 +62,27 @@ public class UIController : MonoBehaviour
     void Start()
     {
         // 시작 메뉴만 활성화
-        gameStartRoot.SetActive(true);
+        if (isRestarting)
+        {
+            isRestarting = false;
+            StartGame();
+        }
+        else
+        {
+            gameStartRoot.SetActive(true);
 
-        gamePauseRoot.SetActive(false);
-        confirmationPanel.SetActive(false);
-        inGameUIRoot.SetActive(false);
-        countdownText.gameObject.SetActive(false);
-        gameOverRoot.SetActive(false);
+            gamePauseRoot.SetActive(false);
+            confirmationPanel.SetActive(false);
+            inGameUIRoot.SetActive(false);
+            countdownText.gameObject.SetActive(false);
+            gameOverRoot.SetActive(false);
 
 
-        Time.timeScale = 0f;
+            Time.timeScale = 0f;
 
-        UpdateMusicIconUI();
-        UpdateSFXIconUI();
+            UpdateMusicIconUI();
+            UpdateSFXIconUI();
+        }
     }
 
     void Update()
@@ -87,10 +96,10 @@ public class UIController : MonoBehaviour
         }
 
         // Test: GameOver with S key
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            EndGame();
-        }
+        //if (Input.GetKeyDown(KeyCode.S))
+        //{
+        //    EndGame();
+        //}
     }
 
     // 게임 일시정지
@@ -171,7 +180,8 @@ public class UIController : MonoBehaviour
         gameOverRoot.SetActive(false);
 
         // 시작 메뉴로 돌아가기
-        gameStartRoot.gameObject.SetActive(true);
+        //gameStartRoot.gameObject.SetActive(true);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // 게임 오버 혹은 클리어 처리
@@ -234,6 +244,20 @@ public class UIController : MonoBehaviour
 
         isGameStarted = true;
         Time.timeScale = 1f;
+    }
+
+    public void RestartGame()
+    {
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.ResetScore();
+        }
+
+        Time.timeScale = 1f;
+        isRestarting = true;
+
+        // 현재 씬 재로드: 처음부터 다시 시작
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // --- Audio Control Methods ---

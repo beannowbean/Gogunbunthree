@@ -13,6 +13,8 @@ public class Star : MonoBehaviour
     // ★ [추가 1] 인스펙터에서 아이콘 이미지를 넣을 변수
     public Sprite iconSprite;
 
+    private bool isCollected = false;   // 중복 획득 방지 변수
+
     void Update()
     {
         // 1. Z축을 기준으로 뱅글뱅글 회전
@@ -21,9 +23,13 @@ public class Star : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if(isCollected) return; // 이미 획득된 상태면 무시
+
         // 2. 플레이어와 닿으면
         if (other.CompareTag("Player"))
         {
+            isCollected = true; // 중복 획득 방지
+
             // 플레이어 스크립트를 가져와서 무적 함수 실행
             Player playerScript = other.GetComponent<Player>();
 

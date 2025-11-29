@@ -279,6 +279,7 @@ public class Player : MonoBehaviour
                 // --- 게임 오버 로직 ---
                 if (isGameOver) return;
                 ScoreManager.Instance.isCleared = false;
+                UIController.Instance.EndGame();
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;
                 StartCoroutine(GameOver());
