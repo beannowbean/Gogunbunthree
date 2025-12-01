@@ -7,18 +7,21 @@ public class BackGroundTileGenerate : MonoBehaviour
     public GameObject[] tiles;  // 바닥 도로 배열
     public GameObject[] buildings;  // 빌딩 배열
     float TileLength;   // 타일 길이
+    Player player;
     
     void Start()
     {
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
         lastBuilding = -1;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if(player.isGameOver == true) return;
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "BackgroundTile")
         {

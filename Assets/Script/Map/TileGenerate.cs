@@ -10,25 +10,30 @@ public class TileGenerate : MonoBehaviour
     public float tileSpeed; // 타일 다가오는 속도
     float TileLength;   // 타일 길이
     public float carSpeed;  //  차 다가오는 속도
-
-    // public ScoreManager scoreManager;
+    private Player player;
     void Start()
     {
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
     }
 
     void Update()
     {
-        // if (scoreManager.Instance != null)
+        if(player.isGameOver == true)
+        {
+            tileSpeed = 0;
+        }
+        // if(ScoreManager.Instance != null)
         // {
-        //     scoreManager.Instance.UpdateCarSpeed(carSpeed);
+        //     ScoreManager.Instance.UpdateCarSpeed(carSpeed);
         // }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if(player.isGameOver == true) return;
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "Tile")
         {

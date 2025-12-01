@@ -6,9 +6,16 @@ using UnityEngine.Tilemaps;
 public class CarGenerate : MonoBehaviour
 {
     public GameObject[] tiles;  // 장애물 타일 배열
-    public GameObject[] obstacles;  // 장애물 배열
+    public GameObject[] easyObstacles;  // 장애물 배열
+    public GameObject[] normalObstacles;
+    public GameObject[] hardObstacles;
+    public int normalCoin = 10;
+    public int hardCoin = 20;
+    public float itemRate = 0.1f;
     float TileLength;   // 타일 길이
     TileGenerate tileGenerate;
+    int tileCount = 0;
+    public int coin = 0;
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
@@ -27,6 +34,7 @@ public class CarGenerate : MonoBehaviour
         {
             moveOldTile(other);
             makeCar(other);
+            tileCount++;
         }
     }
 
@@ -54,13 +62,25 @@ public class CarGenerate : MonoBehaviour
     {
         Transform obstacle = oldTile.transform.GetChild(0);
 
+        GameObject[] obstacles = GetDifficultyArray();
+
         // obstacle 랜덤 생성
         int nextObstacle;
-        do
+
+        bool itemTile = (tileCount >= 20) && (Random.value < itemRate);
+
+        if(itemTile == true)
         {
-            nextObstacle = Random.Range(0, obstacles.Length);
+            nextObstacle = obstacles.Length - 1;
         }
-        while(nextObstacle == lastObstacle);
+        else
+        {
+            do
+            {
+                nextObstacle = Random.Range(0, obstacles.Length);
+            }
+            while(nextObstacle == lastObstacle);
+        }
 
         // Destroy전 좌표와 부모 기억
         Vector3 pos = obstacle.position;
@@ -73,5 +93,12 @@ public class CarGenerate : MonoBehaviour
 
         // 새로운 obstacle 생성
         Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
+    }
+
+    private GameObject[] GetDifficultyArray()
+    {
+        if(coin >= hardCoin) return hardObstacles;
+        else if(coin >= normalCoin) return normalObstacles;
+        else return easyObstacles;
     }
 }

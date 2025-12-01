@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
 
     // 바닥 tag 입력
     public string groundTag;
+    public string vanRoofTag;
 
     // Hook 관련 설정
     public GameObject hookPrefab;
@@ -43,7 +44,7 @@ public class Player : MonoBehaviour
     public bool isEnding = false;
 
     // GameOver 관련 변수
-    private bool isGameOver = false;
+    public bool isGameOver = false;
 
     // Item (무적) 관련 변수
     public bool isInvincible = false;
@@ -233,7 +234,7 @@ public class Player : MonoBehaviour
             anim.SetBool("isGrounded", true);
             isHooked = false;
         }
-        if (collision.collider.CompareTag(groundTag))
+        if (collision.collider.CompareTag(vanRoofTag))
         {
             isGrounded = true;
             anim.SetBool("isGrounded", true);
