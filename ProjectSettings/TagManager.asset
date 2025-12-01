@@ -13,6 +13,8 @@ TagManager:
   - Light
   - Helicopter
   - Coin
+  - FxTemporaire
+  - CarMove
   layers:
   - Default
   - TransparentFX
