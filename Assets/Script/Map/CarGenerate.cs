@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,13 +10,17 @@ public class CarGenerate : MonoBehaviour
     public GameObject[] easyObstacles;  // 장애물 배열
     public GameObject[] normalObstacles;
     public GameObject[] hardObstacles;
-    public int normalCoin = 10;
+    public int normalCoin = 10; // 난이도별 코인 요구치
     public int hardCoin = 20;
-    public float itemRate = 0.1f;
+    public float itemRate = 0.1f;   // 아이템 등장 확률
     float TileLength;   // 타일 길이
     TileGenerate tileGenerate;
     int tileCount = 0;
-    public int coin = 0;
+    public int coin = 0;    // 코인 갯수
+    public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
+    int tutorialIndex = 0;
+    public int normalSpeed = 30;
+    public int hardSpeed = 40;
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
@@ -25,6 +30,46 @@ public class CarGenerate : MonoBehaviour
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
 
         lastObstacle = -1;
+
+        MakeStartCar();
+    }
+
+    void Update() 
+    {
+        coin = ScoreManager.Instance.coinCount;
+    }
+
+    private void MakeStartCar()
+    {
+        for (int i = 2; i < tiles.Length; i++)
+        {
+            GameObject[] obstacles = GetDifficultyArray();
+            int nextObstacle;
+            if(UIController.Instance.isFirstPlay == true)
+            {
+                if(tutorialIndex < tutorialObstacles.Length)
+                {
+                    nextObstacle = tutorialIndex;
+                    tutorialIndex++;
+                }
+                else
+                {
+                    UIController.Instance.isFirstPlay = false;
+                    obstacles = GetDifficultyArray();
+                    nextObstacle = Random.Range(0,obstacles.Length - 1);
+                }
+            }
+            else
+            {
+                do
+                {
+                    nextObstacle = Random.Range(0, obstacles.Length - 1);
+                }
+                while(nextObstacle == lastObstacle);
+            }
+            lastObstacle = nextObstacle;
+            Instantiate(obstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -32,14 +77,14 @@ public class CarGenerate : MonoBehaviour
         // Tile Designer에 Obstacle이 닿으면 (Obstacle이 플레이어 지나가면)
         if(other.gameObject.tag == "Obstacle")
         {
-            moveOldTile(other);
-            makeCar(other);
+            MoveOldTile(other);
+            MakeCar(other);
             tileCount++;
         }
     }
 
     // 지나간 타일 제일 멀리 이동
-    private void moveOldTile(Collider oldTile)
+    private void MoveOldTile(Collider oldTile)
     {
         // 가장 먼 타일 탐색
         float maxZ = -10000;
@@ -58,7 +103,7 @@ public class CarGenerate : MonoBehaviour
 
     //  장애물 랜덤으로 타일에 생성
     int lastObstacle;
-    private void makeCar(Collider oldTile)
+    private void MakeCar(Collider oldTile)
     {
         Transform obstacle = oldTile.transform.GetChild(0);
 
@@ -67,19 +112,36 @@ public class CarGenerate : MonoBehaviour
         // obstacle 랜덤 생성
         int nextObstacle;
 
-        bool itemTile = (tileCount >= 20) && (Random.value < itemRate);
-
-        if(itemTile == true)
+        if(UIController.Instance.isFirstPlay == true)
         {
-            nextObstacle = obstacles.Length - 1;
+            if(tutorialIndex < tutorialObstacles.Length)
+            {
+                nextObstacle = tutorialIndex;
+                tutorialIndex++;
+            }
+            else
+            {
+                UIController.Instance.isFirstPlay = false;
+                obstacles = GetDifficultyArray();
+                nextObstacle = Random.Range(0, obstacles.Length - 1);
+            }
         }
         else
         {
-            do
+            bool itemTile = (tileCount >= 10) && (Random.value < itemRate);
+            if(itemTile == true)
             {
-                nextObstacle = Random.Range(0, obstacles.Length);
+                nextObstacle = obstacles.Length - 1;
+                tileCount = 0;
             }
-            while(nextObstacle == lastObstacle);
+            else
+            {
+                do
+                {
+                    nextObstacle = Random.Range(0, obstacles.Length - 1);
+                }
+                while(nextObstacle == lastObstacle);
+            }
         }
 
         // Destroy전 좌표와 부모 기억
@@ -97,8 +159,15 @@ public class CarGenerate : MonoBehaviour
 
     private GameObject[] GetDifficultyArray()
     {
-        if(coin >= hardCoin) return hardObstacles;
-        else if(coin >= normalCoin) return normalObstacles;
+        if(UIController.Instance.isFirstPlay == true) return tutorialObstacles;
+        if(coin >= hardCoin) {
+            tileGenerate.carSpeed = hardSpeed;
+            return hardObstacles;
+        }
+        else if(coin >= normalCoin) {
+            tileGenerate.carSpeed = normalSpeed;
+            return normalObstacles;
+        }
         else return easyObstacles;
     }
 }

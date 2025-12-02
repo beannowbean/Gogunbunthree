@@ -37,12 +37,12 @@ public class TileGenerate : MonoBehaviour
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "Tile")
         {
-            moveOldTile(other);
+            MoveOldTile(other);
         }
     }
 
     // 지나간 타일 제일 멀리 이동
-    private void moveOldTile(Collider oldTile)
+    private void MoveOldTile(Collider oldTile)
     {
         // 가장 먼 타일 탐색
         float maxZ = -10000;

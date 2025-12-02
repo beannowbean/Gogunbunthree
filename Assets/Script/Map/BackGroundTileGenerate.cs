@@ -25,13 +25,13 @@ public class BackGroundTileGenerate : MonoBehaviour
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "BackgroundTile")
         {
-            moveOldTile(other);
-            makeBuilding(other);
+            MoveOldTile(other);
+            MakeBuilding(other);
         }
     }
 
     // 지나간 타일 제일 멀리 이동
-    private void moveOldTile(Collider oldTile)
+    private void MoveOldTile(Collider oldTile)
     {
         // 가장 먼 타일 탐색
         float maxZ = -10000;
@@ -50,7 +50,7 @@ public class BackGroundTileGenerate : MonoBehaviour
 
     //  빌딩 랜덤으로 타일에 생성
     int lastBuilding;
-    private void makeBuilding(Collider oldTile)
+    private void MakeBuilding(Collider oldTile)
     {
         Transform obstacle = oldTile.transform.GetChild(0);
 
