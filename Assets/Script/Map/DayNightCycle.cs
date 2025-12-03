@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
@@ -9,47 +11,42 @@ public class DayNightCycle : MonoBehaviour
     public float sunriseDuration = 5f;
 
     public Light directionalLight;
-    public float dayIntensity = 1f;    // 낮 Light 강도
-    public float nightIntensity = 0f;  // 밤 Light 강도
-
-    public float daySkyboxExposure = 1f;   // 낮 Skybox 노출
-    public float nightSkyboxExposure = 0f; // 밤 Skybox 노출
 
     private Material skyboxMaterial;
 
-    public bool isNight = false; // 밤인지 여부 확인용
+    public bool isNight = false; // 밤인지 확인용
 
     void Start()
     {
-        // Skybox 재질 가져오기
+        // Skybox 머테리얼 가져오기
         skyboxMaterial = RenderSettings.skybox;
 
-        StartCoroutine(DayNightRoutine());
+        StartCoroutine(DayNight());
     }
 
-    IEnumerator DayNightRoutine()
+    IEnumerator DayNight()
     {
         while (true)
         {
-            // 1. 낮 (고정 밝기)
+            // 낮
             isNight = false;
-            directionalLight.intensity = dayIntensity;
-            skyboxMaterial.SetFloat("_Exposure", daySkyboxExposure);
+            directionalLight.intensity = 1f;
+            skyboxMaterial.SetFloat("_Exposure", 1f);
             yield return RotateLightOverTime(50f, 50f, dayDuration);
 
-            // 2. 낮->밤 (회전과 함께 밝기 감소)
+            // 낮->밤
             isNight = false;
-            yield return RotateLightOverTimeWithIntensityAndSkybox(50f, 230f, sunsetDuration, dayIntensity, nightIntensity, daySkyboxExposure, nightSkyboxExposure);
+            yield return RotateLightOverTimeWithIntensityAndSkybox(50f, 230f, sunsetDuration, 1f, 0f, 1f, 0f);
 
-            // 3. 밤 (고정 어둡게)
+            // 밤
             isNight = true;
-            directionalLight.intensity = nightIntensity;
-            skyboxMaterial.SetFloat("_Exposure", nightSkyboxExposure);
+            directionalLight.intensity = 0f;
+            skyboxMaterial.SetFloat("_Exposure", 0f);
             yield return RotateLightOverTime(230f, 230f, nightDuration);
 
-            // 4. 밤->낮 (회전과 함께 밝기 증가)
+            // 밤->낮
             isNight = false;
-            yield return RotateLightOverTimeWithIntensityAndSkybox(230f, 410f, sunriseDuration, nightIntensity, dayIntensity, nightSkyboxExposure, daySkyboxExposure);
+            yield return RotateLightOverTimeWithIntensityAndSkybox(230f, 410f, sunriseDuration, 0f, 1f, 0f, 1f);
         }
     }
 
@@ -84,7 +81,6 @@ public class DayNightCycle : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         directionalLight.transform.rotation = Quaternion.Euler(endAngle, 0f, 0f);
         directionalLight.intensity = endIntensity;
         skyboxMaterial.SetFloat("_Exposure", endExposure);

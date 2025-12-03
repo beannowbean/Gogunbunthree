@@ -10,6 +10,7 @@ public class CarGenerate : MonoBehaviour
     public GameObject[] easyObstacles;  // 장애물 배열
     public GameObject[] normalObstacles;
     public GameObject[] hardObstacles;
+    public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
     public int normalCoin = 10; // 난이도별 코인 요구치
     public int hardCoin = 20;
     public float itemRate = 0.1f;   // 아이템 등장 확률
@@ -17,10 +18,10 @@ public class CarGenerate : MonoBehaviour
     TileGenerate tileGenerate;
     int tileCount = 0;
     public int coin = 0;    // 코인 갯수
-    public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
     int tutorialIndex = 0;
     public int normalSpeed = 30;
     public int hardSpeed = 40;
+    public bool tutorialSkip = true;
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
@@ -45,7 +46,7 @@ public class CarGenerate : MonoBehaviour
         {
             GameObject[] obstacles = GetDifficultyArray();
             int nextObstacle;
-            if(UIController.Instance.isFirstPlay == true)
+            if(UIController.Instance.isFirstPlay == true && tutorialSkip == false)
             {
                 if(tutorialIndex < tutorialObstacles.Length)
                 {
@@ -112,7 +113,7 @@ public class CarGenerate : MonoBehaviour
         // obstacle 랜덤 생성
         int nextObstacle;
 
-        if(UIController.Instance.isFirstPlay == true)
+        if(UIController.Instance.isFirstPlay == true && tutorialSkip == false)
         {
             if(tutorialIndex < tutorialObstacles.Length)
             {
@@ -159,7 +160,7 @@ public class CarGenerate : MonoBehaviour
 
     private GameObject[] GetDifficultyArray()
     {
-        if(UIController.Instance.isFirstPlay == true) return tutorialObstacles;
+        if(UIController.Instance.isFirstPlay == true && tutorialSkip == false) return tutorialObstacles;
         if(coin >= hardCoin) {
             tileGenerate.carSpeed = hardSpeed;
             return hardObstacles;
