@@ -51,7 +51,7 @@ public class UIController : MonoBehaviour
     private bool isGameStarted = false;     // 게임 시작 여부
     private bool isCountingDown = false;    // 재개 카운트다운 여부
     
-    public bool isFirstPlay = true;         // 첫 플레이 여부
+    public static bool isFirstPlay = true;         // 첫 플레이 여부
 
 
     void Awake()
@@ -65,10 +65,12 @@ public class UIController : MonoBehaviour
         if (isRestarting)
         {
             isRestarting = false;
+            // isFirstPlay 값은 RestartGame()에서 이미 false로 설정됨
             StartGame();
         }
         else
         {
+            // 처음 시작할 때는 isFirstPlay가 true로 유지됨
             gameStartRoot.SetActive(true);
 
             gamePauseRoot.SetActive(false);
@@ -187,8 +189,6 @@ public class UIController : MonoBehaviour
     // 게임 오버 혹은 클리어 처리
     public void EndGame()
     {
-        isFirstPlay = false;
-
         Time.timeScale = 0f;
         isGameStarted = false;
 
@@ -252,6 +252,9 @@ public class UIController : MonoBehaviour
         {
             ScoreManager.Instance.ResetScore();
         }
+
+        // Restart 버튼을 누르면 튜토리얼 스킵
+        isFirstPlay = false;
 
         Time.timeScale = 1f;
         isRestarting = true;
