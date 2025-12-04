@@ -5,7 +5,7 @@ using UnityEngine;
 public class Star : MonoBehaviour
 {
     // 회전 속도 (Z축 기준)
-    public float rotateSpeed = 100f;
+    public float rotateSpeed = 300f;
 
     // 무적 지속 시간
     public float invincibilityDuration = 5.0f;
