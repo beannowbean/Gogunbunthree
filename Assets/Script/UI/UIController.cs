@@ -51,12 +51,24 @@ public class UIController : MonoBehaviour
     private bool isGameStarted = false;     // 게임 시작 여부
     private bool isCountingDown = false;    // 재개 카운트다운 여부
     
-    public bool isFirstPlay = true;         // 첫 플레이 여부
+    public static bool tutorialSkip = false;         // 튜토리얼 스킵 여부 (false = 튜토리얼 실행, true = 스킵)
 
 
     void Awake()
     {
         Instance = this;
+        
+        // 씬이 로드될 때마다 static 변수들을 적절히 초기화
+        // isRestarting이 false이면 게임을 처음 시작하는 것이므로 tutorialSkip도 false
+        if (!isRestarting)
+        {
+            tutorialSkip = false;
+            Debug.Log("First play - tutorialSkip set to false");
+        }
+        else
+        {
+            Debug.Log($"Restarting - tutorialSkip is {tutorialSkip}");
+        }
     }
 
     void Start()
@@ -65,10 +77,12 @@ public class UIController : MonoBehaviour
         if (isRestarting)
         {
             isRestarting = false;
+            // tutorialSkip 값은 RestartGame()에서 이미 true로 설정됨
             StartGame();
         }
         else
         {
+            // 처음 시작할 때는 tutorialSkip이 false로 유지됨 (튜토리얼 실행)
             gameStartRoot.SetActive(true);
 
             gamePauseRoot.SetActive(false);
@@ -187,8 +201,6 @@ public class UIController : MonoBehaviour
     // 게임 오버 혹은 클리어 처리
     public void EndGame()
     {
-        isFirstPlay = false;
-
         Time.timeScale = 0f;
         isGameStarted = false;
 
@@ -252,6 +264,9 @@ public class UIController : MonoBehaviour
         {
             ScoreManager.Instance.ResetScore();
         }
+
+        // Restart 버튼을 누르면 튜토리얼 스킵
+        tutorialSkip = true;
 
         Time.timeScale = 1f;
         isRestarting = true;
