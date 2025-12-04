@@ -96,6 +96,7 @@ public class UIController : MonoBehaviour
 
             UpdateMusicIconUI();
             UpdateSFXIconUI();
+            ApplyAudioVolumes();
         }
     }
 
@@ -282,6 +283,7 @@ public class UIController : MonoBehaviour
         currentMusicVolumeLevel = Mathf.Max(0, currentMusicVolumeLevel - 1);
         Debug.Log($"Music Volume: {currentMusicVolumeLevel}");
         UpdateMusicIconUI();
+        ApplyAudioVolumes();
     }
 
     public void IncreaseMusicVolume()
@@ -289,6 +291,7 @@ public class UIController : MonoBehaviour
         currentMusicVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentMusicVolumeLevel + 1);
         Debug.Log($"Music Volume: {currentMusicVolumeLevel}");
         UpdateMusicIconUI();
+        ApplyAudioVolumes();
     }
 
     public void DecreaseSFXVolume()
@@ -296,6 +299,7 @@ public class UIController : MonoBehaviour
         currentSFXVolumeLevel = Mathf.Max(0, currentSFXVolumeLevel - 1);
         Debug.Log($"SFX Volume: {currentSFXVolumeLevel}");
         UpdateSFXIconUI();
+        ApplyAudioVolumes();
     }
 
     public void IncreaseSFXVolume()
@@ -303,6 +307,7 @@ public class UIController : MonoBehaviour
         currentSFXVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentSFXVolumeLevel + 1);
         Debug.Log($"SFX Volume: {currentSFXVolumeLevel}");
         UpdateSFXIconUI();
+        ApplyAudioVolumes();
     }
 
 
@@ -326,6 +331,7 @@ public class UIController : MonoBehaviour
 
         // 아이콘 상태 갱신
         UpdateMusicIconUI();
+        ApplyAudioVolumes();
     }
 
     // 아이콘을 껐다 켰다 하는 함수
@@ -371,6 +377,7 @@ public class UIController : MonoBehaviour
         }
 
         UpdateSFXIconUI();
+        ApplyAudioVolumes();
     }
 
     private void UpdateSFXIconUI()
@@ -392,6 +399,27 @@ public class UIController : MonoBehaviour
             foreach (GameObject icon in sfxOffIcons)
             {
                 if (icon != null) icon.SetActive(!isSoundOn);
+            }
+        }
+    }
+
+    // AudioSource 음량 적용
+    private void ApplyAudioVolumes()
+    {
+        // 씬의 모든 AudioSource 찾기
+        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+
+        foreach (AudioSource audioSource in allAudioSources)
+        {
+            if (audioSource.gameObject.CompareTag("BGM"))
+            {
+                // BGM 태그: currentMusicVolumeLevel 적용 (0~1 범위로 정규화)
+                audioSource.volume = currentMusicVolumeLevel / (float)MAX_VOLUME_LEVEL;
+            }
+            else if (audioSource.gameObject.CompareTag("SFX"))
+            {
+                // SFX 태그: currentSFXVolumeLevel 적용 (0~1 범위로 정규화)
+                audioSource.volume = currentSFXVolumeLevel / (float)MAX_VOLUME_LEVEL;
             }
         }
     }
