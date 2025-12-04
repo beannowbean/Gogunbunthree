@@ -5,12 +5,13 @@ using UnityEngine;
 public class Tutorial : MonoBehaviour
 {
     int tutorialStage = 0;
-    bool isPaused = false;
+    public bool isPaused = false;
     public GameObject[] tutorialObject;
-    public Player player;
+    Player player;
 
     void Start() 
     {
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         for(int i = 0; i < tutorialObject.Length; i++)
         {
             tutorialObject[i].SetActive(false);
@@ -18,9 +19,10 @@ public class Tutorial : MonoBehaviour
     }
     void Update()
     {
-        // 튜토리얼이 비활성화되어 있으면 실행하지 않음
-        if(UIController.Instance == null || UIController.tutorialSkip) return;
         if(isPaused == false) return;
+        if(UIController.tutorialSkip == true) {
+            player.isControl = true;
+        }
 
         if(tutorialStage == 1)
         {
@@ -29,6 +31,8 @@ public class Tutorial : MonoBehaviour
                 isPaused = false;
                 Time.timeScale = 1f;
                 tutorialObject[tutorialStage - 1].SetActive(false);
+                player.isJump = false;
+                player.isControl = false;
             }
         }
         if(tutorialStage == 2)
@@ -38,13 +42,17 @@ public class Tutorial : MonoBehaviour
                 isPaused = false;
                 Time.timeScale = 1f;
                 tutorialObject[tutorialStage - 1].SetActive(false);
+                player.isMove = false;
+                player.isControl = false;
             }
         }
         if(tutorialStage == 3)
         {
             if(player.isJump == true)
             {
-                tutorialObject[tutorialStage - 2].SetActive(false);
+                tutorialObject[tutorialStage - 1].SetActive(false);
+                player.isJump = false;
+                player.isControl = false;
                 StartCoroutine(TutorialHook());
             }
         }
@@ -55,20 +63,13 @@ public class Tutorial : MonoBehaviour
                 isPaused = false;
                 Time.timeScale = 1f;
                 tutorialObject[tutorialStage - 1].SetActive(false);
-                
-                // 튜토리얼 완료 후 tutorialSkip을 true로 설정
-                UIController.tutorialSkip = true;
-                Debug.Log("Tutorial completed - tutorialSkip set to true");
+                player.isHook = false;                
+                tutorialStage = 5;
             }
         }
     }
 
     private void OnTriggerExit(Collider other) {
-        Debug.Log($"OnTriggerExit - Tag: {other.gameObject.tag}, tutorialSkip: {UIController.tutorialSkip}");
-        
-        // 튜토리얼이 비활성화되어 있으면 실행하지 않음
-        if(UIController.Instance == null || UIController.tutorialSkip) return;
-
         if(other.gameObject.tag == "TutorialDetector")
         {
             player.isControl = true;
