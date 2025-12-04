@@ -701,6 +701,70 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
+--- !u!1 &614249414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 614249416}
+  - component: {fileID: 614249415}
+  m_Layer: 0
+  m_Name: SFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &614249415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614249414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc96a8d46f5163c4298c7a4d643c1e41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - clip: {fileID: 8300000, guid: cb4e3512ebbbdd146996e068efee0adc, type: 3}
+    volume: 0.3
+    loop: 0
+  - clip: {fileID: 8300000, guid: f59bd6d100b63ce45a21a4fc7232f42a, type: 3}
+    volume: 0.5
+    loop: 0
+  - clip: {fileID: 8300000, guid: 6be03923ff647744caa5cb69994ec696, type: 3}
+    volume: 0.5
+    loop: 0
+  - clip: {fileID: 8300000, guid: 51a1ccdc62709c64d94a6039b0ab365d, type: 3}
+    volume: 0.5
+    loop: 0
+  - clip: {fileID: 8300000, guid: cead0abbc0fe0d5409b2b4a89d2e524e, type: 3}
+    volume: 0.5
+    loop: 0
+  - clip: {fileID: 8300000, guid: a6dae87975a050b43ae4cefc0f479098, type: 3}
+    volume: 0.5
+    loop: 1
+  masterVolume: 1
+--- !u!4 &614249416
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614249414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.2824574, y: 6.47956, z: 5.5988235}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &667432971 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5862077421946812769, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
@@ -2680,3 +2744,4 @@ SceneRoots:
   - {fileID: 4112590481727943896}
   - {fileID: 1696879594}
   - {fileID: 305569999}
+  - {fileID: 614249416}

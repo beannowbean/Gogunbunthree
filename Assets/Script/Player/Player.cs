@@ -64,6 +64,12 @@ public class Player : MonoBehaviour
     private Rigidbody rb;
     private Animator anim;
 
+    // 튜토리얼 확인용 변수
+    public bool isJump = false;
+    public bool isMove = false;
+    public bool isHook = false;
+    public bool isControl = false;
+
     void Start()
     {
         currentLane = 2;
@@ -92,7 +98,7 @@ public class Player : MonoBehaviour
 
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime, Space.World);
 
-        CheckInput();
+        if(isControl == true) CheckInput();
         float targetX = (currentLane - 2) * laneDistance;
         Vector3 newPosition = new Vector3(targetX, transform.position.y, transform.position.z);
         Vector3 moveVector = Vector3.Lerp(transform.position, newPosition, crossSpeed * Time.deltaTime);
@@ -141,16 +147,20 @@ public class Player : MonoBehaviour
             if (swipeDistanceX > 0) ChangeLane(1);
             else ChangeLane(-1);
         }
-        else
-        {
-            if (swipeDistanceY > 0) Jump();
-        }
+        else if(swipeDistanceY > 0) Jump();
+        else if(swipeDistanceY < 0) QuickDive();
+        // else
+        // {
+        //     if (swipeDistanceY > 0) Jump();
+        // }
     }
 
     void ChangeLane(int direction)
     {
         int targetLane = currentLane + direction;
         if (targetLane >= 1 && targetLane <= 3) currentLane = targetLane;
+        SFXManager.Instance.Play("Move");
+        isMove = true;
     }
 
     void Jump()
@@ -160,6 +170,8 @@ public class Player : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
             isGrounded = false;
             anim.SetBool("isGrounded", false);
+            SFXManager.Instance.Play("Jump");
+            isJump = true;
         }
     }
 
@@ -187,6 +199,8 @@ public class Player : MonoBehaviour
         hrb.velocity = shootDirection * hookSpeed;
         Hook hookScript = currentHook.GetComponent<Hook>();
         hookScript.player = this;
+        SFXManager.Instance.Play("Hook");
+        isHook = true;
     }
 
     void ReleaseHook()
@@ -249,6 +263,7 @@ public class Player : MonoBehaviour
         // 1. 코인
         if (other.CompareTag("Coin"))
         {
+            if(isGameOver) return;
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
             // 1초 뒤에 이펙트 삭제 (파티클 길이에 맞춰 시간 조절하세요)
             Destroy(effect, 1.0f);
@@ -289,6 +304,7 @@ public class Player : MonoBehaviour
             {
                 // --- 게임 오버 로직 ---
                 if (isGameOver) return;
+                ReleaseHook();
                 ScoreManager.Instance.isCleared = false;
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;

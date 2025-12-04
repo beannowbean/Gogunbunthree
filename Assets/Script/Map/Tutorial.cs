@@ -8,8 +8,10 @@ public class Tutorial : MonoBehaviour
     int tutorialStage = 0;
     bool isPaused = false;
     public TextMeshProUGUI[] text;
+    Player player;
     void Start() 
     {
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         for(int i = 0; i < text.Length; i++)
         {
             text[i].gameObject.SetActive(false);
@@ -20,37 +22,44 @@ public class Tutorial : MonoBehaviour
         if(isPaused == false) return;
         if(tutorialStage == 1)
         {
-            if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
+            if(player.isJump == true)
             {
                 isPaused = false;
                 Time.timeScale = 1f;
                 text[tutorialStage - 1].gameObject.SetActive(false);
+                player.isJump = false;
+                player.isControl = false;
             }
         }
         if(tutorialStage == 2)
         {
-            if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))            
+            if(player.isMove == true)
             {
                 isPaused = false;
                 Time.timeScale = 1f;
                 text[tutorialStage - 1].gameObject.SetActive(false);
+                player.isMove = false;
+                player.isControl = false;
             }
         }
         if(tutorialStage == 3)
         {
-            if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
+            if(player.isJump == true)
             {
                 text[tutorialStage - 1].gameObject.SetActive(false);
+                player.isJump = false;
+                player.isControl = false;
                 StartCoroutine(TutorialHook());
             }
         }
         if(tutorialStage == 4)
         {
-            if (Input.GetMouseButtonDown(0))
+            if(player.isHook == true)
             {
                 isPaused = false;
                 Time.timeScale = 1f;
                 text[tutorialStage - 1].gameObject.SetActive(false);
+                player.isHook = false;
             }
         }
     }
@@ -58,6 +67,7 @@ public class Tutorial : MonoBehaviour
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.tag == "TutorialDetector")
         {
+            player.isControl = true;
             tutorialStage++;
             isPaused = true;
             Time.timeScale = 0f;
@@ -71,6 +81,7 @@ public class Tutorial : MonoBehaviour
         Time.timeScale = 1f;
 
         yield return new WaitForSecondsRealtime(0.1f);
+        player.isControl = true;
         isPaused = true;
         Time.timeScale = 0f;
         text[tutorialStage].gameObject.SetActive(true);
