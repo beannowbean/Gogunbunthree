@@ -30,6 +30,7 @@ public class Star : MonoBehaviour
         // 2. 플레이어와 닿으면
         if (other.CompareTag("Player"))
         {
+            SFXManager.Instance.Play("Star");
             isCollected = true; // 중복 획득 방지
 
             // 플레이어 스크립트를 가져와서 무적 함수 실행

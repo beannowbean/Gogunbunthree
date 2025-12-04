@@ -378,6 +378,7 @@ public class Player : MonoBehaviour
         helicopter.StopChasing();
         transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
         yield return new WaitForSeconds(5);
+        SFXManager.Instance.Play("Clear");
         SFXManager.Instance.Stop("Helicopter");
         UIController.Instance.EndGame();
         currentHelicopter.SetActive(false);
@@ -386,6 +387,7 @@ public class Player : MonoBehaviour
     IEnumerator GameOver()
     {
         isGameOver = true;
+        SFXManager.Instance.Play("Crashed");
         //Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.Stop("Helicopter");
@@ -403,7 +405,7 @@ public class Player : MonoBehaviour
 
         while (!isGameOver)
         {
-            if(Random.value <= 0.1f)
+            if(Random.value <= 0.4f)
             {
                 SFXManager.Instance.Play("Honk");
                 yield return new WaitForSeconds(2f);

@@ -233,6 +233,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_Screen
       objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[0].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[1].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[2].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[3].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[4].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[5].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[6].volume
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[7].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[8].volume
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
+      propertyPath: sounds.Array.data[9].volume
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 9100888040610301167, guid: c27af6976327ddf40a754958e5dbfbc7, type: 3}
       propertyPath: tutorial
       value: 
@@ -390,70 +430,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
---- !u!1 &614249414
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 614249416}
-  - component: {fileID: 614249415}
-  m_Layer: 0
-  m_Name: SFXManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &614249415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 614249414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc96a8d46f5163c4298c7a4d643c1e41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sounds:
-  - clip: {fileID: 8300000, guid: 8d79f553a4fd6504dbb8e47907642f1a, type: 3}
-    volume: 0.3
-    loop: 0
-  - clip: {fileID: 8300000, guid: 0433208efd3cf6844a84468af5518e89, type: 3}
-    volume: 0.5
-    loop: 0
-  - clip: {fileID: 8300000, guid: 8839c5ab92c35bf4f8ecd577661f3078, type: 3}
-    volume: 0.5
-    loop: 0
-  - clip: {fileID: 8300000, guid: b5da9db62e2ab0c40937a76f394ae196, type: 3}
-    volume: 0.5
-    loop: 0
-  - clip: {fileID: 8300000, guid: 009422f07cc761746b0fd8d1688dca47, type: 3}
-    volume: 0.5
-    loop: 0
-  - clip: {fileID: 8300000, guid: 257027498ea02894abb67fef43006b75, type: 3}
-    volume: 0.3
-    loop: 0
-  masterVolume: 1
---- !u!4 &614249416
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 614249414}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.2824574, y: 6.47956, z: 5.5988235}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &667432971 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5862077421946812769, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
@@ -2106,4 +2082,3 @@ SceneRoots:
   - {fileID: 4112590481727943896}
   - {fileID: 1696879594}
   - {fileID: 16919743}
-  - {fileID: 614249416}
