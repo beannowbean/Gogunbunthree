@@ -264,6 +264,7 @@ public class Player : MonoBehaviour
         if (other.CompareTag("Coin"))
         {
             if(isGameOver) return;
+            SFXManager.Instance.Play("Coin", 0.98f, 1.02f);
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
             // 1초 뒤에 이펙트 삭제 (파티클 길이에 맞춰 시간 조절하세요)
             Destroy(effect, 1.0f);
@@ -320,6 +321,7 @@ public class Player : MonoBehaviour
         if (randomValue <= heliSpawnChance)
         {
             currentHelicopter = Instantiate(helicopterPrefab);
+            SFXManager.Instance.Play("Helicopter");
         }
     }
 
@@ -373,6 +375,7 @@ public class Player : MonoBehaviour
         helicopter.StopChasing();
         transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
         yield return new WaitForSeconds(5);
+        SFXManager.Instance.Stop("Helicopter");
         UIController.Instance.EndGame();
         currentHelicopter.SetActive(false);
     }
@@ -382,6 +385,7 @@ public class Player : MonoBehaviour
         isGameOver = true;
         //Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(3.0f);
+        SFXManager.Instance.Stop("Helicopter");
         Time.timeScale = 0f;
         UIController.Instance.EndGame();
         if(currentHelicopter != null)

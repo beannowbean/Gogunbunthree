@@ -686,7 +686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
       propertyPath: heliSpawnChance
-      value: 1
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
       propertyPath: coinEffectPrefab
@@ -731,24 +731,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - clip: {fileID: 8300000, guid: cb4e3512ebbbdd146996e068efee0adc, type: 3}
+  - clip: {fileID: 8300000, guid: 8d79f553a4fd6504dbb8e47907642f1a, type: 3}
     volume: 0.3
     loop: 0
-  - clip: {fileID: 8300000, guid: f59bd6d100b63ce45a21a4fc7232f42a, type: 3}
+  - clip: {fileID: 8300000, guid: 0433208efd3cf6844a84468af5518e89, type: 3}
     volume: 0.5
     loop: 0
-  - clip: {fileID: 8300000, guid: 6be03923ff647744caa5cb69994ec696, type: 3}
+  - clip: {fileID: 8300000, guid: 8839c5ab92c35bf4f8ecd577661f3078, type: 3}
     volume: 0.5
     loop: 0
-  - clip: {fileID: 8300000, guid: 51a1ccdc62709c64d94a6039b0ab365d, type: 3}
+  - clip: {fileID: 8300000, guid: b5da9db62e2ab0c40937a76f394ae196, type: 3}
     volume: 0.5
     loop: 0
-  - clip: {fileID: 8300000, guid: cead0abbc0fe0d5409b2b4a89d2e524e, type: 3}
+  - clip: {fileID: 8300000, guid: 009422f07cc761746b0fd8d1688dca47, type: 3}
     volume: 0.5
     loop: 0
-  - clip: {fileID: 8300000, guid: a6dae87975a050b43ae4cefc0f479098, type: 3}
-    volume: 0.5
-    loop: 1
+  - clip: {fileID: 8300000, guid: 257027498ea02894abb67fef43006b75, type: 3}
+    volume: 0.3
+    loop: 0
   masterVolume: 1
 --- !u!4 &614249416
 Transform:
@@ -2488,7 +2488,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: hardCoin
-      value: 50
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
+      propertyPath: itemRate
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: isTutorial
@@ -2496,7 +2500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: normalCoin
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: normalSpeed

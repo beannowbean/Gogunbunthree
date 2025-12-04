@@ -73,6 +73,7 @@ public class Helicopter : MonoBehaviour
         }
 
         // [4단계] 임무 완료 후 오브젝트 파괴
+        SFXManager.Instance.Stop("Helicopter");
         Destroy(gameObject);
     }
 }

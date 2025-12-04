@@ -45,10 +45,12 @@ public class SFXManager : MonoBehaviour
         var src = GetSourceByName(clipName);
         if (src == null) return;
 
-        src.volume = GetSoundVolume(src.clip.name);
         src.pitch = Random.Range(pitchMin, pitchMax);
-        src.Play();
+        src.volume = GetSoundVolume(clipName);
+        src.time = 0.1f;
+        src.PlayOneShot(src.clip);
     }
+
 
     public void Stop(string clipName)
     {
