@@ -32,18 +32,6 @@ public class UIController : MonoBehaviour
     public GameObject[] sfxOnIcons;
     public GameObject[] sfxOffIcons;
 
-
-
-    // Audio volume levels
-    private const int MAX_VOLUME_LEVEL = 10;
-
-    private int currentMusicVolumeLevel = 3;
-    private int currentSFXVolumeLevel = 4;
-
-    // 음소거 전 저장용
-    private int previousMusicVolumeLevel = MAX_VOLUME_LEVEL;
-    private int previousSFXVolumeLevel = MAX_VOLUME_LEVEL;
-
     // 재개 지연 시간
     public float resumeDelay = 3f;
 
@@ -96,7 +84,6 @@ public class UIController : MonoBehaviour
 
             UpdateMusicIconUI();
             UpdateSFXIconUI();
-            ApplyAudioVolumes();
         }
     }
 
@@ -280,65 +267,56 @@ public class UIController : MonoBehaviour
 
     public void DecreaseMusicVolume()
     {
-        currentMusicVolumeLevel = Mathf.Max(0, currentMusicVolumeLevel - 1);
-        Debug.Log($"Music Volume: {currentMusicVolumeLevel}");
-        UpdateMusicIconUI();
-        ApplyAudioVolumes();
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.DecreaseVolume();
+            UpdateMusicIconUI();
+        }
     }
 
     public void IncreaseMusicVolume()
     {
-        currentMusicVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentMusicVolumeLevel + 1);
-        Debug.Log($"Music Volume: {currentMusicVolumeLevel}");
-        UpdateMusicIconUI();
-        ApplyAudioVolumes();
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.IncreaseVolume();
+            UpdateMusicIconUI();
+        }
     }
 
     public void DecreaseSFXVolume()
     {
-        currentSFXVolumeLevel = Mathf.Max(0, currentSFXVolumeLevel - 1);
-        Debug.Log($"SFX Volume: {currentSFXVolumeLevel}");
-        UpdateSFXIconUI();
-        ApplyAudioVolumes();
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.DecreaseVolume();
+            UpdateSFXIconUI();
+        }
     }
 
     public void IncreaseSFXVolume()
     {
-        currentSFXVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentSFXVolumeLevel + 1);
-        Debug.Log($"SFX Volume: {currentSFXVolumeLevel}");
-        UpdateSFXIconUI();
-        ApplyAudioVolumes();
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.IncreaseVolume();
+            UpdateSFXIconUI();
+        }
     }
 
 
     // Music ( Mute / Unmute ) 구현
     public void ToggleMusicMute()
     {
-        // 소리가 켜져 있으면 Mute
-        if (currentMusicVolumeLevel > 0)
+        if (BGMManager.Instance != null)
         {
-            previousMusicVolumeLevel = currentMusicVolumeLevel; // 현재 볼륨 저장
-            currentMusicVolumeLevel = 0; // 볼륨 0으로 설정
-            Debug.Log($"Music Muted. (Saved: {previousMusicVolumeLevel})");
+            BGMManager.Instance.ToggleMute();
+            UpdateMusicIconUI();
         }
-        // 소리가 꺼져 있다면 Unmute
-        else
-        {
-            // 저장된 볼륨이 0이라면 맥스 볼륨으로, 아니면 저장된 볼륨으로 복구
-            currentMusicVolumeLevel = (previousMusicVolumeLevel > 0) ? previousMusicVolumeLevel : MAX_VOLUME_LEVEL;
-            Debug.Log($"Music Unmuted. (Restored: {currentMusicVolumeLevel})");
-        }
-
-        // 아이콘 상태 갱신
-        UpdateMusicIconUI();
-        ApplyAudioVolumes();
     }
 
     // 아이콘을 껐다 켰다 하는 함수
     private void UpdateMusicIconUI()
     {
         // 볼륨이 0보다 크면 On 아이콘 활성화, Off 아이콘 비활성화
-        bool isSoundOn = currentMusicVolumeLevel > 0;
+        bool isSoundOn = BGMManager.Instance != null && !BGMManager.Instance.IsMuted();
 
         // Music On 아이콘들 처리
         if (musicOnIcons != null)
@@ -364,25 +342,16 @@ public class UIController : MonoBehaviour
 
     public void ToggleSFXMute()
     {
-        if (currentSFXVolumeLevel > 0)
+        if (SFXManager.Instance != null)
         {
-            previousSFXVolumeLevel = currentSFXVolumeLevel;
-            currentSFXVolumeLevel = 0;
-            Debug.Log($"SFX Muted. (Saved: {previousSFXVolumeLevel})");
+            SFXManager.Instance.ToggleMute();
+            UpdateSFXIconUI();
         }
-        else
-        {
-            currentSFXVolumeLevel = (previousSFXVolumeLevel > 0) ? previousSFXVolumeLevel : MAX_VOLUME_LEVEL;
-            Debug.Log($"SFX Unmuted. (Restored: {currentSFXVolumeLevel})");
-        }
-
-        UpdateSFXIconUI();
-        ApplyAudioVolumes();
     }
 
     private void UpdateSFXIconUI()
     {
-        bool isSoundOn = currentSFXVolumeLevel > 0;
+        bool isSoundOn = SFXManager.Instance != null && !SFXManager.Instance.IsMuted();
 
         // SFX On 아이콘들 처리
         if (sfxOnIcons != null)
@@ -399,27 +368,6 @@ public class UIController : MonoBehaviour
             foreach (GameObject icon in sfxOffIcons)
             {
                 if (icon != null) icon.SetActive(!isSoundOn);
-            }
-        }
-    }
-
-    // AudioSource 음량 적용
-    private void ApplyAudioVolumes()
-    {
-        // 씬의 모든 AudioSource 찾기
-        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
-
-        foreach (AudioSource audioSource in allAudioSources)
-        {
-            if (audioSource.gameObject.CompareTag("BGM"))
-            {
-                // BGM 태그: currentMusicVolumeLevel 적용 (0~1 범위로 정규화)
-                audioSource.volume = currentMusicVolumeLevel / (float)MAX_VOLUME_LEVEL;
-            }
-            else if (audioSource.gameObject.CompareTag("SFX"))
-            {
-                // SFX 태그: currentSFXVolumeLevel 적용 (0~1 범위로 정규화)
-                audioSource.volume = currentSFXVolumeLevel / (float)MAX_VOLUME_LEVEL;
             }
         }
     }

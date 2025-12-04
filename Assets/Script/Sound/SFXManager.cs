@@ -21,6 +21,12 @@ public class SFXManager : MonoBehaviour
 
     private List<AudioSource> sources = new List<AudioSource>();
 
+    // Audio volume settings
+    private const int MAX_VOLUME_LEVEL = 10;
+
+    private int currentVolumeLevel = 4;
+    private int previousVolumeLevel = MAX_VOLUME_LEVEL;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -81,5 +87,58 @@ public class SFXManager : MonoBehaviour
     {
         Sound sound = sounds.Find(s => s.clip.name == clipName);
         return (sound != null ? sound.volume : 1f) * masterVolume;
+    }
+
+    // 볼륨 레벨 증가
+    public void IncreaseVolume()
+    {
+        currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
+        Debug.Log($"SFX Volume: {currentVolumeLevel}");
+        ApplyVolume();
+    }
+
+    // 볼륨 레벨 감소
+    public void DecreaseVolume()
+    {
+        currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
+        Debug.Log($"SFX Volume: {currentVolumeLevel}");
+        ApplyVolume();
+    }
+
+    // Mute / Unmute 토글
+    public void ToggleMute()
+    {
+        if (currentVolumeLevel > 0)
+        {
+            previousVolumeLevel = currentVolumeLevel;
+            currentVolumeLevel = 0;
+            Debug.Log($"SFX Muted. (Saved: {previousVolumeLevel})");
+        }
+        else
+        {
+            currentVolumeLevel = (previousVolumeLevel > 0) ? previousVolumeLevel : MAX_VOLUME_LEVEL;
+            Debug.Log($"SFX Unmuted. (Restored: {currentVolumeLevel})");
+        }
+        ApplyVolume();
+    }
+
+    // 현재 볼륨 레벨 가져오기
+    public int GetCurrentVolumeLevel()
+    {
+        return currentVolumeLevel;
+    }
+
+    // 볼륨이 켜져 있는지 확인
+    public bool IsMuted()
+    {
+        return currentVolumeLevel == 0;
+    }
+
+    // 실제 오디오 볼륨 적용
+    private void ApplyVolume()
+    {
+        masterVolume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
+        SetMasterVolume(masterVolume);
+        Debug.Log($"SFX Volume applied: {masterVolume}");
     }
 }
