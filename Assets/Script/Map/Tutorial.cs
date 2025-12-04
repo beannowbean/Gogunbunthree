@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class Tutorial : MonoBehaviour
 {
     int tutorialStage = 0;
     bool isPaused = false;
-    public TextMeshProUGUI[] text;
+    public GameObject[] tutorialObject;
     void Start() 
     {
-        for(int i = 0; i < text.Length; i++)
+        for(int i = 0; i < tutorialObject.Length; i++)
         {
-            text[i].gameObject.SetActive(false);
+            tutorialObject[i].SetActive(false);
         }    
     }
     void Update()
@@ -24,7 +23,7 @@ public class Tutorial : MonoBehaviour
             {
                 isPaused = false;
                 Time.timeScale = 1f;
-                text[tutorialStage - 1].gameObject.SetActive(false);
+                tutorialObject[tutorialStage - 1].SetActive(false);
             }
         }
         if(tutorialStage == 2)
@@ -33,14 +32,14 @@ public class Tutorial : MonoBehaviour
             {
                 isPaused = false;
                 Time.timeScale = 1f;
-                text[tutorialStage - 1].gameObject.SetActive(false);
+                tutorialObject[tutorialStage - 1].SetActive(false);
             }
         }
         if(tutorialStage == 3)
         {
             if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             {
-                text[tutorialStage - 1].gameObject.SetActive(false);
+                tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(TutorialHook());
             }
         }
@@ -50,7 +49,7 @@ public class Tutorial : MonoBehaviour
             {
                 isPaused = false;
                 Time.timeScale = 1f;
-                text[tutorialStage - 1].gameObject.SetActive(false);
+                tutorialObject[tutorialStage - 1].SetActive(false);
             }
         }
     }
@@ -61,7 +60,7 @@ public class Tutorial : MonoBehaviour
             tutorialStage++;
             isPaused = true;
             Time.timeScale = 0f;
-            text[tutorialStage - 1].gameObject.SetActive(true);
+            tutorialObject[tutorialStage - 1].SetActive(true);
         }  
     }
 
@@ -73,7 +72,7 @@ public class Tutorial : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.1f);
         isPaused = true;
         Time.timeScale = 0f;
-        text[tutorialStage].gameObject.SetActive(true);
+        tutorialObject[tutorialStage].SetActive(true);
 
         tutorialStage = 4;
     }
