@@ -84,6 +84,12 @@ public class UIController : MonoBehaviour
 
             UpdateMusicIconUI();
             UpdateSFXIconUI();
+
+            // 메인 화면 BGM 재생
+            if (BGMManager.Instance != null)
+            {
+                BGMManager.Instance.PlayMainScreenBGM();
+            }
         }
     }
 
@@ -95,6 +101,34 @@ public class UIController : MonoBehaviour
             if (confirmationPanel.activeSelf) confirmationPanel.SetActive(false); 
             else if (gamePauseRoot.activeSelf) ResumeGame();
             else PauseGame();
+        }
+
+        // Test: BGM 재생 테스트
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (BGMManager.Instance != null)
+            {
+                BGMManager.Instance.PlayMainScreenBGM();
+                Debug.Log("Playing Main Screen BGM (M key pressed)");
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (BGMManager.Instance != null)
+            {
+                BGMManager.Instance.PlayInGameBGM();
+                Debug.Log("Playing In-Game BGM (I key pressed)");
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if (BGMManager.Instance != null)
+            {
+                BGMManager.Instance.ToggleMute();
+                Debug.Log("BGM Mute Toggled (B key pressed)");
+            }
         }
 
         // Test: GameOver with S key
@@ -183,6 +217,13 @@ public class UIController : MonoBehaviour
 
         // 시작 메뉴로 돌아가기
         //gameStartRoot.gameObject.SetActive(true);
+        
+        // 메인 화면 BGM 재생
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.PlayMainScreenBGM();
+        }
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -244,6 +285,12 @@ public class UIController : MonoBehaviour
 
         isGameStarted = true;
         Time.timeScale = 1f;
+
+        // 인게임 BGM 재생
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.PlayInGameBGM();
+        }
     }
 
     public void RestartGame()

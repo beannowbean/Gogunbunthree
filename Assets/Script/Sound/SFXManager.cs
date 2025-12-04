@@ -16,9 +16,6 @@ public class SFXManager : MonoBehaviour
 
     public List<Sound> sounds = new List<Sound>();
 
-    [Range(0f, 1f)]
-    public float masterVolume = 1f;
-
     private List<AudioSource> sources = new List<AudioSource>();
 
     // Audio volume settings
@@ -40,7 +37,7 @@ public class SFXManager : MonoBehaviour
             src.clip = s.clip;
             src.loop = s.loop;
             src.playOnAwake = false;
-            src.volume = s.volume * masterVolume;
+            src.volume = s.volume * (currentVolumeLevel / (float)MAX_VOLUME_LEVEL);
 
             sources.Add(src);
         }
@@ -66,27 +63,18 @@ public class SFXManager : MonoBehaviour
         src.Stop();
     }
 
-    public void SetMasterVolume(float value)
-    {
-        masterVolume = value;
-        foreach (var src in sources)
-        {
-            Sound sound = sounds.Find(s => s.clip == src.clip);
-            src.volume = sound.volume * masterVolume;
-        }
-    }
-
     // 🔍 AudioClip 이름으로 AudioSource 찾기
     private AudioSource GetSourceByName(string clipName)
     {
         return sources.Find(src => src.clip.name == clipName);
     }
 
-    // 개별 + 마스터 볼륨 반영
+    // 개별 볼륨 반영
     private float GetSoundVolume(string clipName)
     {
         Sound sound = sounds.Find(s => s.clip.name == clipName);
-        return (sound != null ? sound.volume : 1f) * masterVolume;
+        float currentVolume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
+        return (sound != null ? sound.volume : 1f) * currentVolume;
     }
 
     // 볼륨 레벨 증가
@@ -137,8 +125,17 @@ public class SFXManager : MonoBehaviour
     // 실제 오디오 볼륨 적용
     private void ApplyVolume()
     {
-        masterVolume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
-        SetMasterVolume(masterVolume);
-        Debug.Log($"SFX Volume applied: {masterVolume}");
+        float volume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
+        
+        foreach (var src in sources)
+        {
+            Sound sound = sounds.Find(s => s.clip == src.clip);
+            if (sound != null)
+            {
+                src.volume = sound.volume * volume;
+            }
+        }
+        
+        Debug.Log($"SFX Volume applied: {volume}");
     }
 }
