@@ -31,6 +31,7 @@ public class UIController : MonoBehaviour
     public GameObject[] musicOffIcons;          // 소리 꺼짐 아이콘들 (메인 + 일시정지)
     public GameObject[] sfxOnIcons;
     public GameObject[] sfxOffIcons;
+    public Tutorial tutorial;
 
     // 재개 지연 시간
     public float resumeDelay = 3f;
@@ -141,6 +142,7 @@ public class UIController : MonoBehaviour
     // 게임 일시정지
     public void PauseGame()
     {
+        if(tutorial.isPaused == true) return;
         // 시간 멈춤
         Time.timeScale = 0f;
 

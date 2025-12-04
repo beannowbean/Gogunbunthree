@@ -54,6 +54,7 @@ public class CarGenerate : MonoBehaviour
                 }
                 else
                 {
+                    UIController.tutorialSkip = true;
                     // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                     obstacles = GetDifficultyArray();
                     nextObstacle = Random.Range(0,obstacles.Length - 1);
@@ -121,6 +122,7 @@ public class CarGenerate : MonoBehaviour
             }
             else
             {
+                UIController.tutorialSkip = true;
                 // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                 obstacles = GetDifficultyArray();
                 nextObstacle = Random.Range(0, obstacles.Length - 1);

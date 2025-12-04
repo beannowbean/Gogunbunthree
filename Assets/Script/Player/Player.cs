@@ -68,10 +68,12 @@ public class Player : MonoBehaviour
     public bool isJump = false;
     public bool isMove = false;
     public bool isHook = false;
-    public bool isControl = false;
+    public bool isControl;
 
     void Start()
     {
+        if(UIController.tutorialSkip == true) isControl = true;
+        else isControl = false;
         currentLane = 2;
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -89,6 +91,7 @@ public class Player : MonoBehaviour
         {
             originalMaterials[i] = allRenderers[i].material;
         }
+        StartCoroutine(CarSound());
     }
 
     void Update()
@@ -391,6 +394,24 @@ public class Player : MonoBehaviour
         if(currentHelicopter != null)
         {
             currentHelicopter.SetActive(false);
+        }
+    }
+
+    IEnumerator CarSound()
+    {
+        yield return new WaitForSeconds(10.0f);
+
+        while (!isGameOver)
+        {
+            if(Random.value <= 0.1f)
+            {
+                SFXManager.Instance.Play("Honk");
+                yield return new WaitForSeconds(2f);
+            }
+            else
+            {
+                yield return new WaitForSeconds(1f);
+            }
         }
     }
 }
