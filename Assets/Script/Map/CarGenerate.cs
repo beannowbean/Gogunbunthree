@@ -21,7 +21,6 @@ public class CarGenerate : MonoBehaviour
     int tutorialIndex = 0;
     public int normalSpeed = 30;
     public int hardSpeed = 40;
-    public bool tutorialSkip = true;
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
@@ -46,7 +45,7 @@ public class CarGenerate : MonoBehaviour
         {
             GameObject[] obstacles = GetDifficultyArray();
             int nextObstacle;
-            if(UIController.Instance.isFirstPlay == true && tutorialSkip == false)
+            if(!UIController.tutorialSkip)
             {
                 if(tutorialIndex < tutorialObstacles.Length)
                 {
@@ -55,7 +54,7 @@ public class CarGenerate : MonoBehaviour
                 }
                 else
                 {
-                    UIController.Instance.isFirstPlay = false;
+                    // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                     obstacles = GetDifficultyArray();
                     nextObstacle = Random.Range(0,obstacles.Length - 1);
                 }
@@ -113,7 +112,7 @@ public class CarGenerate : MonoBehaviour
         // obstacle 랜덤 생성
         int nextObstacle;
 
-        if(UIController.Instance.isFirstPlay == true && tutorialSkip == false)
+        if(!UIController.tutorialSkip)
         {
             if(tutorialIndex < tutorialObstacles.Length)
             {
@@ -122,7 +121,7 @@ public class CarGenerate : MonoBehaviour
             }
             else
             {
-                UIController.Instance.isFirstPlay = false;
+                // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                 obstacles = GetDifficultyArray();
                 nextObstacle = Random.Range(0, obstacles.Length - 1);
             }
@@ -160,7 +159,7 @@ public class CarGenerate : MonoBehaviour
 
     private GameObject[] GetDifficultyArray()
     {
-        if(UIController.Instance.isFirstPlay == true && tutorialSkip == false) return tutorialObstacles;
+        if(!UIController.tutorialSkip) return tutorialObstacles;
         if(coin >= hardCoin) {
             tileGenerate.carSpeed = hardSpeed;
             return hardObstacles;
