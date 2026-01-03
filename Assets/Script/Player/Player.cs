@@ -68,12 +68,14 @@ public class Player : MonoBehaviour
     public bool isJump = false;
     public bool isMove = false;
     public bool isHook = false;
-    public bool isControl;
+    public bool isControl = false;
 
-    void Start()
-    {
+    void Awake() {
         if(UIController.tutorialSkip == true) isControl = true;
         else isControl = false;
+    }
+    void Start()
+    {
         currentLane = 2;
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
