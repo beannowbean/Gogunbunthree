@@ -31,7 +31,7 @@ public class Tutorial : MonoBehaviour
             {
                 tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(ResumeTutorial());
-                // player.Jump();
+                player.Jump();
             }
         }
         if(tutorialStage == 2)
@@ -39,12 +39,12 @@ public class Tutorial : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftArrow)) {
                 tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(ResumeTutorial());
-                // player.ChangeLane(-1);
+                player.ChangeLane(-1);
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow)) {
                 tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(ResumeTutorial());
-                // player.ChangeLane(1);
+                player.ChangeLane(1);
             }
         }
         if(tutorialStage == 3)
@@ -53,7 +53,7 @@ public class Tutorial : MonoBehaviour
             {
                 tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(TutorialHook());
-                // player.Jump();
+                player.Jump();
             }
         }
         if(tutorialStage == 4)
@@ -62,7 +62,7 @@ public class Tutorial : MonoBehaviour
             {
                 tutorialObject[tutorialStage - 1].SetActive(false);
                 StartCoroutine(ResumeTutorial(true));
-                // player.hookShoot();
+                player.hookShoot();
                 StartCoroutine(EndTutorialDelay());
             }
         }
