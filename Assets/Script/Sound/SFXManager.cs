@@ -20,6 +20,8 @@ public class SFXManager : MonoBehaviour
 
     // Audio volume settings
     private const int MAX_VOLUME_LEVEL = 10;
+    private const string VOLUME_PREFS_KEY = "SFX_Volume";
+    private const string PREVIOUS_VOLUME_PREFS_KEY = "SFX_PreviousVolume";
 
     private int currentVolumeLevel = 4;
     private int previousVolumeLevel = MAX_VOLUME_LEVEL;
@@ -30,6 +32,9 @@ public class SFXManager : MonoBehaviour
         else Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+
+        // 저장된 볼륨 설정 로드
+        LoadVolumeSettings();
 
         foreach (var s in sounds)
         {
@@ -83,6 +88,7 @@ public class SFXManager : MonoBehaviour
         currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
         Debug.Log($"SFX Volume: {currentVolumeLevel}");
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // 볼륨 레벨 감소
@@ -91,6 +97,7 @@ public class SFXManager : MonoBehaviour
         currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
         Debug.Log($"SFX Volume: {currentVolumeLevel}");
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // Mute / Unmute 토글
@@ -108,6 +115,7 @@ public class SFXManager : MonoBehaviour
             Debug.Log($"SFX Unmuted. (Restored: {currentVolumeLevel})");
         }
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // 현재 볼륨 레벨 가져오기
@@ -137,5 +145,24 @@ public class SFXManager : MonoBehaviour
         }
         
         Debug.Log($"SFX Volume applied: {volume}");
+    }
+
+    // 볼륨 설정 저장
+    private void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetInt(VOLUME_PREFS_KEY, currentVolumeLevel);
+        PlayerPrefs.SetInt(PREVIOUS_VOLUME_PREFS_KEY, previousVolumeLevel);
+        PlayerPrefs.Save();
+    }
+
+    // 볼륨 설정 로드
+    private void LoadVolumeSettings()
+    {
+        if (PlayerPrefs.HasKey(VOLUME_PREFS_KEY))
+        {
+            currentVolumeLevel = PlayerPrefs.GetInt(VOLUME_PREFS_KEY, 4);
+            previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
+            Debug.Log($"SFX Volume loaded: {currentVolumeLevel}");
+        }
     }
 }
