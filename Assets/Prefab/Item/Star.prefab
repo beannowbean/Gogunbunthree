@@ -75,8 +75,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba7fcb0aa8fea4db28fa0ed92374330a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 100
-  invincibilityDuration: 5
+  rotateSpeed: 300
+  invincibilityDuration: 10
   iconSprite: {fileID: -885489514, guid: a5e645d0b2507ac42807ef8e886f7d45, type: 3}
   starEffectPrefab: {fileID: 2691009907589781919, guid: ad113b5d3b3804faa867d34fbe228dda, type: 3}
 --- !u!54 &4253392681845803829

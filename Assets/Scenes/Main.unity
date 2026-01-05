@@ -291,6 +291,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
+      propertyPath: rayLength
+      value: 0.501
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
       propertyPath: vanRoofTag
       value: VanRoof
       objectReference: {fileID: 0}
@@ -310,6 +314,10 @@ PrefabInstance:
       propertyPath: helicopterPrefab
       value: 
       objectReference: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
+    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

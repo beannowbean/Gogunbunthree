@@ -2318,7 +2318,7 @@ MonoBehaviour:
   groundCheckDistance: 1.1
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   rayOffsetY: 0.5
   rayLength: 0.6
   hookPrefab: {fileID: 1197467703278805145, guid: d47826aec3e298a499d4957dd517e6c5, type: 3}
