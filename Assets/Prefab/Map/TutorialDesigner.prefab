@@ -120,3 +120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df780b17e9b6da243ac0ea8249a801d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPaused: 0
+  tutorialObject:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

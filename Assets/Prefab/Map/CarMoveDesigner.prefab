@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4920674802160625240}
   - component: {fileID: 2663774538540102830}
   m_Layer: 0
-  m_Name: CarMove
+  m_Name: CarMoveDesigner
   m_TagString: CarMove
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

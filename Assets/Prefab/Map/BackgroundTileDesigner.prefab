@@ -130,3 +130,6 @@ MonoBehaviour:
   buildings:
   - {fileID: 9120035862202894881, guid: ec948b69c55f56d43a62802dda6189f8, type: 3}
   - {fileID: 35664091829970701, guid: fe7ea2c83673665419ba5e462609f26c, type: 3}
+  - {fileID: 7118376416974898884, guid: aeb235eb177af4f4a9a3c1f12161b7d4, type: 3}
+  - {fileID: 1807969935020695153, guid: a27fe0ddfe060c74dbbf421c3c932916, type: 3}
+  - {fileID: 39263626225532837, guid: e7bd3541118772e4fb2cbab1fb2ae6c6, type: 3}

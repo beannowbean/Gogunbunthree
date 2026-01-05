@@ -45,7 +45,7 @@ public class BackGroundTileGenerate : MonoBehaviour
 
         // 가장 먼 타일 기준 새로운 타일 배치
         oldTile.transform.position = new Vector3(oldTile.transform.position.x, oldTile.transform.position.y, 
-            maxZ + TileLength);
+            maxZ + TileLength - 1.0f);
     }
 
     //  빌딩 랜덤으로 타일에 생성

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2004096533748626902}
   - component: {fileID: 2710784203161112879}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Top
   m_TagString: VanRoof
   m_Icon: {fileID: 0}

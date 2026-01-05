@@ -129,10 +129,5 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  obstacles:
-  - {fileID: 6455602189164902562, guid: 97aaf43d6bb2fc94f8fd1094e1500b50, type: 3}
-  - {fileID: 8438292789464834966, guid: 348ccc1d07b2fab459df79721e6deaee, type: 3}
-  - {fileID: 8838705591399663506, guid: 11db327a305337f4c824241be7d28fa2, type: 3}
-  - {fileID: 2083111532654073419, guid: 701f05d88094def47852768dad196edb, type: 3}
-  tileSpeed: 4
-  carSpeed: 10
+  tileSpeed: 15
+  carSpeed: 20

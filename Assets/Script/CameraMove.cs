@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class CameraMove : MonoBehaviour
 {
@@ -12,6 +14,9 @@ public class CameraMove : MonoBehaviour
 
     public GameObject[] designer;
     private Vector3[] designerOffsets;
+    public GameObject VarDesigner;
+    private Vector3 varDesignerOffset;
+    public TileGenerate tileGenerate;
 
     void Start()
     {
@@ -21,6 +26,7 @@ public class CameraMove : MonoBehaviour
         {
             designerOffsets[i] = designer[i].transform.position - transform.position;
         }
+        varDesignerOffset = VarDesigner.transform.position - transform.position;
     }
 
     void Update()
@@ -39,5 +45,19 @@ public class CameraMove : MonoBehaviour
 
             designer[i].transform.position = Vector3.Lerp(designer[i].transform.position, desiredPos, Time.deltaTime * followSpeed);
         }
+        Vector3 varDesiredPos = transform.position + varDesignerOffset;
+        switch(tileGenerate.carSpeed)
+        {
+            case 20:
+                break;
+            case 30:
+                varDesiredPos.z += 5;
+                break;
+            case 40:
+                varDesiredPos.z += 10;
+                break;
+        }
+        varDesiredPos.y = 0;
+        VarDesigner.transform.position = Vector3.Lerp(VarDesigner.transform.position, varDesiredPos, Time.deltaTime * followSpeed);
     }
 }

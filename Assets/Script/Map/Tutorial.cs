@@ -8,6 +8,7 @@ public class Tutorial : MonoBehaviour
     public bool isPaused = false;
     public GameObject[] tutorialObject;
     Player player;
+    private bool inputUsed = false;
 
     void Start() 
     {
@@ -16,55 +17,53 @@ public class Tutorial : MonoBehaviour
         {
             tutorialObject[i].SetActive(false);
         }    
-    }
-    void Update()
-    {
         if(isPaused == false) return;
         if(UIController.tutorialSkip == true) {
             player.isControl = true;
         }
-
+    }
+    void Update()
+    {
+        if(inputUsed == true) return;
         if(tutorialStage == 1)
         {
-            if(player.isJump == true)
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             {
-                isPaused = false;
-                Time.timeScale = 1f;
                 tutorialObject[tutorialStage - 1].SetActive(false);
-                player.isJump = false;
-                player.isControl = false;
+                StartCoroutine(ResumeTutorial());
+                // player.Jump();
             }
         }
         if(tutorialStage == 2)
         {
-            if(player.isMove == true)
-            {
-                isPaused = false;
-                Time.timeScale = 1f;
+            if (Input.GetKeyDown(KeyCode.LeftArrow)) {
                 tutorialObject[tutorialStage - 1].SetActive(false);
-                player.isMove = false;
-                player.isControl = false;
+                StartCoroutine(ResumeTutorial());
+                // player.ChangeLane(-1);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+                tutorialObject[tutorialStage - 1].SetActive(false);
+                StartCoroutine(ResumeTutorial());
+                // player.ChangeLane(1);
             }
         }
         if(tutorialStage == 3)
         {
-            if(player.isJump == true)
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             {
                 tutorialObject[tutorialStage - 1].SetActive(false);
-                player.isJump = false;
-                player.isControl = false;
                 StartCoroutine(TutorialHook());
+                // player.Jump();
             }
         }
         if(tutorialStage == 4)
         {
-            if(player.isHook == true)
+            if (Input.GetMouseButtonDown(0))
             {
-                isPaused = false;
-                Time.timeScale = 1f;
                 tutorialObject[tutorialStage - 1].SetActive(false);
-                player.isHook = false;                
-                tutorialStage = 5;
+                StartCoroutine(ResumeTutorial(true));
+                // player.hookShoot();
+                StartCoroutine(EndTutorialDelay());
             }
         }
     }
@@ -72,7 +71,7 @@ public class Tutorial : MonoBehaviour
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.tag == "TutorialDetector")
         {
-            player.isControl = true;
+            inputUsed = false;
             tutorialStage++;
             isPaused = true;
             Time.timeScale = 0f;
@@ -83,15 +82,36 @@ public class Tutorial : MonoBehaviour
 
     IEnumerator TutorialHook()
     {
+        inputUsed = true;
         isPaused = false;
         Time.timeScale = 1f;
-
+        yield return null;
+        yield return null;
         yield return new WaitForSecondsRealtime(0.1f);
-        player.isControl = true;
         isPaused = true;
         Time.timeScale = 0f;
         tutorialObject[tutorialStage].SetActive(true);
 
         tutorialStage = 4;
+        inputUsed = false;
+    }    
+    
+    IEnumerator ResumeTutorial(bool endTutorial = false)
+    {
+        inputUsed = true;
+        isPaused = false;
+        Time.timeScale = 1f;
+        yield return null;
+        yield return null;
+        if (endTutorial)
+        {
+            tutorialStage = 5;
+        }
+    }
+
+    IEnumerator EndTutorialDelay()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        player.isControl = true;
     }
 }
