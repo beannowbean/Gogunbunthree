@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public float crossSpeed = 10.0f;
     private int currentLane = 2;
     private Vector3 targetPosition;
-    public float diveSpeed = 20.0f;
+    public float diveSpeed = 10.0f;
 
     // 터치 시작 위치, 종료 위치, 스와이프 속도 감지
     private Vector2 touchStartPos;
@@ -24,8 +24,14 @@ public class Player : MonoBehaviour
     private bool isGrounded = true;
 
     // 바닥 tag 입력
-    public string groundTag;
+    public string groundTag = "Tile";
     public string vanRoofTag;
+
+    // 바닥 체크 raycast
+    public float groundCheckDistance = 1.1f;
+    public LayerMask groundLayer;
+    public float rayOffsetY = 0.5f;
+    public float rayLength = 0.501f;
 
     // Hook 관련 설정
     public GameObject hookPrefab;
@@ -58,7 +64,6 @@ public class Player : MonoBehaviour
     private Renderer[] allRenderers;
     private Material[] originalMaterials;
 
-    
 
     // 컴포넌트 선언
     private Rigidbody rb;
@@ -70,8 +75,9 @@ public class Player : MonoBehaviour
     public bool isHook = false;
     public bool isControl = false;
 
-    void Awake() {
-        if(UIController.tutorialSkip == true) isControl = true;
+    void Awake()
+    {
+        if (UIController.tutorialSkip == true) isControl = true;
         else isControl = false;
     }
     void Start()
@@ -82,13 +88,9 @@ public class Player : MonoBehaviour
         lineRenderer.enabled = false;
         anim.SetBool("isGrounded", true);
 
-        // [수정됨] 자식 오브젝트들에 있는 '모든(All)' 렌더러를 찾아옵니다.
         allRenderers = GetComponentsInChildren<Renderer>();
-
-        // 원래 재질들을 저장할 배열 크기를 맞춥니다.
         originalMaterials = new Material[allRenderers.Length];
 
-        // 반복문을 돌며 각 파츠의 원래 재질을 저장해둡니다.
         for (int i = 0; i < allRenderers.Length; i++)
         {
             originalMaterials[i] = allRenderers[i].material;
@@ -99,29 +101,37 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (isGameOver) return;
-        if (isHooked && currentHook != null) MoveToHook();
+
+        CheckGround();
+        DrawRope();
+
+        // 갈고리에 걸린 상태라면?
+        if (isHooked && currentHook != null)
+        {
+            MoveToHook(); // 갈고리 쪽으로 끌려가는 함수 실행
+            return;       // [중요] 아래쪽 이동/입력 코드는 실행하지 않음 (return)
+        }
 
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime, Space.World);
 
-        if(isControl == true) CheckInput();
+        if (isControl == true) CheckInput();
+
         float targetX = (currentLane - 2) * laneDistance;
         Vector3 newPosition = new Vector3(targetX, transform.position.y, transform.position.z);
         Vector3 moveVector = Vector3.Lerp(transform.position, newPosition, crossSpeed * Time.deltaTime);
         transform.position = new Vector3(moveVector.x, transform.position.y, transform.position.z);
-        DrawRope();
     }
-
-    // ... (CheckInput, CalculateSwipe, ChangeLane, Jump, DrawRope, hookShoot, ReleaseHook, MoveToHook 함수들은 기존과 동일) ...
-
-    // 공간 절약을 위해 중복되는 함수 내용은 생략했습니다. 기존 코드를 그대로 쓰시면 됩니다.
-    // CheckInput ~ MoveToHook 까지는 수정할 필요 없습니다.
 
     void CheckInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.RightArrow)) ChangeLane(1);
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
+
+        // 훅 발사 조건: 마우스 클릭 시 + 공중이거나 땅이어도 상관없다면 조건 제거 가능
+        // 여기서는 기존 로직 유지하되, 땅에서도 쏠 수 있게 하려면 !isGrounded 제거하면 됨
         if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
+
         if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
         if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded) QuickDive();
 
@@ -131,36 +141,44 @@ public class Player : MonoBehaviour
             if (touch.phase == TouchPhase.Began)
             {
                 touchStartPos = touch.position;
-                if (!isGrounded) hookShoot();
             }
             else if (touch.phase == TouchPhase.Ended)
             {
                 touchEndPos = touch.position;
-                CalculateSwipe();
-                ReleaseHook();
+                if (!isGrounded) hookShoot();
+                CalculateSwipeOrTap();
             }
         }
     }
 
-    void CalculateSwipe()
+    void CalculateSwipeOrTap()
     {
         float swipeDistanceX = touchEndPos.x - touchStartPos.x;
         float swipeDistanceY = touchEndPos.y - touchStartPos.y;
-        if (Mathf.Abs(swipeDistanceX) < minSwipeDistance && Mathf.Abs(swipeDistanceY) < minSwipeDistance) return;
-        if (Mathf.Abs(swipeDistanceX) > Mathf.Abs(swipeDistanceY))
+
+        bool isSwipe = Mathf.Abs(swipeDistanceX) > minSwipeDistance || Mathf.Abs(swipeDistanceY) > minSwipeDistance;
+
+        if (isSwipe)
         {
-            if (swipeDistanceX > 0) ChangeLane(1);
-            else ChangeLane(-1);
+            if (Mathf.Abs(swipeDistanceX) > Mathf.Abs(swipeDistanceY))
+            {
+                if (swipeDistanceX > 0) ChangeLane(1);
+                else ChangeLane(-1);
+            }
+            else
+            {
+                if (swipeDistanceY > 0) Jump();
+                else if (swipeDistanceY < 0) QuickDive();
+            }
         }
-        else if(swipeDistanceY > 0) Jump();
-        else if(swipeDistanceY < 0) QuickDive();
-        // else
-        // {
-        //     if (swipeDistanceY > 0) Jump();
-        // }
+        else
+        {
+            if (!isGrounded) hookShoot();
+            else ReleaseHook();
+        }
     }
 
-    void ChangeLane(int direction)
+    public void ChangeLane(int direction)
     {
         int targetLane = currentLane + direction;
         if (targetLane >= 1 && targetLane <= 3) currentLane = targetLane;
@@ -168,7 +186,7 @@ public class Player : MonoBehaviour
         isMove = true;
     }
 
-    void Jump()
+    public void Jump()
     {
         if (isGrounded)
         {
@@ -194,7 +212,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void hookShoot()
+    public void hookShoot()
     {
         if (currentHook != null) return;
         Quaternion projectileRotation = Quaternion.Euler(-90f - hookAngle, transform.eulerAngles.y, 0f);
@@ -210,28 +228,32 @@ public class Player : MonoBehaviour
 
     void ReleaseHook()
     {
-        if (currentHook != null && isHooked == true)
+        // 훅 해제 시 중력을 다시 켜줍니다.
+        rb.useGravity = true;
+
+        if (currentHook != null)
         {
             Destroy(currentHook);
-            isHooked = false;
             currentHook = null;
-            lineRenderer.enabled = false;
         }
-        else if (isHooked == false)
-        {
-            Destroy(currentHook);
-            isHooked = false;
-            currentHook = null;
-            lineRenderer.enabled = false;
-        }
+
+        isHooked = false;
+        lineRenderer.enabled = false;
     }
 
     void MoveToHook()
     {
+        // [수정됨] 훅으로 이동 중에는 중력을 꺼서 부드럽게 날아가게 함
+        rb.useGravity = false;
+        // 기존 속도 제거 (관성 방지)
+        rb.velocity = Vector3.zero;
+
         if (isEnding) StartCoroutine(Ending());
         else
         {
+            // 바닥에 닿아 있어도 강제로 hook 위치로 당김
             transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
+
             float distance = Vector3.Distance(transform.position, currentHook.transform.position);
             if (distance <= 2) ReleaseHook();
         }
@@ -242,73 +264,70 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
     }
 
-    // ... (여기까지 기존 함수들) ...
-
-    // [수정] 물리적 충돌 (벽, 바닥 등) - 자동차 코드는 여기서 뺍니다.
-    private void OnCollisionEnter(Collision collision)
+    void CheckGround()
     {
-        if (collision.gameObject.CompareTag(groundTag))
+        Vector3 rayStart = transform.position + Vector3.up * rayOffsetY;
+        RaycastHit hit;
+
+        Debug.DrawRay(rayStart, Vector3.down * rayLength, Color.red);
+
+        // 레이어 마스크 체크
+        if (Physics.Raycast(rayStart, Vector3.down, out hit, rayLength, groundLayer))
         {
-            isGrounded = true;
-            anim.SetBool("isGrounded", true);
-            isHooked = false;
+            // 방금 쏜 갈고리는 바닥으로 인식하지 않음
+            if (currentHook != null && hit.collider.gameObject == currentHook) return;
+
+            if (hit.collider.CompareTag(groundTag) || hit.collider.CompareTag(vanRoofTag))
+            {
+                isGrounded = true;
+                anim.SetBool("isGrounded", true);
+
+                // [수정됨] ★핵심★: 바닥에 닿았다고 해서 무조건 훅을 끊지 않습니다.
+                // 훅이 걸려있지 않을 때만 훅 상태를 false로 만듭니다.
+                // 즉, 갈고리에 매달려 바닥을 질질 끌려가는 상황에서도 훅이 유지됩니다.
+                if (!isHooked)
+                {
+                    isHooked = false;
+                }
+            }
         }
-        if (collision.collider.CompareTag(vanRoofTag))
+        else
         {
-            isGrounded = true;
-            anim.SetBool("isGrounded", true);
-            isHooked = false;
+            isGrounded = false;
+            anim.SetBool("isGrounded", false);
         }
-        // 자동차 코드는 삭제됨
     }
 
-    // [수정] 통과형 충돌 (코인, 별, 자동차)
     private void OnTriggerEnter(Collider other)
     {
-        // 1. 코인
         if (other.CompareTag("Coin"))
         {
-            if(isGameOver) return;
+            if (isGameOver) return;
             SFXManager.Instance.Play("Coin", 0.98f, 1.02f);
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
-            // 1초 뒤에 이펙트 삭제 (파티클 길이에 맞춰 시간 조절하세요)
             Destroy(effect, 1.0f);
             Destroy(other.gameObject);
             TrySpawnHelicopter();
             ScoreManager.Instance.AddCoin(1);
         }
-        // 3. [이동됨] 자동차 (Car)
         else if (other.CompareTag("Car"))
         {
             if (isInvincible)
             {
-                // --- 자동차 날리기 로직 ---
                 Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
-                // 혹시 부모에 Rigidbody가 있는 구조라면 아래 주석 해제
-                // if (carRb == null) carRb = other.gameObject.GetComponentInParent<Rigidbody>();
-
                 if (carRb != null)
                 {
-                    // 날리기 위해 잠시 물리 엔진 켜기
                     carRb.isKinematic = false;
                     carRb.useGravity = true;
-
-                    // 플레이어 진행 방향 + 위쪽으로 날리기
                     Vector3 flyDirection = transform.forward + Vector3.up * 1.5f;
-
-                    // 질량 무시하고 즉시 속도 적용 (VelocityChange)
                     float finalForce = carImpactForce * 1.5f;
                     carRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
-
-                    // 회전 주기
                     carRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
                 }
-
-                Destroy(other.gameObject, 2.0f); // 2초 뒤 삭제
+                Destroy(other.gameObject, 2.0f);
             }
             else
             {
-                // --- 게임 오버 로직 ---
                 if (isGameOver) return;
                 ReleaseHook();
                 ScoreManager.Instance.isCleared = false;
@@ -330,43 +349,87 @@ public class Player : MonoBehaviour
         }
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Vector3 rayStart = transform.position + Vector3.up * rayOffsetY;
+        Vector3 rayEnd = rayStart + (Vector3.down * rayLength);
+        Gizmos.DrawLine(rayStart, rayEnd);
+        Gizmos.DrawWireSphere(rayStart, 0.05f);
+        Gizmos.DrawWireSphere(rayEnd, 0.05f);
+    }
+
     public void ActivateInvincibility(float duration)
     {
-        // 이미 무적 상태라면 코루틴이 중복 실행되지 않도록 관리하거나, 
-        // 시간을 연장하는 방식이 좋지만 여기선 단순하게 새로 시작합니다.
-        StopCoroutine("InvincibilityRoutine"); // 기존 코루틴이 있다면 멈춤
+        StopCoroutine("InvincibilityRoutine");
         StartCoroutine(InvincibilityRoutine(duration));
     }
 
-    // [수정됨] 모든 파츠의 색을 바꾸는 무적 코루틴
     IEnumerator InvincibilityRoutine(float duration)
     {
         isInvincible = true;
         Debug.Log("무적 상태 시작!");
 
-        // 1. 모든 파츠를 무적 재질로 교체
         if (allRenderers != null && invincibleMaterial != null)
         {
             foreach (Renderer rend in allRenderers)
             {
-                rend.material = invincibleMaterial;
+                if (rend != null)
+                {
+                    rend.material = invincibleMaterial;
+                    rend.enabled = true;
+                }
             }
         }
 
-        yield return new WaitForSeconds(duration);
+        float blinkDuration = 3.0f;
+        float safeTime = duration - blinkDuration;
+
+        if (safeTime > 0) yield return new WaitForSeconds(safeTime);
+        else blinkDuration = duration;
+
+        float blinkTimer = 0f;
+        bool showingInvincibleMat = true;
+
+        while (blinkTimer < blinkDuration)
+        {
+            yield return new WaitForSeconds(0.15f);
+            blinkTimer += 0.15f;
+            showingInvincibleMat = !showingInvincibleMat;
+
+            if (allRenderers != null && originalMaterials != null)
+            {
+                for (int i = 0; i < allRenderers.Length; i++)
+                {
+                    Renderer rend = allRenderers[i];
+                    if (rend == null) continue;
+
+                    if (showingInvincibleMat)
+                    {
+                        if (invincibleMaterial != null) rend.material = invincibleMaterial;
+                    }
+                    else
+                    {
+                        if (i < originalMaterials.Length && originalMaterials[i] != null)
+                        {
+                            rend.material = originalMaterials[i];
+                        }
+                    }
+                }
+            }
+        }
 
         isInvincible = false;
         Debug.Log("무적 상태 종료.");
 
-        // 2. 모든 파츠를 원래 재질로 복구
         if (allRenderers != null && originalMaterials != null)
         {
             for (int i = 0; i < allRenderers.Length; i++)
             {
-                // 저장해뒀던 원래 재질로 다시 입힘
-                if (allRenderers[i] != null)
+                if (allRenderers[i] != null && i < originalMaterials.Length && originalMaterials[i] != null)
                 {
                     allRenderers[i].material = originalMaterials[i];
+                    allRenderers[i].enabled = true;
                 }
             }
         }
@@ -390,12 +453,11 @@ public class Player : MonoBehaviour
     {
         isGameOver = true;
         SFXManager.Instance.Play("Crashed");
-        //Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.Stop("Helicopter");
         Time.timeScale = 0f;
         UIController.Instance.EndGame();
-        if(currentHelicopter != null)
+        if (currentHelicopter != null)
         {
             currentHelicopter.SetActive(false);
         }
@@ -404,10 +466,9 @@ public class Player : MonoBehaviour
     IEnumerator CarSound()
     {
         yield return new WaitForSeconds(10.0f);
-
         while (!isGameOver)
         {
-            if(Random.value <= 0.4f)
+            if (Random.value <= 0.4f)
             {
                 SFXManager.Instance.Play("Honk");
                 yield return new WaitForSeconds(2f);
