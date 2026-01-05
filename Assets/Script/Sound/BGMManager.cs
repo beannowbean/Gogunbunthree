@@ -11,6 +11,8 @@ public class BGMManager : MonoBehaviour
 
     // Audio volume settings
     private const int MAX_VOLUME_LEVEL = 10;
+    private const string VOLUME_PREFS_KEY = "BGM_Volume";
+    private const string PREVIOUS_VOLUME_PREFS_KEY = "BGM_PreviousVolume";
 
     private int currentVolumeLevel = 3;
     private int previousVolumeLevel = MAX_VOLUME_LEVEL;
@@ -33,6 +35,9 @@ public class BGMManager : MonoBehaviour
         audioSource.loop = true;
         audioSource.playOnAwake = false;
         
+        // 저장된 볼륨 설정 로드
+        LoadVolumeSettings();
+        
         ApplyVolume();
     }
 
@@ -42,6 +47,7 @@ public class BGMManager : MonoBehaviour
         currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
         Debug.Log($"BGM Volume: {currentVolumeLevel}");
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // 볼륨 레벨 감소
@@ -50,6 +56,7 @@ public class BGMManager : MonoBehaviour
         currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
         Debug.Log($"BGM Volume: {currentVolumeLevel}");
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // Mute / Unmute 토글
@@ -67,6 +74,7 @@ public class BGMManager : MonoBehaviour
             Debug.Log($"BGM Unmuted. (Restored: {currentVolumeLevel})");
         }
         ApplyVolume();
+        SaveVolumeSettings();
     }
 
     // 현재 볼륨 레벨 가져오기
@@ -126,6 +134,25 @@ public class BGMManager : MonoBehaviour
         if (audioSource != null)
         {
             audioSource.Stop();
+        }
+    }
+
+    // 볼륨 설정 저장
+    private void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetInt(VOLUME_PREFS_KEY, currentVolumeLevel);
+        PlayerPrefs.SetInt(PREVIOUS_VOLUME_PREFS_KEY, previousVolumeLevel);
+        PlayerPrefs.Save();
+    }
+
+    // 볼륨 설정 로드
+    private void LoadVolumeSettings()
+    {
+        if (PlayerPrefs.HasKey(VOLUME_PREFS_KEY))
+        {
+            currentVolumeLevel = PlayerPrefs.GetInt(VOLUME_PREFS_KEY, 3);
+            previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
+            Debug.Log($"BGM Volume loaded: {currentVolumeLevel}");
         }
     }
 }

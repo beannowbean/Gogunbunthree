@@ -20,6 +20,7 @@ public class UIController : MonoBehaviour
     public GameObject gameStartRoot;            // StartPanel Root
     public GameObject confirmationPanel;        // QuitReconfirm Root
     public GameObject gameOverRoot;             // GameOverPanel Root
+    public GameObject pauseButton;              // InGameUI의 일시정지 버튼
 
     public TextMeshProUGUI PasueScoreText;      // PausePanel의 점수 text
     public TextMeshProUGUI gameOverScoreText;   // GameOverPanel의 점수 text
@@ -68,6 +69,9 @@ public class UIController : MonoBehaviour
             isRestarting = false;
             // tutorialSkip 값은 RestartGame()에서 이미 true로 설정됨
             StartGame();
+            // 재시작 시에도 아이콘 업데이트
+            UpdateMusicIconUI();
+            UpdateSFXIconUI();
         }
         else
         {
@@ -172,6 +176,12 @@ public class UIController : MonoBehaviour
         // Ui 전환
         gamePauseRoot.SetActive(false);
         inGameUIRoot.SetActive(true);
+        
+        // 일시정지 버튼만 숨김 (카운트다운 동안)
+        if (pauseButton != null)
+        {
+            pauseButton.SetActive(false);
+        }
 
         // Countdown text 활성화
         countdownText.gameObject.SetActive(true);
@@ -186,6 +196,12 @@ public class UIController : MonoBehaviour
 
         // Countdown text 비활성화
         countdownText.gameObject.SetActive(false);
+
+        // 일시정지 버튼 다시 활성화
+        if (pauseButton != null)
+        {
+            pauseButton.SetActive(true);
+        }
 
         isCountingDown = false;
 
@@ -227,6 +243,7 @@ public class UIController : MonoBehaviour
         }
         
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        tutorialSkip = false;  
     }
 
     // 게임 오버 혹은 클리어 처리
@@ -287,6 +304,10 @@ public class UIController : MonoBehaviour
 
         isGameStarted = true;
         Time.timeScale = 1f;
+
+        // 아이콘 상태 업데이트
+        UpdateMusicIconUI();
+        UpdateSFXIconUI();
 
         // 인게임 BGM 재생
         if (BGMManager.Instance != null)
