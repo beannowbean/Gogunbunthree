@@ -2272,7 +2272,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &3402963304394955649
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2311,9 +2311,16 @@ MonoBehaviour:
   moveSpeed: 0
   laneDistance: 1.5
   crossSpeed: 10
-  diveSpeed: 20
+  diveSpeed: 10
   jumpForce: 6
   groundTag: Tile
+  vanRoofTag: VanRoof
+  groundCheckDistance: 1.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  rayOffsetY: 0.5
+  rayLength: 0.6
   hookPrefab: {fileID: 1197467703278805145, guid: d47826aec3e298a499d4957dd517e6c5, type: 3}
   hookStartingPoint: {fileID: 7084073858312634730}
   hookSpeed: 40
@@ -2321,13 +2328,18 @@ MonoBehaviour:
   lineRenderer: {fileID: 5989779946320784498}
   hookAngle: 15
   hookPullSpeed: 30
-  helicopterPrefab: {fileID: 0}
+  helicopterPrefab: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
   heliSpawnChance: 0.05
   isEnding: 0
-  isInvincible: 1
+  isGameOver: 0
+  isInvincible: 0
   carImpactForce: 20
   invincibleMaterial: {fileID: 2100000, guid: c03f914600086417dabdfbf1bb977a83, type: 2}
   coinEffectPrefab: {fileID: 9035389033025327860, guid: a5030b96398a749c182cc73b42009d3e, type: 3}
+  isJump: 0
+  isMove: 0
+  isHook: 0
+  isControl: 0
 --- !u!1 &6494276987261500578
 GameObject:
   m_ObjectHideFlags: 0

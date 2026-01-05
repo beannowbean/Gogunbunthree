@@ -8,7 +8,7 @@ public class Star : MonoBehaviour
     public float rotateSpeed = 300f;
 
     // 무적 지속 시간
-    public float invincibilityDuration = 5.0f;
+    public float invincibilityDuration = 10.0f;
 
     // ★ [추가 1] 인스펙터에서 아이콘 이미지를 넣을 변수
     public Sprite iconSprite;
