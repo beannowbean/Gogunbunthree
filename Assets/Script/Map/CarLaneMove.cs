@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CarLaneMove : MonoBehaviour
+public class CarLaneMove : MonoBehaviour    // 움직이는 차 차선 변경 스크립트
 {
     public bool isLeft = true;      // true = 왼쪽, false = 오른쪽
-    public float moveSpeed = 10f;
+    public float moveSpeed = 10f;   // 차선 변경 속도
 
     public GameObject arrowObject;  // 깜빡이는 화살표(자식 오브젝트)
     
@@ -24,6 +24,7 @@ public class CarLaneMove : MonoBehaviour
     {
         if (isMoving == true)
         {
+            // 목표 위치로 이동
             float newX = Mathf.MoveTowards(transform.localPosition.x, targetPos.x, moveSpeed * Time.deltaTime);
             transform.localPosition = new Vector3(newX, transform.localPosition.y, transform.localPosition.z);
             

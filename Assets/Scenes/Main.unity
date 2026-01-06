@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.9239597, g: 0.6453925, b: 0.5727354, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: b61538f68d674c64b85c89765b05ff3e, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1138,29 +1138,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1732069967516003164, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
+    - target: {fileID: 1697430806770133315, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.33625
       objectReference: {fileID: 0}
-    - target: {fileID: 3114578188600615910, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
+    - target: {fileID: 2729456215169960200, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.33625
       objectReference: {fileID: 0}
-    - target: {fileID: 3378219478316906860, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
+    - target: {fileID: 4180050535729754285, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.33625
       objectReference: {fileID: 0}
-    - target: {fileID: 3873133208028069426, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4215048630337977536, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4378356765351028548, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
+    - target: {fileID: 5780724605322105965, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.33625
       objectReference: {fileID: 0}
     - target: {fileID: 7465382134180936885, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1205,14 +1197,6 @@ PrefabInstance:
     - target: {fileID: 7680778385306796833, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
       propertyPath: m_Name
       value: Tile
-      objectReference: {fileID: 0}
-    - target: {fileID: 8546397080104665143, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8820483736906246232, guid: 5c1f5f7496ace344b8210ba6e54b1976, type: 3}
-      propertyPath: m_Layer
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

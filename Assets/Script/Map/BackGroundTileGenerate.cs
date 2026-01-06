@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BackGroundTileGenerate : MonoBehaviour
+public class BackGroundTileGenerate : MonoBehaviour   // 배경 타일 생성 스크립트
 {
     public GameObject[] tiles;  // 바닥 도로 배열
     public GameObject[] buildings;  // 빌딩 배열

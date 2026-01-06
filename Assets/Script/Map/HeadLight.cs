@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class HeadLight : MonoBehaviour
+public class HeadLight : MonoBehaviour  // 자동차 헤드라이트 스크립트
 {
     public DayNightCycle dayNightCycle;   // isNight 을 가진 스크립트
 

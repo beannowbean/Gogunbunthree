@@ -51,8 +51,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.24, y: 0.79, z: 4.05}
-  m_Center: {x: 0, y: 2.59, z: -0.7}
+  m_Size: {x: 2.24, y: 0.34, z: 4.05}
+  m_Center: {x: 0, y: 2.78, z: -0.7}
 --- !u!1 &2213180606067632483
 GameObject:
   m_ObjectHideFlags: 0
@@ -661,8 +661,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.76, y: 2.61, z: 4.18}
-  m_Center: {x: 0, y: 1.25, z: -0.42}
+  m_Size: {x: 1.36, y: 2.87, z: 4.18}
+  m_Center: {x: 0, y: 1.23, z: -0.42}
 --- !u!54 &5337543720650918098
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -718,7 +718,7 @@ Transform:
   m_GameObject: {fileID: 8724973506361863755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0.15, z: -4.87}
+  m_LocalPosition: {x: -1, y: 0.47, z: -5.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -772,9 +772,9 @@ Light:
   m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -849,7 +849,7 @@ Transform:
   m_GameObject: {fileID: 8975141145407335250}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0.15, z: -4.87}
+  m_LocalPosition: {x: 1, y: 0.47, z: -5.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -903,9 +903,9 @@ Light:
   m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
