@@ -174,9 +174,25 @@ public class ItemUIController : MonoBehaviour
 
     /// <summary>
     /// 비어있는 슬롯을 자동으로 찾아 아이템을 표시합니다.
+    /// 같은 아이템(아이콘이 같은 경우)이 이미 있으면 지속시간을 초기화합니다.
     /// </summary>
     public void ActivateNextAvailableItem(float duration, Sprite icon = null)
     {
+        // 먼저 같은 아이템이 이미 활성화되어 있는지 확인
+        foreach (var slot in itemSlots)
+        {
+            if (slot.isActive && slot.itemIcon != null && slot.itemIcon.sprite == icon && icon != null)
+            {
+                // 같은 아이템이 있으면 지속시간만 초기화
+                slot.maxDuration = duration;
+                slot.currentDuration = duration;
+                if (slot.durationSlider != null)
+                    slot.durationSlider.value = 1f;
+                return;
+            }
+        }
+
+        // 같은 아이템이 없으면 빈 슬롯을 찾아서 새로 활성화
         foreach (var slot in itemSlots)
         {
             // 활성화되지 않은(비어있는) 슬롯을 찾으면
