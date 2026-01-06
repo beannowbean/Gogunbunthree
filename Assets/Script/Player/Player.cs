@@ -75,6 +75,9 @@ public class Player : MonoBehaviour
     public bool isHook = false;
     public bool isControl = false;
 
+    // 아이템 로직 관련
+    private Coroutine currentInvincibilityCoroutine;
+
     void Awake()
     {
         if (UIController.tutorialSkip == true) isControl = true;
@@ -82,6 +85,7 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        groundLayer = LayerMask.GetMask("Ground");
         currentLane = 2;
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -361,8 +365,14 @@ public class Player : MonoBehaviour
 
     public void ActivateInvincibility(float duration)
     {
-        StopCoroutine("InvincibilityRoutine");
-        StartCoroutine(InvincibilityRoutine(duration));
+        // 1. 이미 실행 중인 무적 코루틴이 있다면 확실하게 멈춤!
+        if (currentInvincibilityCoroutine != null)
+        {
+            StopCoroutine(currentInvincibilityCoroutine);
+        }
+
+        // 2. 새로운 코루틴을 시작하면서, 그 정보를 변수에 저장함
+        currentInvincibilityCoroutine = StartCoroutine(InvincibilityRoutine(duration));
     }
 
     IEnumerator InvincibilityRoutine(float duration)
@@ -370,6 +380,7 @@ public class Player : MonoBehaviour
         isInvincible = true;
         Debug.Log("무적 상태 시작!");
 
+        // 1. 시작: 모든 파츠를 무적 재질로 변경
         if (allRenderers != null && invincibleMaterial != null)
         {
             foreach (Renderer rend in allRenderers)
@@ -382,21 +393,36 @@ public class Player : MonoBehaviour
             }
         }
 
-        float blinkDuration = 3.0f;
-        float safeTime = duration - blinkDuration;
+        // --- 시간 계산 ---
+        float blinkTotalTime = 3.0f;
+        float safeTime = duration - blinkTotalTime;
 
-        if (safeTime > 0) yield return new WaitForSeconds(safeTime);
-        else blinkDuration = duration;
-
-        float blinkTimer = 0f;
-        bool showingInvincibleMat = true;
-
-        while (blinkTimer < blinkDuration)
+        // 3초가 남을 때까지 대기
+        if (safeTime > 0)
         {
-            yield return new WaitForSeconds(0.15f);
-            blinkTimer += 0.15f;
+            yield return new WaitForSeconds(safeTime);
+        }
+
+        // 3초 남음: 효과음 재생
+        SFXManager.Instance.Play("ItemTimeSound");
+
+        // --- 깜빡이는 간격 설정 (횟수 2배) ---
+        List<float> blinkDelays = new List<float>();
+
+        // 1단계: 0~2초 구간 (0.25초 간격 8번)
+        for (int i = 0; i < 8; i++) blinkDelays.Add(0.25f);
+        // 2단계: 2~3초 구간 (0.125초 간격 8번)
+        for (int i = 0; i < 8; i++) blinkDelays.Add(0.125f);
+
+        bool showingInvincibleMat = true; // 현재 보여주는 재질 상태
+
+        // [수정] 순서 변경: 재질 먼저 바꾸고 -> 그 다음에 대기
+        foreach (float delay in blinkDelays)
+        {
+            // 1. 재질 반전 (즉시 실행)
             showingInvincibleMat = !showingInvincibleMat;
 
+            // 2. 렌더러에 적용
             if (allRenderers != null && originalMaterials != null)
             {
                 for (int i = 0; i < allRenderers.Length; i++)
@@ -417,11 +443,16 @@ public class Player : MonoBehaviour
                     }
                 }
             }
+
+            // 3. 정해진 시간만큼 대기 (이게 뒤로 가야 0초에 바로 바뀜)
+            yield return new WaitForSeconds(delay);
         }
 
+        // --- 종료 처리 ---
         isInvincible = false;
         Debug.Log("무적 상태 종료.");
 
+        // 원래 재질로 복구
         if (allRenderers != null && originalMaterials != null)
         {
             for (int i = 0; i < allRenderers.Length; i++)
@@ -433,6 +464,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        currentInvincibilityCoroutine = null;
     }
 
     IEnumerator Ending()
