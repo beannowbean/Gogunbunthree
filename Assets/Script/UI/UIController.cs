@@ -43,6 +43,10 @@ public class UIController : MonoBehaviour
     
     public static bool tutorialSkip = false;         // 튜토리얼 스킵 여부 (false = 튜토리얼 실행, true = 스킵)
 
+    // 프리로드된 씬들
+    private AsyncOperation preloadedMainMenu = null;
+    private AsyncOperation preloadedInGame = null;
+
 
     void Awake()
     {
@@ -63,38 +67,37 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        // 시작 메뉴만 활성화
+        // InGame 씬에서는 항상 게임을 시작
+        gamePauseRoot.SetActive(false);
+        confirmationPanel.SetActive(false);
+        gameOverRoot.SetActive(false);
+        countdownText.gameObject.SetActive(false);
+        
+        // 재시작인지 확인
         if (isRestarting)
         {
             isRestarting = false;
             // tutorialSkip 값은 RestartGame()에서 이미 true로 설정됨
-            StartGame();
-            // 재시작 시에도 아이콘 업데이트
-            UpdateMusicIconUI();
-            UpdateSFXIconUI();
         }
         else
         {
             // 처음 시작할 때는 tutorialSkip이 false로 유지됨 (튜토리얼 실행)
-            gameStartRoot.SetActive(true);
+            tutorialSkip = false;
+        }
+        
+        // 게임 시작
+        gameStartRoot.SetActive(false);
+        inGameUIRoot.SetActive(true);
+        isGameStarted = true;
+        Time.timeScale = 1f;
 
-            gamePauseRoot.SetActive(false);
-            confirmationPanel.SetActive(false);
-            inGameUIRoot.SetActive(false);
-            countdownText.gameObject.SetActive(false);
-            gameOverRoot.SetActive(false);
+        UpdateMusicIconUI();
+        UpdateSFXIconUI();
 
-
-            Time.timeScale = 0f;
-
-            UpdateMusicIconUI();
-            UpdateSFXIconUI();
-
-            // 메인 화면 BGM 재생
-            if (BGMManager.Instance != null)
-            {
-                BGMManager.Instance.PlayMainScreenBGM();
-            }
+        // 인게임 BGM 재생
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.PlayInGameBGM();
         }
     }
 
@@ -232,18 +235,20 @@ public class UIController : MonoBehaviour
         gamePauseRoot.SetActive(false);
         confirmationPanel.SetActive(false);
         gameOverRoot.SetActive(false);
-
-        // 시작 메뉴로 돌아가기
-        //gameStartRoot.gameObject.SetActive(true);
         
-        // 메인 화면 BGM 재생
-        if (BGMManager.Instance != null)
+        Time.timeScale = 1f;
+        tutorialSkip = false;
+        
+        // 프리로드된 씬이 있으면 즉시 활성화, 없으면 일반 로딩
+        if (preloadedMainMenu != null && preloadedMainMenu.progress >= 0.9f)
         {
-            BGMManager.Instance.PlayMainScreenBGM();
+            preloadedMainMenu.allowSceneActivation = true;
+            preloadedMainMenu = null; // 사용 완료
         }
-        
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        tutorialSkip = false;  
+        else
+        {
+            StartCoroutine(LoadSceneAsync("MainMenu"));
+        }
     }
 
     // 게임 오버 혹은 클리어 처리
@@ -279,6 +284,9 @@ public class UIController : MonoBehaviour
 
         // 점수 초기화
         ScoreManager.Instance.ResetScore();
+
+        // 씬 프리로드 시작 (백그라운드에서 로딩)
+        StartCoroutine(PreloadScenesForGameOver());
     }
 
     // 점수 표시
@@ -296,26 +304,6 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        gameStartRoot.SetActive(false);
-        gameOverRoot.SetActive(false);
-        inGameUIRoot.SetActive(true);
-
-        isGameStarted = true;
-        Time.timeScale = 1f;
-
-        // 아이콘 상태 업데이트
-        UpdateMusicIconUI();
-        UpdateSFXIconUI();
-
-        // 인게임 BGM 재생
-        if (BGMManager.Instance != null)
-        {
-            BGMManager.Instance.PlayInGameBGM();
-        }
-    }
-
     public void RestartGame()
     {
         if (ScoreManager.Instance != null)
@@ -329,8 +317,59 @@ public class UIController : MonoBehaviour
         Time.timeScale = 1f;
         isRestarting = true;
 
-        // 현재 씬 재로드: 처음부터 다시 시작
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // 프리로드된 씬이 있으면 즉시 활성화, 없으면 일반 로딩
+        if (preloadedInGame != null && preloadedInGame.progress >= 0.9f)
+        {
+            preloadedInGame.allowSceneActivation = true;
+            preloadedInGame = null; // 사용 완료
+        }
+        else
+        {
+            StartCoroutine(LoadSceneAsync("InGame"));
+        }
+    }
+
+    // 비동기 씬 로딩
+    private IEnumerator LoadSceneAsync(string sceneName)
+    {
+        // 비동기로 씬 로드 시작
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        
+        // allowSceneActivation을 false로 설정하면 로딩이 완료되어도 바로 전환되지 않음
+        asyncLoad.allowSceneActivation = false;
+
+        // 로딩 진행률 체크 (0.9까지만 자동으로 진행됨)
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+
+        // 로딩 완료 직후 씬 활성화 (부드러운 전환)
+        asyncLoad.allowSceneActivation = true;
+    }
+
+    // 게임 오버 시 씬들을 백그라운드에서 프리로드
+    private IEnumerator PreloadScenesForGameOver()
+    {
+        // 기존 프리로드 초기화
+        preloadedMainMenu = null;
+        preloadedInGame = null;
+
+        // MainMenu 씬 프리로드 (90%까지)
+        preloadedMainMenu = SceneManager.LoadSceneAsync("MainMenu");
+        preloadedMainMenu.allowSceneActivation = false; // 자동 활성화 방지
+
+        // InGame 씬 프리로드 (90%까지)
+        preloadedInGame = SceneManager.LoadSceneAsync("InGame");
+        preloadedInGame.allowSceneActivation = false; // 자동 활성화 방지
+
+        // 두 씬이 모두 90%까지 로드될 때까지 대기
+        while (preloadedMainMenu.progress < 0.9f || preloadedInGame.progress < 0.9f)
+        {
+            yield return null;
+        }
+
+        Debug.Log("게임 오버 씬 프리로드 완료 - 버튼 클릭 시 즉시 전환 가능");
     }
 
     // --- Audio Control Methods ---
