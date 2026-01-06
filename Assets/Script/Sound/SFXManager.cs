@@ -26,12 +26,18 @@ public class SFXManager : MonoBehaviour
     private int currentVolumeLevel = 4;
     private int previousVolumeLevel = MAX_VOLUME_LEVEL;
 
+    // 플랫폼별 볼륨 보정 (모바일 기기에서 소리가 더 크게 들리므로 보정)
+    private float platformVolumeMultiplier = 1f;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+
+        // 플랫폼별 볼륨 배율 설정
+        SetPlatformVolumeMultiplier();
 
         // 저장된 볼륨 설정 로드
         LoadVolumeSettings();
@@ -79,7 +85,7 @@ public class SFXManager : MonoBehaviour
     {
         Sound sound = sounds.Find(s => s.clip.name == clipName);
         float currentVolume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
-        return (sound != null ? sound.volume : 1f) * currentVolume;
+        return (sound != null ? sound.volume : 1f) * currentVolume * platformVolumeMultiplier;
     }
 
     // 볼륨 레벨 증가
@@ -140,11 +146,11 @@ public class SFXManager : MonoBehaviour
             Sound sound = sounds.Find(s => s.clip == src.clip);
             if (sound != null)
             {
-                src.volume = sound.volume * volume;
+                src.volume = sound.volume * volume * platformVolumeMultiplier;
             }
         }
         
-        Debug.Log($"SFX Volume applied: {volume}");
+        Debug.Log($"SFX Volume applied: {volume * platformVolumeMultiplier} (Base: {volume}, Multiplier: {platformVolumeMultiplier})");
     }
 
     // 볼륨 설정 저장
@@ -164,5 +170,17 @@ public class SFXManager : MonoBehaviour
             previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
             Debug.Log($"SFX Volume loaded: {currentVolumeLevel}");
         }
+    }
+
+    // 플랫폼별 볼륨 배율 설정
+    private void SetPlatformVolumeMultiplier()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        // 모바일에서는 볼륨을 60%로 감소 (모바일 기기에서 소리가 더 크게 들림)
+        platformVolumeMultiplier = 0.6f;
+#else
+        // 데스크톱(Windows, Mac, Linux)에서는 기본값 사용
+        platformVolumeMultiplier = 1.0f;
+#endif
     }
 }

@@ -17,6 +17,9 @@ public class BGMManager : MonoBehaviour
     private int currentVolumeLevel = 3;
     private int previousVolumeLevel = MAX_VOLUME_LEVEL;
 
+    // 플랫폼별 볼륨 보정 (모바일 기기에서 소리가 더 크게 들리므로 보정)
+    private float platformVolumeMultiplier = 1f;
+
     void Awake()
     {
         if (Instance == null)
@@ -34,6 +37,9 @@ public class BGMManager : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
         audioSource.playOnAwake = false;
+        
+        // 플랫폼별 볼륨 배율 설정
+        SetPlatformVolumeMultiplier();
         
         // 저장된 볼륨 설정 로드
         LoadVolumeSettings();
@@ -95,8 +101,8 @@ public class BGMManager : MonoBehaviour
         if (audioSource != null)
         {
             float volume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
-            audioSource.volume = volume;
-            Debug.Log($"BGM Volume applied: {volume}");
+            audioSource.volume = volume * platformVolumeMultiplier;
+            Debug.Log($"BGM Volume applied: {volume * platformVolumeMultiplier} (Base: {volume}, Multiplier: {platformVolumeMultiplier})");
         }
     }
 
@@ -154,5 +160,17 @@ public class BGMManager : MonoBehaviour
             previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
             Debug.Log($"BGM Volume loaded: {currentVolumeLevel}");
         }
+    }
+
+    // 플랫폼별 볼륨 배율 설정
+    private void SetPlatformVolumeMultiplier()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        // 모바일에서는 볼륨을 60%로 감소 (모바일 기기에서 소리가 더 크게 들림)
+        platformVolumeMultiplier = 0.6f;
+#else
+        // 데스크톱(Windows, Mac, Linux)에서는 기본값 사용
+        platformVolumeMultiplier = 1.0f;
+#endif
     }
 }
