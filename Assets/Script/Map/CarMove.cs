@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class CarMove : MonoBehaviour
+public class CarMove : MonoBehaviour    // 움직이는 차 타일 스크립트
 {
     private TileGenerate tileGenerate;
     private Player player;

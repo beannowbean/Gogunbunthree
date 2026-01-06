@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class CarGenerate : MonoBehaviour
+public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립트
 {
     public GameObject[] tiles;  // 장애물 타일 배열
     public GameObject[] easyObstacles;  // 장애물 배열
@@ -19,8 +19,8 @@ public class CarGenerate : MonoBehaviour
     int tileCount = 0;
     public int coin = 0;    // 코인 갯수
     int tutorialIndex = 0;
-    public int normalSpeed = 30;
-    public int hardSpeed = 40;
+    public int normalSpeed = 30;    // 노멀 모드 차 속도
+    public int hardSpeed = 40;  // 하드 모드 차 속도
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
@@ -29,6 +29,7 @@ public class CarGenerate : MonoBehaviour
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
 
+        // 마지막 장애물 변수 초기화
         lastObstacle = -1;
 
         MakeStartCar();
@@ -39,12 +40,14 @@ public class CarGenerate : MonoBehaviour
         coin = ScoreManager.Instance.coinCount;
     }
 
+    // 게임 시작시 초기 장애물
     private void MakeStartCar()
     {
         for (int i = 2; i < tiles.Length; i++)
         {
             GameObject[] obstacles = GetDifficultyArray();
             int nextObstacle;
+            // 튜토리얼시 튜토리얼 장애물
             if(!UIController.tutorialSkip)
             {
                 if(tutorialIndex < tutorialObstacles.Length)
@@ -115,6 +118,7 @@ public class CarGenerate : MonoBehaviour
 
         if(!UIController.tutorialSkip)
         {
+            // 튜토리얼시 튜토리얼 장애물
             if(tutorialIndex < tutorialObstacles.Length)
             {
                 nextObstacle = tutorialIndex;
@@ -130,6 +134,7 @@ public class CarGenerate : MonoBehaviour
         }
         else
         {
+            // 일정 확률로 star 아이템 장애물 배열 사용 (배열의 마지막 인덱스 장애물은 무조건 star 사용한 장애물)
             bool itemTile = (tileCount >= 10) && (Random.value < itemRate);
             if(itemTile == true)
             {
@@ -159,17 +164,18 @@ public class CarGenerate : MonoBehaviour
         Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
     }
 
+    // 난이도별 장애물 반환
     private GameObject[] GetDifficultyArray()
     {
-        if(!UIController.tutorialSkip) return tutorialObstacles;
-        if(coin >= hardCoin) {
+        if(!UIController.tutorialSkip) return tutorialObstacles;    // 튜토리얼시 튜토리얼 장애물
+        if(coin >= hardCoin) {  // 하드 모드 (속도 40, 코인 70 이상 -> CarTileDesigner에서 변경)
             tileGenerate.carSpeed = hardSpeed;
             return hardObstacles;
         }
-        else if(coin >= normalCoin) {
+        else if(coin >= normalCoin) {   // 노멀 모드 (속도 30, 코인 30 이상)
             tileGenerate.carSpeed = normalSpeed;
             return normalObstacles;
         }
-        else return easyObstacles;
+        else return easyObstacles;  // 이지 모드 (속도 20)
     }
 }

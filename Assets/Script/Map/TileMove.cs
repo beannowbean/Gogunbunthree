@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileMove : MonoBehaviour
+public class TileMove : MonoBehaviour   // 바닥 도로 타일 이동 스크립트
 {
     private TileGenerate tileGenerate;
     

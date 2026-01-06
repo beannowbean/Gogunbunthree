@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
-public class DayNightCycle : MonoBehaviour
+public class DayNightCycle : MonoBehaviour  // 낮과 밤 주기 스크립트
 {
     public float dayDuration = 10f;
     public float sunsetDuration = 5f;
@@ -50,6 +50,7 @@ public class DayNightCycle : MonoBehaviour
         }
     }
 
+    // 빛의 각도를 시간에 따라 변화 (낮 또는 밤)
     IEnumerator RotateLightOverTime(float startAngle, float endAngle, float duration)
     {
         float elapsed = 0f;
@@ -63,6 +64,7 @@ public class DayNightCycle : MonoBehaviour
         directionalLight.transform.rotation = Quaternion.Euler(endAngle, 0f, 0f);
     }
 
+    // 빛의 각도를 시간에 따라 변화 (스카이박스 / 강도 포함)
     IEnumerator RotateLightOverTimeWithIntensityAndSkybox(float startAngle, float endAngle, float duration,
         float startIntensity, float endIntensity, float startExposure, float endExposure)
     {
