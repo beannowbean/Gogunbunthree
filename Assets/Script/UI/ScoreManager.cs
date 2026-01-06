@@ -108,6 +108,8 @@ public class ScoreManager : MonoBehaviour
     {
         coinCount = 0;
         currentScore = 0;
+        IsNewRecord = false;
+        isCleared = true;
     }
 
     public bool GetIsNewRecord()
