@@ -42,12 +42,8 @@ public class Player : MonoBehaviour
     public LineRenderer lineRenderer;
     public int hookAngle = 30;
     public float hookPullSpeed = 30.0f;
-
-    // 헬리콥터 관련 변수
-    public GameObject helicopterPrefab;
-    public float heliSpawnChance = 0.05f;
-    private GameObject currentHelicopter;
-    public bool isEnding = false;
+    public bool isHelicopter = false;
+    public float helicopterDistance = 4.0f;
 
     // GameOver 관련 변수
     public bool isGameOver = false;
@@ -113,11 +109,21 @@ public class Player : MonoBehaviour
         if (isHooked && currentHook != null)
         {
             MoveToHook(); // 갈고리 쪽으로 끌려가는 함수 실행
-            return;       // [중요] 아래쪽 이동/입력 코드는 실행하지 않음 (return)
+
+            if (isHelicopter)
+            {
+
+            }
+            else
+            {
+                return;
+            }
         }
+        if (!isHelicopter)
+        {
+            transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime, Space.World);
 
-        transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime, Space.World);
-
+        }
         if (isControl == true) CheckInput();
 
         float targetX = (currentLane - 2) * laneDistance;
@@ -130,15 +136,18 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.RightArrow)) ChangeLane(1);
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
+        if (!isHelicopter)
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
 
-        // 훅 발사 조건: 마우스 클릭 시 + 공중이거나 땅이어도 상관없다면 조건 제거 가능
-        // 여기서는 기존 로직 유지하되, 땅에서도 쏠 수 있게 하려면 !isGrounded 제거하면 됨
-        if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
+            // 훅 발사 조건: 마우스 클릭 시 + 공중이거나 땅이어도 상관없다면 조건 제거 가능
+            // 여기서는 기존 로직 유지하되, 땅에서도 쏠 수 있게 하려면 !isGrounded 제거하면 됨
+            if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
 
-        if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
-        if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded) QuickDive();
-
+            if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
+            if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded) QuickDive();
+        }
+        
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -171,14 +180,20 @@ public class Player : MonoBehaviour
             }
             else
             {
-                if (swipeDistanceY > 0) Jump();
-                else if (swipeDistanceY < 0) QuickDive();
+                if (!isHelicopter)
+                {
+                    if (swipeDistanceY > 0) Jump();
+                    else if (swipeDistanceY < 0) QuickDive();
+                }
             }
         }
         else
         {
-            if (!isGrounded) hookShoot();
-            else ReleaseHook();
+            if (!isHelicopter)
+            {
+                if (!isGrounded) hookShoot();
+                else ReleaseHook();
+            }
         }
     }
 
@@ -247,20 +262,31 @@ public class Player : MonoBehaviour
 
     void MoveToHook()
     {
-        // [수정됨] 훅으로 이동 중에는 중력을 꺼서 부드럽게 날아가게 함
         rb.useGravity = false;
-        // 기존 속도 제거 (관성 방지)
         rb.velocity = Vector3.zero;
+        float distance = Vector3.Distance(transform.position, currentHook.transform.position);
+        if (isHelicopter)
+        {
+            if (distance > helicopterDistance)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
 
-        if (isEnding) StartCoroutine(Ending());
+            }
+        }
         else
         {
-            // 바닥에 닿아 있어도 강제로 hook 위치로 당김
             transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
 
-            float distance = Vector3.Distance(transform.position, currentHook.transform.position);
-            if (distance <= 2) ReleaseHook();
+            if (distance <= 2.0f)
+            {
+                ReleaseHook();
+            }
         }
+    }
+    public void ReleaseHelicopter()
+    {
+        isHelicopter = false;
+        ReleaseHook();
     }
 
     void QuickDive()
@@ -311,7 +337,6 @@ public class Player : MonoBehaviour
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
             Destroy(effect, 1.0f);
             Destroy(other.gameObject);
-            TrySpawnHelicopter();
             ScoreManager.Instance.AddCoin(1);
         }
         else if (other.CompareTag("Car"))
@@ -339,17 +364,6 @@ public class Player : MonoBehaviour
                 rb.constraints = RigidbodyConstraints.None;
                 StartCoroutine(GameOver());
             }
-        }
-    }
-
-    void TrySpawnHelicopter()
-    {
-        if (currentHelicopter != null) return;
-        float randomValue = Random.value;
-        if (randomValue <= heliSpawnChance)
-        {
-            currentHelicopter = Instantiate(helicopterPrefab);
-            SFXManager.Instance.Play("Helicopter");
         }
     }
 
@@ -467,20 +481,6 @@ public class Player : MonoBehaviour
         currentInvincibilityCoroutine = null;
     }
 
-    IEnumerator Ending()
-    {
-        ScoreManager.Instance.isCleared = true;
-        rb.useGravity = false;
-        Helicopter helicopter = currentHook.transform.parent.GetComponent<Helicopter>();
-        helicopter.StopChasing();
-        transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * 0.1f * Time.deltaTime);
-        yield return new WaitForSeconds(5);
-        SFXManager.Instance.Play("Clear");
-        SFXManager.Instance.Stop("Helicopter");
-        UIController.Instance.EndGame();
-        currentHelicopter.SetActive(false);
-    }
-
     IEnumerator GameOver()
     {
         isGameOver = true;
@@ -489,10 +489,6 @@ public class Player : MonoBehaviour
         SFXManager.Instance.Stop("Helicopter");
         Time.timeScale = 0f;
         UIController.Instance.EndGame();
-        if (currentHelicopter != null)
-        {
-            currentHelicopter.SetActive(false);
-        }
     }
 
     IEnumerator CarSound()
@@ -500,14 +496,14 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(10.0f);
         while (!isGameOver)
         {
-            if (Random.value <= 0.4f)
+            if (Random.value <= 0.2f)
             {
                 SFXManager.Instance.Play("Honk");
                 yield return new WaitForSeconds(2f);
             }
             else
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(2f);
             }
         }
     }

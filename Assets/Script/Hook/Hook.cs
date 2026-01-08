@@ -26,8 +26,6 @@ public class Hook : MonoBehaviour
 
     void FixedUpdate()
     {
-        // [중요 수정 1] 이미 키네마틱(고정) 상태라면 힘을 가하지 않도록 막습니다.
-        // 충돌 직후 물리 연산이 꼬이는 것을 방지합니다.
         if (rb != null && rb.useGravity && !rb.isKinematic)
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
@@ -36,13 +34,11 @@ public class Hook : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // [중요 수정 2] 이미 어딘가에 박혀서 고정된(Kinematic) 상태라면,
-        // 또 다시 충돌 로직을 실행하지 않도록 아예 함수를 종료합니다.
+
         if (rb.isKinematic) return;
 
         if (other.CompareTag(streetLightTag) || other.CompareTag("Helicopter"))
         {
-            // [중요 수정 3] 혹시 모를 상황을 대비해 velocity를 건드리기 전에 한번 더 확인합니다.
             if (!rb.isKinematic)
             {
                 rb.velocity = Vector3.zero;       // 1. 멈춤
@@ -64,9 +60,10 @@ public class Hook : MonoBehaviour
             if (player != null)
             {
                 player.isHooked = true;
+
                 if (other.CompareTag("Helicopter"))
                 {
-                    player.isEnding = true;
+                    player.isHelicopter = true;
                 }
             }
         }
