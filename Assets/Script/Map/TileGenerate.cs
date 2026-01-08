@@ -72,6 +72,6 @@ public class TileGenerate : MonoBehaviour   // 바닥 도로 타일 생성 스�
 
         // 가장 먼 타일 기준 새로운 타일 배치
         oldTile.transform.position = new Vector3(oldTile.transform.position.x, targetY, 
-            maxZ + TileLength - 2.0f);
+            maxZ + TileLength - 0.1f);
     }
 }
