@@ -52,6 +52,11 @@ public class BackGroundTileGenerate : MonoBehaviour   // 배경 타일 생성 �
     int lastBuilding;
     private void MakeBuilding(Collider oldTile)
     {
+        if (ObjectPooler.Instance == null)
+        {
+            Debug.LogWarning("ObjectPooler 생성 대기");
+            return;
+        }
         Transform obstacle = oldTile.transform.GetChild(0);
 
         // obstacle 랜덤 생성
@@ -67,11 +72,13 @@ public class BackGroundTileGenerate : MonoBehaviour   // 배경 타일 생성 �
         Transform parent = oldTile.transform;
 
         // 기존 자식 오브젝트 삭제
+        ObjectPooler.Instance.ReturnPool(obstacle.gameObject);
         obstacle.SetParent(null);
-        Destroy(obstacle.gameObject);
+        // Destroy(obstacle.gameObject);
         lastBuilding = nextBuilding;
         
         // 새로운 obstacle 생성
-        Instantiate(buildings[nextBuilding], pos, Quaternion.identity, parent);
+        // Instantiate(buildings[nextBuilding], pos, Quaternion.identity, parent);
+        ObjectPooler.Instance.GetPool(buildings[nextBuilding], pos, Quaternion.identity, parent);
     }
 }

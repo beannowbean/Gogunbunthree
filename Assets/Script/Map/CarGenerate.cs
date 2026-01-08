@@ -109,6 +109,11 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     int lastObstacle;
     private void MakeCar(Collider oldTile)
     {
+        if (ObjectPooler.Instance == null)
+        {
+            Debug.LogWarning("ObjectPooler 생성 대기");
+            return;
+        }
         Transform obstacle = oldTile.transform.GetChild(0);
 
         GameObject[] obstacles = GetDifficultyArray();
@@ -156,12 +161,14 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         Transform parent = oldTile.transform;
 
         // 기존 자식 오브젝트 삭제
+        ObjectPooler.Instance.ReturnPool(obstacle.gameObject);
         obstacle.SetParent(null);
-        Destroy(obstacle.gameObject);
+        // Destroy(obstacle.gameObject);
         lastObstacle = nextObstacle;
 
         // 새로운 obstacle 생성
-        Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
+        // Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
+        ObjectPooler.Instance.GetPool(obstacles[nextObstacle], pos, Quaternion.identity, parent);
     }
 
     // 난이도별 장애물 반환

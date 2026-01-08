@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &484863604042372710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6240275948253185330}
+  m_Layer: 0
+  m_Name: Obstacle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6240275948253185330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 484863604042372710}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5770490162120786643}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &514826733802193144
 GameObject:
   m_ObjectHideFlags: 0
@@ -35,7 +66,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3354824230747812317}
+  - {fileID: 6240275948253185330}
   m_Father: {fileID: 4341180815829264024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &780110303051572173
@@ -173,6 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
 --- !u!1 &590320204725103768
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
 --- !u!1 &1345891872172899654
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,6 +550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
 --- !u!1 &1463509171257089968
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,6 +723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
 --- !u!1 &1757775026274778236
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +759,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7527165663112925979}
+  - {fileID: 5337861926786277030}
   m_Father: {fileID: 4341180815829264024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6039835370468070046
@@ -862,6 +897,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
 --- !u!1 &2834401154079254803
 GameObject:
   m_ObjectHideFlags: 0
@@ -1073,68 +1109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4690205713182917645
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7527165663112925979}
-  m_Layer: 0
-  m_Name: Obstacle
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7527165663112925979
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4690205713182917645}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1088671999740547255}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5554247046759167233
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3354824230747812317}
-  m_Layer: 0
-  m_Name: Obstacle
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3354824230747812317
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5554247046759167233}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5770490162120786643}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  changeTime: 10
 --- !u!1 &5992410106362242993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1307,6 +1282,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
+--- !u!1 &6034367459057832731
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5337861926786277030}
+  m_Layer: 0
+  m_Name: Obstacle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5337861926786277030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6034367459057832731}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1088671999740547255}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8523001859096915156
 GameObject:
   m_ObjectHideFlags: 0
@@ -1479,3 +1486,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea02b2057efa094caa99b8168d9d312, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeTime: 10
