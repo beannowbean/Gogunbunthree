@@ -56,11 +56,6 @@ public class UIController : MonoBehaviour
         if (!isRestarting)
         {
             tutorialSkip = false;
-            Debug.Log("First play - tutorialSkip set to false");
-        }
-        else
-        {
-            Debug.Log($"Restarting - tutorialSkip is {tutorialSkip}");
         }
     }
 
@@ -108,40 +103,6 @@ public class UIController : MonoBehaviour
             else if (gamePauseRoot.activeSelf) ResumeGame();
             else PauseGame();
         }
-
-        // Test: BGM 재생 테스트
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            if (BGMManager.Instance != null)
-            {
-                BGMManager.Instance.PlayMainScreenBGM();
-                Debug.Log("Playing Main Screen BGM (M key pressed)");
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            if (BGMManager.Instance != null)
-            {
-                BGMManager.Instance.PlayInGameBGM();
-                Debug.Log("Playing In-Game BGM (I key pressed)");
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            if (BGMManager.Instance != null)
-            {
-                BGMManager.Instance.ToggleMute();
-                Debug.Log("BGM Mute Toggled (B key pressed)");
-            }
-        }
-
-        // Test: GameOver with S key
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    EndGame();
-        //}
     }
 
     // 게임 일시정지

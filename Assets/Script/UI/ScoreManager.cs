@@ -60,7 +60,12 @@ public class ScoreManager : MonoBehaviour
         currentScore = coinCount;
 
         // 점수 표시 업데이트
-        inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore}";
+        if(currentScore < bestScore)
+            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
+        else if (currentScore == bestScore)
+            inGameScoreText.text = $"SCORE:\t{currentScore}";
+        else
+            inGameScoreText.text = $"SCORE:\t{currentScore}\n<color=#FF5A11>NEW RECORD!</color>";
     }
 
 
