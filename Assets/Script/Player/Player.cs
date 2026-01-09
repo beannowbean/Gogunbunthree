@@ -398,6 +398,8 @@ public class Player : MonoBehaviour
         {
             if (isInvincible)
             {
+                // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
+                SFXManager.Instance.Play("CarBounceOff");
                 Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
                 if (carRb != null)
                 {
