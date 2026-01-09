@@ -64,6 +64,10 @@ public class Hook : MonoBehaviour
                 if (other.CompareTag("Helicopter"))
                 {
                     player.isHelicopter = true;
+
+                    // 헬리콥터에 갈고리가 걸리자마자 상승을 위해 Helicopter.cs에 갈고리가 걸렸다는 정보를 넘기는 메소드
+                    Helicopter heliCopterScript = other.GetComponentInParent<Helicopter>();
+                    heliCopterScript.PlayerHooked();
                 }
             }
         }

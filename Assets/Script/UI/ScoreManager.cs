@@ -27,10 +27,9 @@ public class ScoreManager : MonoBehaviour
 
     public TextMeshProUGUI inGameScoreText; // 인게임 점수 표시용
 
-    /* 획득한 코인 수로만 점수 계산
+    // 점수 계산 공식: 시간 * 속도 + 코인 * 100
     public float currentCarSpeed = 0f;  // 현재 자동차 속도 (외부에서 받아옴)
     private float survivalTime = 0f;    // 게임 생존 시간 (초 단위)
-    */
 
     void Awake()
     {
@@ -49,15 +48,12 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /* 코인 획득으로만 점수 계산
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;
-        // 2. 점수 계산 공식: (Coin + 시간 * 차 시속)
-        // 계산 결과는 소수점이 나올 수 있으므로 Mathf.FloorToInt로 정수(int) 변환합니다.
-        float rawScore = coinCount + (survivalTime * currentCarSpeed);
-        */
-
-        currentScore = coinCount;
+        
+        // 2. 점수 계산 공식: 시간 * 속도 + 코인 * 100
+        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100);
+        currentScore = Mathf.FloorToInt(rawScore);
 
         // 점수 표시 업데이트
         if(currentScore < bestScore)
@@ -95,11 +91,17 @@ public class ScoreManager : MonoBehaviour
         return currentScore;
     }
 
-    // 코인 획득량
-    // amount: 획득한 코인 수
+    // 코인 획듥량
+    // amount: 획듩한 코인 수
     public void AddCoin(int amount)
     {
         coinCount += amount;
+    }
+
+    // 차량 속도 업데이트
+    public void UpdateCarSpeed(float speed)
+    {
+        currentCarSpeed = speed;
     }
 
     // TEST: 최고 점수 초기화
@@ -113,6 +115,7 @@ public class ScoreManager : MonoBehaviour
     {
         coinCount = 0;
         currentScore = 0;
+        survivalTime = 0f;
         IsNewRecord = false;
         isCleared = true;
     }

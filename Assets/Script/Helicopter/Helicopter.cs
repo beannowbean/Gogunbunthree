@@ -26,6 +26,9 @@ public class Helicopter : MonoBehaviour
     private float currentHeight;
     private bool isChasing = true;
 
+    // 아이템 로직을 위해 갈고리가 걸려있는지 확인하는 변수
+    private bool isHookedHelicopter = false;
+
     void Start()
     {
         // 1. 플레이어 찾기 (태그 이용)
@@ -55,6 +58,12 @@ public class Helicopter : MonoBehaviour
         isChasing = false;
     }
 
+    // Hook.cs에서 이 함수를 호출하여 훅이 걸렸다고 전달.
+    public void PlayerHooked()
+    {
+        isHookedHelicopter = true;
+    }
+
     IEnumerator MoveRoutine()
     {
         // [1단계] 하강 (Sky -> Target)
@@ -66,13 +75,28 @@ public class Helicopter : MonoBehaviour
         currentHeight = targetHeight;
 
         // [2단계] 대기
-        yield return new WaitForSeconds(stayDuration);
+        // 5초 대기 상태에서 헬리콥터에 갈고리가 걸리면 바로 상승하도록
+        // 시간이 5초 미만이고 훅을 걸었다면 다음 단계로.
+        float timer = 0f;
+        while (timer < stayDuration && isHookedHelicopter == false)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
         // [3단계] 상승 (Target -> Sky)
         while (Mathf.Abs(currentHeight - coinMapHeight) > 0.1f)
         {
             currentHeight = Mathf.MoveTowards(currentHeight, coinMapHeight, moveSpeed * Time.deltaTime);
             yield return null;
+        }
+
+        // 플레이어가 헬리콥터에 갈고리를 걸지 않았다면 헬리콥터 삭제
+        if (isHookedHelicopter == false)
+        {
+            SFXManager.Instance.Stop("Helicopter"); // 오디오 멈춤.
+            Destroy(gameObject);
+            yield break;    // 코루틴 강제 종료
         }
 
         // [4단계] CoinMap 시간 대기
