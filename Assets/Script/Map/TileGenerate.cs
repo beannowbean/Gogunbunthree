@@ -28,10 +28,10 @@ public class TileGenerate : MonoBehaviour   // 바닥 도로 타일 생성 스�
         {
             tileSpeed = 0;
         }
-        // if(ScoreManager.Instance != null)
-        // {
-        //     ScoreManager.Instance.UpdateCarSpeed(carSpeed);
-        // }
+        if(ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.UpdateCarSpeed(carSpeed);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -72,6 +72,6 @@ public class TileGenerate : MonoBehaviour   // 바닥 도로 타일 생성 스�
 
         // 가장 먼 타일 기준 새로운 타일 배치
         oldTile.transform.position = new Vector3(oldTile.transform.position.x, targetY, 
-            maxZ + TileLength - 0.1f);
+            maxZ + TileLength - 2f);
     }
 }
