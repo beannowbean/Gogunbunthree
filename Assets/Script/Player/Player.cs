@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
     public float hookPullSpeed = 30.0f;
     public bool isHelicopter = false;
     public float helicopterDistance = 4.0f;
+    private bool isHelicopterInvincible = false; // 헬리콥터에서 내릴 때 무적 확인 변수
 
     // GameOver 관련 변수
     public bool isGameOver = false;
@@ -264,18 +265,29 @@ public class Player : MonoBehaviour
     {
         rb.useGravity = false;
         rb.velocity = Vector3.zero;
-        float distance = Vector3.Distance(transform.position, currentHook.transform.position);
+
+        // 플레이어가 헬리콥터에서 내려올때, 좌우 방향키를 누르면 헬리콥터만 아래로 내려가는 현상 수정.
+        // 무조건 헬리콥터의 Y값에서 일정 거리를 뺀 위치에서 있도록 수.
         if (isHelicopter)
         {
-            if (distance > helicopterDistance)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
+            Vector3 targetPos = new Vector3(
+                transform.position.x,                                  // X값은 그대로
+                currentHook.transform.position.y - helicopterDistance, // Y값은 헬리콥터보다 일정거리 아래
+                currentHook.transform.position.z                       // Z값은 헬리콥터 따라가
+            );
 
-            }
+            // 위치로 이동
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, hookPullSpeed * Time.deltaTime);
         }
         else
         {
             transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
+
+            // 갈고리의 X위치를 기반으로 currentLane을 제일 가까운 곳으로 강제 변환.
+            // 갈고리에서 떨어질 때 갈고리 걸기 전 Lane으로 자동 이동되어 부자연스러운 현상을 수정.
+            UpdateLanePosition(currentHook.transform.position.x);
+
+            float distance = Vector3.Distance(transform.position, currentHook.transform.position);
 
             if (distance <= 2.0f)
             {
@@ -283,10 +295,56 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    // 갈고리를 가로등에 걸었을 때, 차선을 가로등이 있는 위치로 오게 하는 함수
+    void UpdateLanePosition(float xPos)
+    {
+        if (xPos < -1.0f) currentLane = 1;
+        else if (xPos > 1.0f) currentLane = 3;
+        else currentLane = 2;
+    }
+
     public void ReleaseHelicopter()
     {
         isHelicopter = false;
         ReleaseHook();
+
+        // 헬리콥터에서 내린 후 3초간 무적 코루틴 
+        StartCoroutine(GetOffHelicopter());
+    }
+
+    // 헬리콥터에서 내린 후 3초간 깜빡이며 무적상태인 코루틴
+
+    IEnumerator GetOffHelicopter()
+    {
+        isHelicopterInvincible = true;  // 무적 켜기
+
+        float duration = 3.0f;          // 지속 시	
+        float blinkSpeed = 0.2f;        // 깜빡이는 속도
+
+        // 3초간 플레이어 모든 렌더러 깜빡이도록
+        for (float t = 0; t < duration; t += blinkSpeed)
+        {
+            if (allRenderers != null)
+            {
+                foreach (Renderer r in allRenderers)
+                {
+                    if (r != null) r.enabled = !r.enabled;
+                }
+            }
+            yield return new WaitForSeconds(blinkSpeed);
+        }
+
+        // 끝난 후 모습 복구
+        if (allRenderers != null)
+        {
+            foreach (Renderer r in allRenderers)
+            {
+                if (r != null) r.enabled = true;
+            }
+        }
+
+        isHelicopterInvincible = false; // 무적 끄기
     }
 
     void QuickDive()
@@ -312,9 +370,6 @@ public class Player : MonoBehaviour
                 isGrounded = true;
                 anim.SetBool("isGrounded", true);
 
-                // [수정됨] ★핵심★: 바닥에 닿았다고 해서 무조건 훅을 끊지 않습니다.
-                // 훅이 걸려있지 않을 때만 훅 상태를 false로 만듭니다.
-                // 즉, 갈고리에 매달려 바닥을 질질 끌려가는 상황에서도 훅이 유지됩니다.
                 if (!isHooked)
                 {
                     isHooked = false;
@@ -355,6 +410,12 @@ public class Player : MonoBehaviour
                 }
                 Destroy(other.gameObject, 2.0f);
             }
+            // 헬리콥터에서 내릴 때 차와 부딪히는 경우
+            else if (isHelicopterInvincible)
+            {
+                return; // 아무 일도 일어나지 않게 리턴
+            }
+
             else
             {
                 if (isGameOver) return;
@@ -379,10 +440,11 @@ public class Player : MonoBehaviour
 
     public void ActivateInvincibility(float duration)
     {
-        // 1. 이미 실행 중인 무적 코루틴이 있다면 확실하게 멈춤!
+        // 1. 이미 실행 중인 무적 코루틴이 있다면 확실하게 멈춤
         if (currentInvincibilityCoroutine != null)
         {
             StopCoroutine(currentInvincibilityCoroutine);
+            SFXManager.Instance.Stop("ItemTimeSound");  // 사운드 겹침 방지
         }
 
         // 2. 새로운 코루틴을 시작하면서, 그 정보를 변수에 저장함
@@ -485,6 +547,13 @@ public class Player : MonoBehaviour
     {
         isGameOver = true;
         SFXManager.Instance.Play("Crashed");
+
+        // 메인메뉴, 인게임 Scene preload
+        //if (UIController.Instance != null)
+        //{
+        //    UIController.Instance.StartPreloadScenes();
+        //}
+
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.Stop("Helicopter");
         Time.timeScale = 0f;
