@@ -551,10 +551,10 @@ public class Player : MonoBehaviour
         SFXManager.Instance.Play("Crashed");
 
         // 메인메뉴, 인게임 Scene preload
-        //if (UIController.Instance != null)
-        //{
-        //    UIController.Instance.StartPreloadScenes();
-        //}
+        if (UIController.Instance != null)
+        {
+            UIController.Instance.StartPreloadScenes();
+        }
 
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.Stop("Helicopter");
