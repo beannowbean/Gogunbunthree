@@ -13,11 +13,27 @@ public class CarLaneMove : MonoBehaviour    // 움직이는 차 차선 변경 �
     private bool isMoving = false;
     private Coroutine blinkRoutine;
     public float blinkTime = 0.25f;
+    private Vector3 initialPos;
 
-    void Start()
+    void Awake()
     {
+        initialPos = transform.localPosition;
+    }
+
+    void OnEnable()
+    {
+        transform.localPosition = initialPos;
         // 시작 시 깜빡이 설정 시작
         StartBlinkIndicator();
+    }
+
+    void OnDisable()
+    {
+        if(blinkRoutine != null)
+        {
+            StopCoroutine(blinkRoutine);
+            blinkRoutine = null;
+        }
     }
 
     void Update()

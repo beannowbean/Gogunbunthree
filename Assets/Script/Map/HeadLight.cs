@@ -6,7 +6,7 @@ public class HeadLight : MonoBehaviour  // 자동차 헤드라이트 스크립�
     DayNightCycle dayNightCycle;   // isNight 을 가진 스크립트
 
     public float maxIntensity = 2.5f;      // 밤일 때 밝기
-    float changeSpeed = 0.2f;        // 밝기 변화 속도
+    float changeSpeed = 0.1f;        // 밝기 변화 속도
 
     private Light headLight;
 

@@ -7,25 +7,31 @@ using UnityEngine.Tilemaps;
 public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립트
 {
     public GameObject[] tiles;  // 장애물 타일 배열
+
+    [Header("장애물 배열")]
     public GameObject[] easyObstacles;  // 장애물 배열
     public GameObject[] normalObstacles;
     public GameObject[] hardObstacles;
     public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
+    
+    [Header("난이도 설정")]
+    public int score = 0;    // 점수
     public int normalscore = 5000; // 난이도별 코인 요구치
     public int hardscore = 15000;
-    public float itemRate = 0.1f;   // 아이템 등장 확률
-    float TileLength;   // 타일 길이
-    TileGenerate tileGenerate;
-    int tileCount = 0;
-    public int score = 0;    // 점수
-    int tutorialIndex = 0;
     public int normalSpeed = 30;    // 노멀 모드 차 속도
     public int hardSpeed = 40;  // 하드 모드 차 속도
+    public float itemRate = 0.1f;   // 아이템 등장 확률
+    float TileLength;   // 타일 길이
+    int tileCount = 0;
+    int tutorialIndex = 0;
+    int lastObstacle;
+    GameObject[] currentObstacles = new GameObject[8];
+    TileGenerate tileGenerate;
+    DayNightCycle dayNightCycle;
 
     // 난이도 설정 변수
     enum Difficulty{Level1, Level2, Level3}
     Difficulty currentDifficulty = Difficulty.Level1;
-    DayNightCycle dayNightCycle;
 
     void Start()
     {
@@ -48,6 +54,16 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         DifficultyDetection();
     }
 
+    private int CountObstacles(GameObject prefab)
+    {
+        int count = 0;
+        for(int i = 0; i < 8; i++)
+        {
+            if(currentObstacles[i] == prefab) count++;
+        }
+        return count;
+    }
+
     // 게임 시작시 초기 장애물
     private void MakeStartCar()
     {
@@ -68,18 +84,15 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
                     UIController.tutorialSkip = true;
                     // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                     obstacles = GetDifficultyArray();
-                    nextObstacle = Random.Range(0,obstacles.Length - 1);
+                    nextObstacle = ChooseObstacle(obstacles);
                 }
             }
             else
             {
-                do
-                {
-                    nextObstacle = Random.Range(0, obstacles.Length - 1);
-                }
-                while(nextObstacle == lastObstacle);
+                nextObstacle = ChooseObstacle(obstacles);
             }
             lastObstacle = nextObstacle;
+            currentObstacles[i] = obstacles[nextObstacle];
             Instantiate(obstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
         }
     }
@@ -114,7 +127,6 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     }
 
     //  장애물 랜덤으로 타일에 생성
-    int lastObstacle;
     private void MakeCar(Collider oldTile)
     {
         if (ObjectPooler.Instance == null)
@@ -176,6 +188,16 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         // 새로운 obstacle 생성
         // Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
         ObjectPooler.Instance.GetPool(obstacles[nextObstacle], pos, Quaternion.identity, parent);
+    }
+
+    private int ChooseObstacle(GameObject[] obstacles)
+    {
+        int nextObstacle;
+        do
+        {
+            nextObstacle = Random.Range(0, obstacles.Length - 1);
+        } while(nextObstacle == lastObstacle || CountObstacles(obstacles[nextObstacle]) >= 2);
+        return nextObstacle;
     }
 
     // 난이도별 장애물 반환
