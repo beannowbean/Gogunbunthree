@@ -21,9 +21,16 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     int tutorialIndex = 0;
     public int normalSpeed = 30;    // 노멀 모드 차 속도
     public int hardSpeed = 40;  // 하드 모드 차 속도
+
+    // 난이도 설정 변수
+    enum Difficulty{Level1, Level2, Level3}
+    Difficulty currentDifficulty = Difficulty.Level1;
+    DayNightCycle dayNightCycle;
+
     void Start()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
+        dayNightCycle = GameObject.FindGameObjectWithTag("Light").GetComponent<DayNightCycle>();
 
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
@@ -38,6 +45,7 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     void Update() 
     {
         score = ScoreManager.Instance.GetCurrentScore();
+        DifficultyDetection();
     }
 
     // 게임 시작시 초기 장애물
@@ -183,5 +191,24 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
             return normalObstacles;
         }
         else return easyObstacles;  // 이지 모드 (속도 20)
+    }
+
+    // 난이도 변경 감지
+    private void DifficultyDetection()
+    {
+        if(!UIController.tutorialSkip) return;
+        if(score >= hardscore) {  // 하드 모드 (속도 40, 15000점 이상 -> CarTileDesigner에서 변경)
+            if(currentDifficulty != Difficulty.Level3){
+                currentDifficulty = Difficulty.Level3;
+                dayNightCycle.NightToDay();
+            }
+        }
+        else if(score >= normalscore) {   // 노멀 모드 (속도 30, 5000점 이상)
+            if(currentDifficulty != Difficulty.Level2)
+            {
+                currentDifficulty = Difficulty.Level2;
+                dayNightCycle.DayToNight();
+            }
+        }
     }
 }

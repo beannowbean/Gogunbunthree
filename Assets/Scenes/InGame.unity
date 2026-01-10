@@ -589,9 +589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e0ba9fad15f41b4c966bd712ba79b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayDuration: 10
   sunsetDuration: 3
-  nightDuration: 10
   sunriseDuration: 3
   directionalLight: {fileID: 1022528939}
   isNight: 0
@@ -1622,6 +1620,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CarTileDesigner
       objectReference: {fileID: 0}
+    - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
+      propertyPath: dayNightCycle
+      value: 
+      objectReference: {fileID: 1022528938}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: 'tiles.Array.data[0]'
       value: 

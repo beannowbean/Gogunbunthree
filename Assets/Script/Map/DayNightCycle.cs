@@ -4,69 +4,53 @@ using UnityEngine;
 
 public class DayNightCycle : MonoBehaviour  // 낮과 밤 주기 스크립트
 {
-    public float dayDuration = 10f;
-    public float sunsetDuration = 5f;
-    public float nightDuration = 10f;
-    public float sunriseDuration = 5f;
+    public float sunsetDuration = 15f;
+    public float sunriseDuration = 15f;
 
     public Light directionalLight;
-
     private Material skyboxMaterial;
 
-    public bool isNight = false; // 밤인지 확인용
+    public bool isNight = false; // 밤인지 확인
 
     void Start()
     {
         // Skybox 머테리얼 가져오기
         skyboxMaterial = RenderSettings.skybox;
 
-        StartCoroutine(DayNight());
+        // 시작 시 낮으로 설정
+        StartDay();
     }
 
-    IEnumerator DayNight()
+    // 낮으로 강제 설정
+    void StartDay()
     {
-        while (true)
-        {
-            // 낮
-            isNight = false;
-            directionalLight.intensity = 1f;
-            skyboxMaterial.SetFloat("_Exposure", 1f);
-            skyboxMaterial.SetFloat("_Blend", 0f);
-            yield return RotateLightOverTime(50f, 50f, dayDuration);
-
-            // 낮->밤
-            isNight = false;
-            yield return RotateLightOverTimeWithIntensityAndSkybox(50f, 230f, sunsetDuration, 1f, 0f, 1f, 0.8f, 0f, 1f);
-
-            // 밤
-            isNight = true;
-            directionalLight.intensity = 0f;
-            skyboxMaterial.SetFloat("_Exposure", 0.8f);
-            skyboxMaterial.SetFloat("_Blend", 1f);
-            yield return RotateLightOverTime(230f, 230f, nightDuration);
-
-            // 밤->낮
-            isNight = false;
-            yield return RotateLightOverTimeWithIntensityAndSkybox(230f, 410f, sunriseDuration, 0f, 1f, 0.8f, 1f, 1f, 0f);
-        }
+        StopAllCoroutines();
+        isNight = false;
+        directionalLight.intensity = 1f;
+        directionalLight.transform.rotation = Quaternion.Euler(50f, 0f, 0f);
+        skyboxMaterial.SetFloat("_Exposure", 1f);
+        skyboxMaterial.SetFloat("_Blend", 0f);
     }
 
-    // 빛의 각도를 시간에 따라 변화 (낮 또는 밤)
-    IEnumerator RotateLightOverTime(float startAngle, float endAngle, float duration)
+    // 낮에서 밤으로 변경
+    public void DayToNight()
     {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            float angle = Mathf.Lerp(startAngle, endAngle, elapsed / duration);
-            directionalLight.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        directionalLight.transform.rotation = Quaternion.Euler(endAngle, 0f, 0f);
+        StopAllCoroutines();
+        StartCoroutine(TimeChange(50f, 230f, sunsetDuration, 1f, 0f, 1f, 0.8f, 0f, 1f));
+        isNight = true;
     }
 
-    // 빛의 각도를 시간에 따라 변화 (스카이박스 / 강도 포함)
-    IEnumerator RotateLightOverTimeWithIntensityAndSkybox(float startAngle, float endAngle, float duration,
+    // 밤에서 낮으로 변경
+    public void NightToDay()
+    {
+        StopAllCoroutines();
+        StartCoroutine(TimeChange(230f, 410f, sunriseDuration, 0f, 1f, 0.8f, 1f, 1f, 0f));
+        isNight = false;
+
+    }
+
+    // 시간에 따른 배경 변경 (light, skybox, shader blend)
+    IEnumerator TimeChange(float startAngle, float endAngle, float duration,
         float startIntensity, float endIntensity, float startExposure, float endExposure, float startBlend, float endBlend)
     {
         float elapsed = 0f;
