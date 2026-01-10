@@ -11,13 +11,13 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     public GameObject[] normalObstacles;
     public GameObject[] hardObstacles;
     public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
-    public int normalCoin = 10; // 난이도별 코인 요구치
-    public int hardCoin = 20;
+    public int normalscore = 5000; // 난이도별 코인 요구치
+    public int hardscore = 15000;
     public float itemRate = 0.1f;   // 아이템 등장 확률
     float TileLength;   // 타일 길이
     TileGenerate tileGenerate;
     int tileCount = 0;
-    public int coin = 0;    // 코인 갯수
+    public int score = 0;    // 점수
     int tutorialIndex = 0;
     public int normalSpeed = 30;    // 노멀 모드 차 속도
     public int hardSpeed = 40;  // 하드 모드 차 속도
@@ -37,7 +37,7 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
 
     void Update() 
     {
-        coin = ScoreManager.Instance.coinCount;
+        score = ScoreManager.Instance.GetCurrentScore();
     }
 
     // 게임 시작시 초기 장애물
@@ -111,7 +111,6 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     {
         if (ObjectPooler.Instance == null)
         {
-            Debug.LogWarning("ObjectPooler 생성 대기");
             return;
         }
         Transform obstacle = oldTile.transform.GetChild(0);
@@ -175,11 +174,11 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     private GameObject[] GetDifficultyArray()
     {
         if(!UIController.tutorialSkip) return tutorialObstacles;    // 튜토리얼시 튜토리얼 장애물
-        if(coin >= hardCoin) {  // 하드 모드 (속도 40, 코인 70 이상 -> CarTileDesigner에서 변경)
+        if(score >= hardscore) {  // 하드 모드 (속도 40, 15000점 이상 -> CarTileDesigner에서 변경)
             tileGenerate.carSpeed = hardSpeed;
             return hardObstacles;
         }
-        else if(coin >= normalCoin) {   // 노멀 모드 (속도 30, 코인 30 이상)
+        else if(score >= normalscore) {   // 노멀 모드 (속도 30, 5000점 이상)
             tileGenerate.carSpeed = normalSpeed;
             return normalObstacles;
         }
