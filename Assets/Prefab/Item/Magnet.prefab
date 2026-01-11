@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 2335525187658190111}
   - component: {fileID: 1713241829678711482}
   - component: {fileID: 3468439202973611632}
-  - component: {fileID: 8717462764044953881}
+  - component: {fileID: 5958481070495671064}
+  - component: {fileID: 8316384068182167603}
   m_Layer: 0
   m_Name: Magnet
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -86,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8717462764044953881
+--- !u!114 &5958481070495671064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,3 +101,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 100
   duration: 10
+--- !u!65 &8316384068182167603
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108226343484544933}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.8644094, y: 1.9911376, z: 0.33526292}
+  m_Center: {x: 0, y: 0.06281697, z: -0.1676314}

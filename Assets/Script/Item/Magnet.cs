@@ -9,7 +9,7 @@ public class Magnet : MonoBehaviour
     void Update()
     {
         // 아이템 뱅글뱅글 회전
-        transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
+        transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
     }
 
     private void OnTriggerEnter(Collider other)
