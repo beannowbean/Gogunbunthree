@@ -57,6 +57,10 @@ public class Player : MonoBehaviour
     // coin effect 관련 변수
     public GameObject coinEffectPrefab;
 
+    // Magnet 관련 변수
+    public bool isMagnetActive = false;
+    private Coroutine magnetCoroutine;
+
     // [수정됨] 하나가 아니라 '모든' 렌더러와 재질을 저장하기 위한 배열 선언
     private Renderer[] allRenderers;
     private Material[] originalMaterials;
@@ -266,8 +270,8 @@ public class Player : MonoBehaviour
         rb.useGravity = false;
         rb.velocity = Vector3.zero;
 
-        // 플레이어가 헬리콥터에서 내려올때, 좌우 방향키를 누르면 헬리콥터만 아래로 내려가는 현상 수정.
-        // 무조건 헬리콥터의 Y값에서 일정 거리를 뺀 위치에서 있도록 수.
+        // 플레이어가 헬리콥터에 갈고리를 걸어 이동할 때, 뚝뚝 끊기며 이동하는 현상 수정
+        // transform으로 이동하던 로직을 Lerp를 사용한 벡터로 이동하도록.
         if (isHelicopter)
         {
             Vector3 targetPos = new Vector3(
@@ -276,8 +280,9 @@ public class Player : MonoBehaviour
                 currentHook.transform.position.z                       // Z값은 헬리콥터 따라가
             );
 
-            // 위치로 이동
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, hookPullSpeed * Time.deltaTime);
+            // MoveTowards에서 Lerp로 이동하도록.
+            // 15.0f 의 속도로 지정.
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 15.0f);
         }
         else
         {
@@ -381,6 +386,24 @@ public class Player : MonoBehaviour
             isGrounded = false;
             anim.SetBool("isGrounded", false);
         }
+    }
+
+    // 자석 아이템 먹었을 때 호출되는 함수
+    public void ActivateMagnet(float duration)
+    {
+        if (magnetCoroutine != null) StopCoroutine(magnetCoroutine);
+        magnetCoroutine = StartCoroutine(MagnetRoutine(duration));
+    }
+
+    // 자석 활성화 코루틴
+    IEnumerator MagnetRoutine(float duration)
+    {
+        isMagnetActive = true;
+
+        // 지속 시간만큼 대기
+        yield return new WaitForSeconds(duration);
+
+        isMagnetActive = false;
     }
 
     private void OnTriggerEnter(Collider other)
