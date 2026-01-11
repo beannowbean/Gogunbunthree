@@ -220,14 +220,7 @@ public class UIController : MonoBehaviour
         gameOverRoot.SetActive(true);
 
         // Game Over / Game Clear 텍스트 설정
-        if (ScoreManager.Instance.isCleared)
-        {
-            gameOverOrClearText.text = "GAME\nCLEAR";
-        }
-        else
-        {
-            gameOverOrClearText.text = "GAME\nOVER";
-        }
+        gameOverOrClearText.text = "GAME\nOVER";
 
         // 점수 표시
         UpdateScoreDisplay(ScoreManager.Instance.GetFinalScore());

@@ -6,10 +6,6 @@ using TMPro;
 /*
  *  Coin 관련 Script에서, 코인 획득 시 아래의 함수 호출 필요
  *  ScoreManager.Instance.AddCoin(1)
- *  
- *  helicopter 관련 script에서, isCleared 변수 설정 필요
- *  변수 형식: boolean
- *  ScoreManager.Instance.isCleared;
  */
 
 public class ScoreManager : MonoBehaviour
@@ -23,9 +19,12 @@ public class ScoreManager : MonoBehaviour
     private int bestScore = 0;          // 최고 점수
     
     private bool IsNewRecord = false;   // 뉴 레코드 여부
-    public bool isCleared = true;       // 클리어 여부
+    private bool isGameOver = false;    // 게임 오버 여부
+    private bool showingBonus = false;  // 보너스 표시 중인지 여부
+    private Coroutine bonusCoroutine = null; // 현재 실행 중인 보너스 코루틴
 
     public TextMeshProUGUI inGameScoreText; // 인게임 점수 표시용
+
 
     // 점수 계산 공식: 시간 * 속도 + 코인 * 100
     public float currentCarSpeed = 0f;  // 현재 자동차 속도 (외부에서 받아옴)
@@ -41,6 +40,11 @@ public class ScoreManager : MonoBehaviour
     {
         bestScore = PlayerPrefs.GetInt("BestScore", 0);
         
+        if(currentScore < bestScore)
+            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
+        else if (currentScore == bestScore)
+            inGameScoreText.text = $"SCORE:\t{currentScore}";
+        
         // TEST: 최고 점수 초기화
         //ResetBestScore();
     }
@@ -48,6 +52,8 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isGameOver || !UIController.tutorialSkip) return;
+
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;
         
@@ -55,13 +61,20 @@ public class ScoreManager : MonoBehaviour
         float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100);
         currentScore = Mathf.FloorToInt(rawScore);
 
-        // 점수 표시 업데이트
+        // 점수 표시 업데이트 (보너스 표시 중이면 보너스도 함께 표시)
+        UpdateScoreDisplay(showingBonus);
+    }
+
+    void UpdateScoreDisplay(bool showBonus)
+    {
+        string bonusText = showBonus ? " <color=#FF5A11>+100</color>" : "";
+        
         if(currentScore < bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
+            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}\nBEST:\t{bestScore - currentScore}";
         else if (currentScore == bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}";
+            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}";
         else
-            inGameScoreText.text = $"SCORE:\t{currentScore}\n<color=#FF5A11>NEW RECORD!</color>";
+            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}\n<color=#FF5A11>NEW RECORD!</color>";
     }
 
 
@@ -73,12 +86,6 @@ public class ScoreManager : MonoBehaviour
 
     public int GetFinalScore()
     {
-        if (!isCleared)
-        {
-            currentScore -= 200;
-            if (currentScore < 0) currentScore = 0;
-        }
-
         if (currentScore > bestScore)
         {
             bestScore = currentScore;
@@ -91,11 +98,20 @@ public class ScoreManager : MonoBehaviour
         return currentScore;
     }
 
-    // 코인 획듥량
-    // amount: 획듩한 코인 수
+    // 코인 획득량
+    // amount: 획득한 코인 수
     public void AddCoin(int amount)
     {
         coinCount += amount;
+        
+        // 기존 보너스 코루틴이 실행 중이면 중단
+        if (bonusCoroutine != null)
+        {
+            StopCoroutine(bonusCoroutine);
+        }
+        
+        // 새 보너스 코루틴 시작
+        bonusCoroutine = StartCoroutine(ShowCoinBonus());
     }
 
     // 차량 속도 업데이트
@@ -117,7 +133,22 @@ public class ScoreManager : MonoBehaviour
         currentScore = 0;
         survivalTime = 0f;
         IsNewRecord = false;
-        isCleared = true;
+        isGameOver = false;
+    }
+
+    public void StopScoring()
+    {
+        isGameOver = true;
+    }
+
+    IEnumerator ShowCoinBonus()
+    {
+        showingBonus = true;
+        UpdateScoreDisplay(true);
+        yield return new WaitForSeconds(0.3f);
+        showingBonus = false;
+        UpdateScoreDisplay(false);
+        bonusCoroutine = null;
     }
 
     public bool GetIsNewRecord()
