@@ -92,7 +92,6 @@ public class SFXManager : MonoBehaviour
     public void IncreaseVolume()
     {
         currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
-        Debug.Log($"SFX Volume: {currentVolumeLevel}");
         ApplyVolume();
         SaveVolumeSettings();
     }
@@ -101,7 +100,6 @@ public class SFXManager : MonoBehaviour
     public void DecreaseVolume()
     {
         currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
-        Debug.Log($"SFX Volume: {currentVolumeLevel}");
         ApplyVolume();
         SaveVolumeSettings();
     }
@@ -113,12 +111,10 @@ public class SFXManager : MonoBehaviour
         {
             previousVolumeLevel = currentVolumeLevel;
             currentVolumeLevel = 0;
-            Debug.Log($"SFX Muted. (Saved: {previousVolumeLevel})");
         }
         else
         {
             currentVolumeLevel = (previousVolumeLevel > 0) ? previousVolumeLevel : MAX_VOLUME_LEVEL;
-            Debug.Log($"SFX Unmuted. (Restored: {currentVolumeLevel})");
         }
         ApplyVolume();
         SaveVolumeSettings();
@@ -150,7 +146,6 @@ public class SFXManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"SFX Volume applied: {volume * platformVolumeMultiplier} (Base: {volume}, Multiplier: {platformVolumeMultiplier})");
     }
 
     // 볼륨 설정 저장
@@ -168,7 +163,6 @@ public class SFXManager : MonoBehaviour
         {
             currentVolumeLevel = PlayerPrefs.GetInt(VOLUME_PREFS_KEY, 4);
             previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
-            Debug.Log($"SFX Volume loaded: {currentVolumeLevel}");
         }
     }
 
