@@ -42,10 +42,6 @@ public class UIController : MonoBehaviour
     
     public static bool tutorialSkip = false;         // 튜토리얼 스킵 여부 (false = 튜토리얼 실행, true = 스킵)
 
-    // 프리로드된 씬들
-    private AsyncOperation preloadedMainMenu = null;
-    private AsyncOperation preloadedInGame = null;
-
 
     void Awake()
     {
@@ -205,24 +201,8 @@ public class UIController : MonoBehaviour
         tutorialSkip = false;
         isRestarting = false;
         
-        // 모든 코루틴 중단
-        StopAllCoroutines();
-        
-        // 프리로드된 씬이 있으면 사용, 없으면 직접 로드
-        if (preloadedMainMenu != null && preloadedMainMenu.progress >= 0.9f)
-        {
-            Debug.Log("프리로드된 MainMenu 씬 활성화");
-            StartCoroutine(SwitchToPreloadedScene(preloadedMainMenu, "MainMenu"));
-        }
-        else
-        {
-            Debug.Log("MainMenu 씬 직접 로드");
-            SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
-        }
-        
-        // 프리로드된 씬 정리
-        preloadedMainMenu = null;
-        preloadedInGame = null;
+        // 메인 메뉴로 이동
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 
     // 게임 오버 혹은 클리어 처리
@@ -258,8 +238,6 @@ public class UIController : MonoBehaviour
 
         // 점수 초기화
         ScoreManager.Instance.ResetScore();
-        
-        // 프리로드는 이미 GameOver 코루틴 시작 시점에 시작됨
     }
 
     // 점수 표시
@@ -292,82 +270,11 @@ public class UIController : MonoBehaviour
             ScoreManager.Instance.ResetScore();
         }
 
-        // 모든 코루틴 중단
-        StopAllCoroutines();
-        
-        // 프리로드된 씬이 있으면 사용, 없으면 직접 로드
-        if (preloadedInGame != null && preloadedInGame.progress >= 0.9f)
-        {
-            Debug.Log("프리로드된 InGame 씬 활성화");
-            StartCoroutine(SwitchToPreloadedScene(preloadedInGame, "InGame"));
-        }
-        else
-        {
-            Debug.Log("InGame 씬 직접 로드");
-            SceneManager.LoadScene("InGame", LoadSceneMode.Single);
-        }
-        
-        // 프리로드된 씬 정리
-        preloadedMainMenu = null;
-        preloadedInGame = null;
+        // InGame 씬으로 이동
+        SceneManager.LoadScene("InGame", LoadSceneMode.Single);
     }
 
-    // 비동기 씬 로딩 (제거 예정 - 프리로드 방식 사용)
-    private IEnumerator LoadSceneAsync(string sceneName)
-    {
-        // 이 함수는 더 이상 사용하지 않음
-        yield break;
-    }
-    
-    // Additive로 프리로드된 씬으로 전환 (현재 씬 언로드)
-    private IEnumerator SwitchToPreloadedScene(AsyncOperation preloadedScene, string sceneName)
-    {
-        // 프리로드된 씬 활성화
-        preloadedScene.allowSceneActivation = true;
-        
-        // 씬이 완전히 로드될 때까지 대기
-        while (!preloadedScene.isDone)
-        {
-            yield return null;
-        }
-        
-        // 현재 InGame 씬 언로드
-        yield return SceneManager.UnloadSceneAsync("InGame");
-        
-        // 새 씬을 활성 씬으로 설정
-        UnityEngine.SceneManagement.Scene newScene = SceneManager.GetSceneByName(sceneName);
-        if (newScene.isLoaded)
-        {
-            SceneManager.SetActiveScene(newScene);
-        }
-    }
 
-    // 게임 오버 시 씬들을 백그라운드에서 프리로드
-    public void StartPreloadScenes()
-    {
-        StartCoroutine(PreloadScenesForGameOver());
-    }
-    
-    private IEnumerator PreloadScenesForGameOver()
-    {
-        Debug.Log("씬 프리로드 시작 (충돌 시점)");
-        
-        // Additive 모드로 MainMenu 씬 프리로드 (백그라운드에 로드)
-        preloadedMainMenu = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
-        preloadedMainMenu.allowSceneActivation = false;
-        
-        // Additive 모드로 InGame 씬 프리로드 (백그라운드에 로드)
-        preloadedInGame = SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
-        preloadedInGame.allowSceneActivation = false;
-        
-        // 두 씬 모두 로드 완료될 때까지 대기
-        while (preloadedMainMenu.progress < 0.9f || preloadedInGame.progress < 0.9f)
-        {
-            yield return null;
-        }
-        
-        Debug.Log("MainMenu & InGame 씬 프리로드 완료");
-    }
 
     // --- Audio Control Methods ---
 
