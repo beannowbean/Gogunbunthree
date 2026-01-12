@@ -105,8 +105,15 @@ public class UIController : MonoBehaviour
     public void PauseGame()
     {
         if(tutorial != null && tutorial.isPaused == true) return;
+
         // 시간 멈춤
         Time.timeScale = 0f;
+
+        // 모든 효과음 일시정
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PauseAll();
+        }
 
         inGameUIRoot.SetActive(false);
         gamePauseRoot.SetActive(true);
@@ -132,6 +139,11 @@ public class UIController : MonoBehaviour
     private IEnumerator ResumeAfterDelay()
     {
         isCountingDown = true;
+
+        // 플레이어가 일시정지 재개 카운트다운시 입력 못받도
+        Player player = FindObjectOfType<Player>();
+        if (player != null) player.isResuming = true;
+
         float timer = resumeDelay;
 
         // Ui 전환
@@ -165,6 +177,15 @@ public class UIController : MonoBehaviour
         }
 
         isCountingDown = false;
+
+        // 효과음 다시 재생
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.ResumeAll();
+        }
+
+        // Player 입력 다시 받도록
+        if (player != null) player.isResuming = false;
 
         // 게임 재개
         Time.timeScale = 1f;

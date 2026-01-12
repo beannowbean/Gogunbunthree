@@ -61,10 +61,12 @@ public class Player : MonoBehaviour
     public bool isMagnetActive = false;
     private Coroutine magnetCoroutine;
 
-    // [수정됨] 하나가 아니라 '모든' 렌더러와 재질을 저장하기 위한 배열 선언
+    // 일시정지를 확인하는 변수
+    public bool isResuming = false;
+
+    // 플레이어 렌더러와 재질을 저장하기 위한 배열 선언
     private Renderer[] allRenderers;
     private Material[] originalMaterials;
-
 
     // 컴포넌트 선언
     private Rigidbody rb;
@@ -105,7 +107,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (isGameOver) return;
+        // 일시정지와 일시정지 재개중인 3초간 아무 실행을 안하도록
+        if (isGameOver || Time.timeScale == 0.0f || isResuming) return;
 
         CheckGround();
         DrawRope();
@@ -139,6 +142,7 @@ public class Player : MonoBehaviour
 
     void CheckInput()
     {
+        if (Time.timeScale == 0f || isResuming) return;     // 일시정지시 Input 안받도록
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.RightArrow)) ChangeLane(1);
         if (!isHelicopter)
