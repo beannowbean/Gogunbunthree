@@ -21,7 +21,7 @@ public class ObjectPooler : MonoBehaviour
     {
         Instance = this;
         
-        // 모든 리스트의 프리팹들을 하나의 딕셔너리에 초기화 (각 3개씩)
+        // 모든 리스트의 프리팹들을 하나의 딕셔너리에 초기화 (각 2개씩)
         InitializePool(backgroundBuildings);
         InitializePool(easyObstacles);
         InitializePool(normalObstacles);
@@ -37,7 +37,7 @@ public class ObjectPooler : MonoBehaviour
 
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 2; i++)
             {
                 GameObject obj = Instantiate(prefab);
                 obj.AddComponent<PoolMember>().myPrefab = prefab;
