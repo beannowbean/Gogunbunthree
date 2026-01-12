@@ -118,5 +118,6 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
     {
         yield return new WaitForSecondsRealtime(0.5f);
         player.isControl = true;
+        UIController.tutorialSkip = true;
     }
 }

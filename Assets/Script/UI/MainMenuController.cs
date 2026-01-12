@@ -50,8 +50,6 @@ public class MainMenuController : MonoBehaviour
         {
             yield return null;
         }
-        
-        Debug.Log("InGame 씬 프리로드 완료 - Start 버튼 클릭 시 즉시 전환 가능");
     }
 
     // 게임 시작 버튼

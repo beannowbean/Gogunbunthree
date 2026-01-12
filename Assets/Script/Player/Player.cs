@@ -422,7 +422,6 @@ public class Player : MonoBehaviour
             {
                 if (isGameOver) return;
                 ReleaseHook();
-                ScoreManager.Instance.isCleared = false;
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;
                 StartCoroutine(GameOver());
@@ -456,7 +455,6 @@ public class Player : MonoBehaviour
     IEnumerator InvincibilityRoutine(float duration)
     {
         isInvincible = true;
-        Debug.Log("무적 상태 시작!");
 
         // 1. 시작: 모든 파츠를 무적 재질로 변경
         if (allRenderers != null && invincibleMaterial != null)
@@ -528,7 +526,6 @@ public class Player : MonoBehaviour
 
         // --- 종료 처리 ---
         isInvincible = false;
-        Debug.Log("무적 상태 종료.");
 
         // 원래 재질로 복구
         if (allRenderers != null && originalMaterials != null)
@@ -548,13 +545,8 @@ public class Player : MonoBehaviour
     IEnumerator GameOver()
     {
         isGameOver = true;
+        ScoreManager.Instance.StopScoring();
         SFXManager.Instance.Play("Crashed");
-
-        // 메인메뉴, 인게임 Scene preload
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.StartPreloadScenes();
-        }
 
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.Stop("Helicopter");

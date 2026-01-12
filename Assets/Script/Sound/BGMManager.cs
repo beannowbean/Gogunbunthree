@@ -51,7 +51,6 @@ public class BGMManager : MonoBehaviour
     public void IncreaseVolume()
     {
         currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
-        Debug.Log($"BGM Volume: {currentVolumeLevel}");
         ApplyVolume();
         SaveVolumeSettings();
     }
@@ -60,7 +59,6 @@ public class BGMManager : MonoBehaviour
     public void DecreaseVolume()
     {
         currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
-        Debug.Log($"BGM Volume: {currentVolumeLevel}");
         ApplyVolume();
         SaveVolumeSettings();
     }
@@ -72,12 +70,10 @@ public class BGMManager : MonoBehaviour
         {
             previousVolumeLevel = currentVolumeLevel;
             currentVolumeLevel = 0;
-            Debug.Log($"BGM Muted. (Saved: {previousVolumeLevel})");
         }
         else
         {
             currentVolumeLevel = (previousVolumeLevel > 0) ? previousVolumeLevel : MAX_VOLUME_LEVEL;
-            Debug.Log($"BGM Unmuted. (Restored: {currentVolumeLevel})");
         }
         ApplyVolume();
         SaveVolumeSettings();
@@ -102,7 +98,6 @@ public class BGMManager : MonoBehaviour
         {
             float volume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
             audioSource.volume = volume * platformVolumeMultiplier;
-            Debug.Log($"BGM Volume applied: {volume * platformVolumeMultiplier} (Base: {volume}, Multiplier: {platformVolumeMultiplier})");
         }
     }
 
@@ -131,7 +126,6 @@ public class BGMManager : MonoBehaviour
 
         audioSource.clip = clip;
         audioSource.Play();
-        Debug.Log($"Playing BGM: {clip.name}");
     }
 
     // BGM 정지
@@ -158,7 +152,6 @@ public class BGMManager : MonoBehaviour
         {
             currentVolumeLevel = PlayerPrefs.GetInt(VOLUME_PREFS_KEY, 3);
             previousVolumeLevel = PlayerPrefs.GetInt(PREVIOUS_VOLUME_PREFS_KEY, MAX_VOLUME_LEVEL);
-            Debug.Log($"BGM Volume loaded: {currentVolumeLevel}");
         }
     }
 
