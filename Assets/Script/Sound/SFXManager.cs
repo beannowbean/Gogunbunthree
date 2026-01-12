@@ -177,4 +177,22 @@ public class SFXManager : MonoBehaviour
         platformVolumeMultiplier = 1.0f;
 #endif
     }
+
+    // 일시정지시 효과음 정지
+    public void PauseAll()
+    {
+        foreach (var src in sources)
+        {
+            if (src != null) src.Pause();
+        }
+    }
+
+    // 일지정지 해제후 3초 지날 시 효과음 재생
+    public void ResumeAll()
+    {
+        foreach (var src in sources)
+        {
+            if (src != null) src.UnPause();
+        }
+    }
 }
