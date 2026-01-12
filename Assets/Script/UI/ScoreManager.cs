@@ -14,16 +14,16 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance;
 
     public int coinCount = 0;           // 획득한 코인 수
+    public int carKnockCount = 0;       // 무적 상태에서 날린 차 수
 
     private int currentScore = 0;       // 최종 계산된 점수
     private int bestScore = 0;          // 최고 점수
     
     private bool IsNewRecord = false;   // 뉴 레코드 여부
     private bool isGameOver = false;    // 게임 오버 여부
-    private bool showingBonus = false;  // 보너스 표시 중인지 여부
-    private Coroutine bonusCoroutine = null; // 현재 실행 중인 보너스 코루틴
 
     public TextMeshProUGUI inGameScoreText; // 인게임 점수 표시용
+    public TextMeshProUGUI bonusScoreText;  // 보너스 점수 표시용 (점수 위에 표시)
 
 
     // 점수 계산 공식: 시간 * 속도 + 코인 * 100
@@ -40,10 +40,7 @@ public class ScoreManager : MonoBehaviour
     {
         bestScore = PlayerPrefs.GetInt("BestScore", 0);
         
-        if(currentScore < bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
-        else if (currentScore == bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}";
+        UpdateScoreDisplay();
         
         // TEST: 최고 점수 초기화
         //ResetBestScore();
@@ -57,24 +54,22 @@ public class ScoreManager : MonoBehaviour
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;
         
-        // 2. 점수 계산 공식: 시간 * 속도 + 코인 * 100
-        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100);
+        // 2. 점수 계산 공식: 시간 * 속도 + 코인 * 100 + 차 날리기 * 50
+        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100) + (carKnockCount * 1000);
         currentScore = Mathf.FloorToInt(rawScore);
 
-        // 점수 표시 업데이트 (보너스 표시 중이면 보너스도 함께 표시)
-        UpdateScoreDisplay(showingBonus);
+        // 점수 표시 업데이트
+        UpdateScoreDisplay();
     }
 
-    void UpdateScoreDisplay(bool showBonus)
+    void UpdateScoreDisplay()
     {
-        string bonusText = showBonus ? " <color=#FF5A11>+100</color>" : "";
-        
         if(currentScore < bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}\nBEST:\t{bestScore - currentScore}";
+            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
         else if (currentScore == bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}";
+            inGameScoreText.text = $"SCORE:\t{currentScore}";
         else
-            inGameScoreText.text = $"SCORE:\t{currentScore} {bonusText}\n<color=#FF5A11>NEW RECORD!</color>";
+            inGameScoreText.text = $"SCORE:\t{currentScore}\n<color=#FF5A11>NEW RECORD!</color>";
     }
 
 
@@ -104,14 +99,15 @@ public class ScoreManager : MonoBehaviour
     {
         coinCount += amount;
         
-        // 기존 보너스 코루틴이 실행 중이면 중단
-        if (bonusCoroutine != null)
-        {
-            StopCoroutine(bonusCoroutine);
-        }
-        
-        // 새 보너스 코루틴 시작
-        bonusCoroutine = StartCoroutine(ShowCoinBonus());
+        // 코인 먹을 때마다 보너스 표시 (중단하지 않음)
+        StartCoroutine(ShowBonus("+100"));
+    }
+
+    // 무적 상태에서 차 날리기 점수 추가
+    public void AddCarKnockScore()
+    {
+        carKnockCount++;
+        StartCoroutine(ShowBonus("+50"));
     }
 
     // 차량 속도 업데이트
@@ -130,6 +126,7 @@ public class ScoreManager : MonoBehaviour
     public void ResetScore()
     {
         coinCount = 0;
+        carKnockCount = 0;
         currentScore = 0;
         survivalTime = 0f;
         IsNewRecord = false;
@@ -141,14 +138,55 @@ public class ScoreManager : MonoBehaviour
         isGameOver = true;
     }
 
-    IEnumerator ShowCoinBonus()
+    IEnumerator ShowBonus(string bonusAmount)
     {
-        showingBonus = true;
-        UpdateScoreDisplay(true);
-        yield return new WaitForSeconds(0.3f);
-        showingBonus = false;
-        UpdateScoreDisplay(false);
-        bonusCoroutine = null;
+        // bonusScoreText가 설정되어 있으면 애니메이션 효과와 함께 표시
+        if (bonusScoreText != null)
+        {
+            // 원본을 복제하여 새로운 텍스트 생성 (동시에 여러 개 표시 가능)
+            GameObject bonusObj = Instantiate(bonusScoreText.gameObject, bonusScoreText.transform.parent);
+            TextMeshProUGUI bonusText = bonusObj.GetComponent<TextMeshProUGUI>();
+            bonusText.text = bonusAmount;
+            bonusObj.SetActive(true);
+            
+            // 초기 위치와 알파값 설정
+            bonusText.transform.localPosition = bonusScoreText.transform.localPosition;
+            Color startColor = bonusText.color;
+            startColor.a = 1f;
+            bonusText.color = startColor;
+            
+            Vector3 startPos = bonusText.transform.localPosition;
+            
+            // 애니메이션 실행 (위로 올라가면서 페이드 아웃)
+            float duration = 0.8f;
+            float elapsed = 0f;
+            
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                
+                // 위로 이동
+                Vector3 newPos = startPos;
+                newPos.y = startPos.y + (t * 100f); // 100 픽셀 위로 이동
+                bonusText.transform.localPosition = newPos;
+                
+                // 페이드 아웃
+                Color newColor = startColor;
+                newColor.a = 1f - t;
+                bonusText.color = newColor;
+                
+                yield return null;
+            }
+            
+            // 애니메이션이 끝나면 오브젝트 삭제
+            Destroy(bonusObj);
+        }
+        else
+        {
+            // bonusScoreText가 없으면 아무것도 하지 않음
+            yield return null;
+        }
     }
 
     public bool GetIsNewRecord()
