@@ -187,6 +187,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 300
   helicopterPrefab: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
+  heliEffectPrefab: {fileID: 1429954232896169633, guid: 94b1ba276f67a49f39de2f097ffdcc9b, type: 3}
+  heliAuroraEffectPrefab: {fileID: 5137123306192418792, guid: ee1c95175b994425da8c7ddd6544d328, type: 3}
 --- !u!1 &9166405950102362063
 GameObject:
   m_ObjectHideFlags: 0

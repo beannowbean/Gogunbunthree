@@ -27,8 +27,8 @@ public class Magnet : MonoBehaviour
 
                 ItemUIController.Instance.ActivateNextAvailableItem(duration, iconSprite);
 
-                // 효과음
-                // SFXManager.Instance.Play("ItemGet");
+                // 자석 지속시간동안 효과음
+                SFXManager.Instance.Play("MagnetSound");
             }
             Destroy(gameObject);
         }

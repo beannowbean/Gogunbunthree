@@ -60,6 +60,8 @@ public class Player : MonoBehaviour
     // Magnet 관련 변수
     public bool isMagnetActive = false;
     private Coroutine magnetCoroutine;
+    public GameObject magnetEffectPrefab;       // 자석 아이템 프리펩
+    private GameObject currentMagnetEffect;     // 현재 자석 코루틴 활성화 중인지 확인 변수
 
     // [수정됨] 하나가 아니라 '모든' 렌더러와 재질을 저장하기 위한 배열 선언
     private Renderer[] allRenderers;
@@ -392,6 +394,7 @@ public class Player : MonoBehaviour
     public void ActivateMagnet(float duration)
     {
         if (magnetCoroutine != null) StopCoroutine(magnetCoroutine);
+        if (currentMagnetEffect != null) Destroy(currentMagnetEffect);  // 아이템 겹침 현상 방
         magnetCoroutine = StartCoroutine(MagnetRoutine(duration));
     }
 
@@ -400,8 +403,14 @@ public class Player : MonoBehaviour
     {
         isMagnetActive = true;
 
+        // 이펙트 생성 (플레이어를 부모로 하여 따라다니도록)
+        currentMagnetEffect = Instantiate(magnetEffectPrefab, transform.position, Quaternion.identity, transform);
+
         // 지속 시간만큼 대기
         yield return new WaitForSeconds(duration);
+
+        // 이펙트 삭제
+        Destroy(currentMagnetEffect);
 
         isMagnetActive = false;
     }
