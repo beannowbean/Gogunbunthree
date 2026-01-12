@@ -270,6 +270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1542419551727888721}
   - component: {fileID: 8521130811320056509}
+  - component: {fileID: 3324327330663426832}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Coin
@@ -314,3 +315,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.19357057, y: 0.15, z: 0.19848377}
   m_Center: {x: 0.0011559092, y: -0.0013026893, z: 0.002228655}
+--- !u!114 &3324327330663426832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8811091799345439505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1c096ac26ed4cfe8d0dc8d66c69f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flySpeed: 30
+  magnetRange: 10
