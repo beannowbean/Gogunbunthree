@@ -1,37 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
-public class CarMove : MonoBehaviour    // 움직이는 차 타일 스크립트
+/// <summary>
+/// 차 아래로 움직이는 스크립트
+/// </summary>
+public class CarMove : MonoBehaviour
 {
-    private TileGenerate tileGenerate;
-    private Player player;
-    private bool freezeStreetLight = false;
-    public float changeTime = 5.0f;
-    private float currentCarSpeed;
+    public float changeTime = 3.0f; // 속도 변화 시간
+
+    // 내부 변수
+    TileGenerate tileGenerate;  // 타일 생성 스크립트 참조
+    Player player;  // 플레이어 참조
+    bool freezeStreetLight = false; // 가로등 고정 여부
+    float currentCarSpeed;  // 현재 차 속도
     
     void Start()
     {
-        // 타일 오브젝트 생성 시 TileGenerate 스크립트 가져오기 (carSpeed 사용)
-        tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();   
+        // 참조 설정
+        tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();   // carSpeed 참조용
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>(); // 게임오버 참조용
 
-        // 플레이어 스크립트 가져오기 (게임오버 확인용)
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-
-        // 초기 자동차 속도
+        // 초기 차 속도
         currentCarSpeed = tileGenerate.carSpeed;
     }
 
     void Update()
     {
-        // 자동차 타일 이동
+        // 차 속도 부드럽게 변경 및 이동
         currentCarSpeed = Mathf.Lerp(currentCarSpeed, tileGenerate.carSpeed, Time.deltaTime / changeTime);
         transform.position += new Vector3(0, 0, -currentCarSpeed * Time.deltaTime);
 
         // 게임오버 시 가로등 고정
         if(player.isGameOver == true && freezeStreetLight == false)
         {
+            // 가로등 찾아 저장 후 부모 해제하여 고정
             GameObject[] streetLights = GameObject.FindGameObjectsWithTag("StreetLight");
             foreach(GameObject streetLight in streetLights)
             {
@@ -39,7 +40,7 @@ public class CarMove : MonoBehaviour    // 움직이는 차 타일 스크립트
                 streetLight.transform.SetParent(null);
                 streetLight.transform.position = curPos;
             }
-            freezeStreetLight = true;
+            freezeStreetLight = true;   // 고정 확인 및 중복 실행 방지
         }
     }
 }

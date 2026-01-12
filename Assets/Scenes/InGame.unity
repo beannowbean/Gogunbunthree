@@ -194,6 +194,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1632010869267955216, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2210859972143698717, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -47.600098
@@ -253,6 +257,10 @@ PrefabInstance:
     - target: {fileID: 7643544323887031657, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: m_Name
       value: UI_InGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 7643544323887031657, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: sounds.Array.size
@@ -1620,10 +1628,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CarTileDesigner
       objectReference: {fileID: 0}
-    - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
-      propertyPath: dayNightCycle
-      value: 
-      objectReference: {fileID: 1022528938}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: 'tiles.Array.data[0]'
       value: 
