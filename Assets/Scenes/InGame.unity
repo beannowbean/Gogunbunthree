@@ -305,14 +305,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2210859972143698717, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -47.600098
-      objectReference: {fileID: 0}
-    - target: {fileID: 2210859972143698717, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -41.600098
-      objectReference: {fileID: 0}
     - target: {fileID: 2799558296940214234, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: inGameBGM
       value: 
