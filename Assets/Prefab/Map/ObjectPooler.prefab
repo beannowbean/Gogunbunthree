@@ -50,7 +50,7 @@ MonoBehaviour:
   - {fileID: 7118376416974898884, guid: aeb235eb177af4f4a9a3c1f12161b7d4, type: 3}
   - {fileID: 1807969935020695153, guid: a27fe0ddfe060c74dbbf421c3c932916, type: 3}
   - {fileID: 39263626225532837, guid: e7bd3541118772e4fb2cbab1fb2ae6c6, type: 3}
-  easyObstacles:
+  level_1Obstacles:
   - {fileID: 6455602189164902562, guid: 97aaf43d6bb2fc94f8fd1094e1500b50, type: 3}
   - {fileID: 2083111532654073419, guid: 348ccc1d07b2fab459df79721e6deaee, type: 3}
   - {fileID: 8838705591399663506, guid: 11db327a305337f4c824241be7d28fa2, type: 3}
@@ -65,8 +65,7 @@ MonoBehaviour:
   - {fileID: 2600367174308168890, guid: 8a1dd7f9caee1c544b6f7d6c48a1deb5, type: 3}
   - {fileID: 1853532972408782514, guid: a8fdbfe550567e14fa7602bb40ad7a8c, type: 3}
   - {fileID: 8218985168725160778, guid: 862f66f2c5144944490f909ea1a62526, type: 3}
-  - {fileID: 3037490845441552490, guid: b0b2654bd6d670a4ba1b7e9f3a2a66ca, type: 3}
-  normalObstacles:
+  level_2Obstacles:
   - {fileID: 6455602189164902562, guid: 4182c079143a38340ad16136f6f7fed5, type: 3}
   - {fileID: 2083111532654073419, guid: e03e4a9e2cfd8f34489f9a04e6077b85, type: 3}
   - {fileID: 8838705591399663506, guid: 18207a6f9e4531e4c9fd1d8fff3d67bc, type: 3}
@@ -81,8 +80,7 @@ MonoBehaviour:
   - {fileID: 2600367174308168890, guid: 9d6532d9b29a31c43a1a12f1209f72ed, type: 3}
   - {fileID: 1853532972408782514, guid: 2ca673f2c1997a848a01aec75614cf97, type: 3}
   - {fileID: 8218985168725160778, guid: 248959fd6968eed46ae3011915bbd7db, type: 3}
-  - {fileID: 3037490845441552490, guid: 9ea2e0078b6442d4a8bc14d8e5c8bd8e, type: 3}
-  hardObstacles:
+  level_3Obstacles:
   - {fileID: 6455602189164902562, guid: b519376c203feb54c8cb6c14cf2b06ac, type: 3}
   - {fileID: 2083111532654073419, guid: a6eb449c46e2d984cad8432204ae8826, type: 3}
   - {fileID: 8838705591399663506, guid: 762a2709be0d5394b924841578c3bad0, type: 3}
@@ -100,9 +98,14 @@ MonoBehaviour:
   - {fileID: 6455602189164902562, guid: 4324a5e3504c2d0489651a7ca3e85339, type: 3}
   - {fileID: 2083111532654073419, guid: 12ecf2b0481e8904ea0a2a9f99745847, type: 3}
   - {fileID: 8838705591399663506, guid: a6ccae9c5bb749846b492ce5f6a8dae3, type: 3}
-  - {fileID: 3037490845441552490, guid: ccba378374aaf854fa74f95c2925fcfc, type: 3}
   tutorialObstacles:
   - {fileID: 6877269332224938191, guid: e46ca503ebaabd5449a52b36bd53959c, type: 3}
   - {fileID: 2571761426055083449, guid: 531883e32409b854489028b18ff9c1db, type: 3}
   - {fileID: 7475912922056014152, guid: 893218475c69b0a429c5faa96c500fbb, type: 3}
   - {fileID: 1297974728418574874, guid: b73e3cbf42d4cfb4b9e5129f7f1759bf, type: 3}
+  - {fileID: 1297974728418574874, guid: b73e3cbf42d4cfb4b9e5129f7f1759bf, type: 3}
+  starObstacles:
+  - {fileID: 3037490845441552490, guid: b0b2654bd6d670a4ba1b7e9f3a2a66ca, type: 3}
+  - {fileID: 3037490845441552490, guid: 9ea2e0078b6442d4a8bc14d8e5c8bd8e, type: 3}
+  heliObstacles:
+  - {fileID: 3037490845441552490, guid: 101a20800b656fd4f90db62813558663, type: 3}

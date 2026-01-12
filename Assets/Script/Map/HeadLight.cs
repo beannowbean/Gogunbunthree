@@ -1,20 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-public class HeadLight : MonoBehaviour  // 자동차 헤드라이트 스크립트
+
+/// <summary>
+/// 자동차 헤드라이트 스크립트
+/// </summary>
+public class HeadLight : MonoBehaviour
 {
-    DayNightCycle dayNightCycle;   // isNight 을 가진 스크립트
+    public float maxIntensity = 2.5f;      // 밤일 때 라이트 밝기
 
-    public float maxIntensity = 2.5f;      // 밤일 때 밝기
-    float changeSpeed = 0.1f;        // 밝기 변화 속도
-
-    private Light headLight;
+    // 내부 변수
+    Light headLight;             // 헤드라이트 라이트 컴포넌트
+    DayNightCycle dayNightCycle;   // 낮밤 전환 스크립트 참조
+    float changeSpeed = 0.1f;        // 밝기 변화 속도 (인스펙터가 복잡해 여기서 변경 / 낮을수록 천천히 켜짐)
 
     void Start()
     {
-        // 같은 오브젝트에 있는 Light 자동으로 가져오기
+        // 참조 설정
         headLight = GetComponent<Light>();
-        dayNightCycle = GameObject.FindGameObjectWithTag("Light").GetComponent<DayNightCycle>();
+        dayNightCycle = GameObject.FindGameObjectWithTag("Light").GetComponent<DayNightCycle>(); // isNight 참조용
+
+        // 시작 시 낮이면 라이트 끔
         if(dayNightCycle.isNight == false) headLight.intensity = 0f;
     }
 

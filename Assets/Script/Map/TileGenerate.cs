@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class TileGenerate : MonoBehaviour   // 바닥 도로 타일 생성 스크립트
 {
-    public GameObject[] tiles;  // 바닥 도로 배열
+    public GameObject[] tiles;  // 기준 바닥 배열
     public float tileSpeed; // 타일 다가오는 속도
     float TileLength;   // 타일 길이
     public float carSpeed;  //  차 다가오는 속도

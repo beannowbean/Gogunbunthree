@@ -1,21 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 오브젝트 풀링 스크립트
+/// </summary>
 public class ObjectPooler : MonoBehaviour
 {
-    public static ObjectPooler Instance;
+    public static ObjectPooler Instance;    // 싱글톤 인스턴스
 
-    [Header("BackGround Tile")]
-    public List<GameObject> backgroundBuildings;
+    [Header("배경 배열")]
+    public List<GameObject> backgroundBuildings;    // 빌딩 배열
 
-    [Header("Car Tile")]
-    public List<GameObject> easyObstacles;
-    public List<GameObject> normalObstacles;
-    public List<GameObject> hardObstacles;
-    public List<GameObject> tutorialObstacles;
+    [Header("장애물 배열")]
+    public List<GameObject> level_1Obstacles;   // 레벨1 배열
+    public List<GameObject> level_2Obstacles;   // 레벨2 배열
+    public List<GameObject> level_3Obstacles;   // 레벨3 배열
+    public List<GameObject> tutorialObstacles;  // 튜토리얼 배열
+
+    [Header("아이템 배열")]
+    public List<GameObject> starObstacles;  // 별 아이템 배열
+    public List<GameObject> heliObstacles;  // 헬기 아이템 배열
     
-    private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
+    // 내부 변수
+    Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
     private void Awake()
     {
@@ -23,10 +30,12 @@ public class ObjectPooler : MonoBehaviour
         
         // 모든 리스트의 프리팹들을 하나의 딕셔너리에 초기화 (각 2개씩)
         InitializePool(backgroundBuildings);
-        InitializePool(easyObstacles);
-        InitializePool(normalObstacles);
-        InitializePool(hardObstacles);
+        InitializePool(level_1Obstacles);
+        InitializePool(level_2Obstacles);
+        InitializePool(level_3Obstacles);
         InitializePool(tutorialObstacles);
+        InitializePool(starObstacles);
+        InitializePool(heliObstacles);
     }
 
     private void InitializePool(List<GameObject> prefabList)
