@@ -14,6 +14,8 @@ public class ObjectPooler : MonoBehaviour
     public List<GameObject> normalObstacles;
     public List<GameObject> hardObstacles;
     public List<GameObject> tutorialObstacles;
+    public List<GameObject> starObstacles;  // 별 아이템 장애물 배열
+    public List<GameObject> heliObstacles;  // 헬기 아이템 장애물 배열
     
     private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
 
@@ -27,6 +29,8 @@ public class ObjectPooler : MonoBehaviour
         InitializePool(normalObstacles);
         InitializePool(hardObstacles);
         InitializePool(tutorialObstacles);
+        InitializePool(starObstacles);
+        InitializePool(heliObstacles);
     }
 
     private void InitializePool(List<GameObject> prefabList)

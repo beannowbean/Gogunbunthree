@@ -13,6 +13,14 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     public GameObject[] normalObstacles;
     public GameObject[] hardObstacles;
     public GameObject[] tutorialObstacles;  // 튜토리얼용 배열
+
+    [Header("아이템 배열")]
+    public GameObject[] starObstacles;  // 별 아이템 장애물 배열
+    public GameObject[] heliObstacles;  // 헬기 아이템 장애물 배열
+    public float itemRate = 0.1f;   // 아이템 등장 확률
+    public float itemCooltime = 30f; // 아이템 등장 쿨타임
+    public float starHeliRate = 0.7f; // 별 확률 / 헬기 확률
+    public float itemTimer; // 아이템 타이머
     
     [Header("난이도 설정")]
     public int score = 0;    // 점수
@@ -20,11 +28,10 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     public int hardscore = 15000;
     public int normalSpeed = 30;    // 노멀 모드 차 속도
     public int hardSpeed = 40;  // 하드 모드 차 속도
-    public float itemRate = 0.1f;   // 아이템 등장 확률
+
     float TileLength;   // 타일 길이
-    int tileCount = 0;
     int tutorialIndex = 0;
-    int lastObstacle;
+    int lastObstacle = -1;
     GameObject[] currentObstacles = new GameObject[8];
     TileGenerate tileGenerate;
     DayNightCycle dayNightCycle;
@@ -37,13 +44,11 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
         dayNightCycle = GameObject.FindGameObjectWithTag("Light").GetComponent<DayNightCycle>();
+        itemTimer = Time.time;
 
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
-
-        // 마지막 장애물 변수 초기화
-        lastObstacle = -1;
 
         MakeStartCar();
     }
@@ -93,7 +98,7 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
             }
             lastObstacle = nextObstacle;
             currentObstacles[i] = obstacles[nextObstacle];
-            Instantiate(obstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
+            ObjectPooler.Instance.GetPool(obstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
         }
     }
 
@@ -104,7 +109,6 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         {
             MoveOldTile(other);
             MakeCar(other);
-            tileCount++;
         }
     }
 
@@ -129,13 +133,10 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
     //  장애물 랜덤으로 타일에 생성
     private void MakeCar(Collider oldTile)
     {
-        if (ObjectPooler.Instance == null)
-        {
-            return;
-        }
+        if (ObjectPooler.Instance == null) return;
         Transform obstacle = oldTile.transform.GetChild(0);
 
-        GameObject[] obstacles = GetDifficultyArray();
+        GameObject[] obstacles;
 
         // obstacle 랜덤 생성
         int nextObstacle;
@@ -143,6 +144,7 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         if(!UIController.tutorialSkip)
         {
             // 튜토리얼시 튜토리얼 장애물
+            obstacles = tutorialObstacles;
             if(tutorialIndex < tutorialObstacles.Length)
             {
                 nextObstacle = tutorialIndex;
@@ -153,25 +155,23 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
                 UIController.tutorialSkip = true;
                 // 튜토리얼 장애물이 부족하면 일반 장애물 사용
                 obstacles = GetDifficultyArray();
-                nextObstacle = Random.Range(0, obstacles.Length - 1);
+                nextObstacle = ChooseObstacle(obstacles);
             }
         }
         else
         {
             // 일정 확률로 star 아이템 장애물 배열 사용 (배열의 마지막 인덱스 장애물은 무조건 star 사용한 장애물)
-            bool itemTile = (tileCount >= 10) && (Random.value < itemRate);
+            bool itemTile = (Time.time >= itemTimer + itemCooltime) && (Random.value < itemRate);
             if(itemTile == true)
             {
-                nextObstacle = obstacles.Length - 1;
-                tileCount = 0;
+                obstacles = (Random.value < starHeliRate) ? starObstacles : heliObstacles;
+                nextObstacle = ChooseObstacle(obstacles);
+                itemTimer = Time.time;
             }
             else
             {
-                do
-                {
-                    nextObstacle = Random.Range(0, obstacles.Length - 1);
-                }
-                while(nextObstacle == lastObstacle);
+                obstacles = GetDifficultyArray();
+                nextObstacle = ChooseObstacle(obstacles);
             }
         }
 
@@ -182,11 +182,9 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         // 기존 자식 오브젝트 삭제
         ObjectPooler.Instance.ReturnPool(obstacle.gameObject);
         obstacle.SetParent(null);
-        // Destroy(obstacle.gameObject);
         lastObstacle = nextObstacle;
 
         // 새로운 obstacle 생성
-        // Instantiate(obstacles[nextObstacle], pos, Quaternion.identity, parent);
         ObjectPooler.Instance.GetPool(obstacles[nextObstacle], pos, Quaternion.identity, parent);
     }
 
@@ -195,7 +193,7 @@ public class CarGenerate : MonoBehaviour    // 장애물 타일 생성 스크립
         int nextObstacle;
         do
         {
-            nextObstacle = Random.Range(0, obstacles.Length - 1);
+            nextObstacle = Random.Range(0, obstacles.Length);
         } while(nextObstacle == lastObstacle || CountObstacles(obstacles[nextObstacle]) >= 2);
         return nextObstacle;
     }

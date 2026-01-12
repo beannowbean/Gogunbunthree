@@ -12,6 +12,8 @@ public class BackGroundTileGenerate : MonoBehaviour
     public GameObject[] buildings;  // 빌딩 배열
     float TileLength;   // 타일 길이
     Player player;
+    int lastBuilding = -1;
+    GameObject[] currentBuildings = new GameObject[8];
     
     void Start()
     {
@@ -19,8 +21,29 @@ public class BackGroundTileGenerate : MonoBehaviour
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        MakeStartBuilding();
+    }
 
-        lastBuilding = -1;
+    private int CountBuildings(GameObject prefab)
+    {
+        int count = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            if (currentBuildings[i] == prefab) count++;
+        }
+        return count;
+    }
+
+    // 시작할 때 빌딩 생성
+    void MakeStartBuilding()
+    {
+        for(int i = 0; i < tiles.Length; i++)
+        {
+            int nextBuilding = ChooseBuildings(buildings);
+            lastBuilding = nextBuilding;
+            currentBuildings[i] = buildings[nextBuilding];
+            ObjectPooler.Instance.GetPool(buildings[nextBuilding], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -53,23 +76,14 @@ public class BackGroundTileGenerate : MonoBehaviour
     }
 
     //  빌딩 랜덤으로 타일에 생성
-    int lastBuilding;
     private void MakeBuilding(Collider oldTile)
     {
-        if (ObjectPooler.Instance == null)
-        {
-            Debug.LogWarning("ObjectPooler 생성 대기");
-            return;
-        }
+        if (ObjectPooler.Instance == null) return;
         Transform obstacle = oldTile.transform.GetChild(0);
 
         // obstacle 랜덤 생성
         int nextBuilding;
-        do
-        {
-            nextBuilding = Random.Range(0, buildings.Length);
-        }
-        while(nextBuilding == lastBuilding);
+        nextBuilding = ChooseBuildings(buildings);
 
         // Destroy전 좌표와 부모 기억
         Vector3 pos = obstacle.position;
@@ -78,11 +92,19 @@ public class BackGroundTileGenerate : MonoBehaviour
         // 기존 자식 오브젝트 삭제
         ObjectPooler.Instance.ReturnPool(obstacle.gameObject);
         obstacle.SetParent(null);
-        // Destroy(obstacle.gameObject);
         lastBuilding = nextBuilding;
         
         // 새로운 obstacle 생성
-        // Instantiate(buildings[nextBuilding], pos, Quaternion.identity, parent);
         ObjectPooler.Instance.GetPool(buildings[nextBuilding], pos, Quaternion.identity, parent);
+    }
+
+    private int ChooseBuildings(GameObject[] buildings)
+    {
+        int nextBuilding;
+        do
+        {
+            nextBuilding = Random.Range(0, buildings.Length);
+        } while (nextBuilding == lastBuilding || CountBuildings(buildings[nextBuilding]) >= 2);
+        return nextBuilding;
     }
 }
