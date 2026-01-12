@@ -55,7 +55,7 @@ public class ScoreManager : MonoBehaviour
         survivalTime += Time.deltaTime;
         
         // 2. 점수 계산 공식: 시간 * 속도 + 코인 * 100 + 차 날리기 * 50
-        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100) + (carKnockCount * 1000);
+        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100) + (carKnockCount * 50);
         currentScore = Mathf.FloorToInt(rawScore);
 
         // 점수 표시 업데이트
