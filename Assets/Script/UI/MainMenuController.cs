@@ -76,6 +76,34 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // Achievement 버튼
+    public void OpenAchievement()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+        
+        isLoadingScene = true;
+        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
+    }
+
+    // Customize 버튼
+    public void OpenCustomize()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+        
+        isLoadingScene = true;
+        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
+    }
+
     // --- Audio Control Methods ---
 
     public void DecreaseMusicVolume()
