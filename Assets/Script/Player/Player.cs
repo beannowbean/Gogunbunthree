@@ -75,9 +75,6 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     // 튜토리얼 확인용 변수
-    public bool isJump = false;
-    public bool isMove = false;
-    public bool isHook = false;
     public bool isControl = false;
 
     // 아이템 로직 관련
@@ -213,7 +210,6 @@ public class Player : MonoBehaviour
         int targetLane = currentLane + direction;
         if (targetLane >= 1 && targetLane <= 3) currentLane = targetLane;
         SFXManager.Instance.Play("Move");
-        isMove = true;
     }
 
     public void Jump()
@@ -224,7 +220,6 @@ public class Player : MonoBehaviour
             isGrounded = false;
             anim.SetBool("isGrounded", false);
             SFXManager.Instance.Play("Jump");
-            isJump = true;
         }
     }
 
@@ -253,7 +248,6 @@ public class Player : MonoBehaviour
         Hook hookScript = currentHook.GetComponent<Hook>();
         hookScript.player = this;
         SFXManager.Instance.Play("Hook");
-        isHook = true;
     }
 
     void ReleaseHook()
@@ -427,7 +421,7 @@ public class Player : MonoBehaviour
             SFXManager.Instance.Play("Coin", 0.98f, 1.02f);
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
             Destroy(effect, 1.0f);
-            Destroy(other.gameObject);
+            other.gameObject.SetActive(false);
             ScoreManager.Instance.AddCoin(1);
         }
         else if (other.CompareTag("Car"))
@@ -446,7 +440,8 @@ public class Player : MonoBehaviour
                     carRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
                     carRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
                 }
-                Destroy(other.gameObject, 2.0f);
+                StartCoroutine(DeActiveAfterSeconds(other.gameObject, 2.0f));
+
             }
             // 헬리콥터에서 내릴 때 차와 부딪히는 경우
             else if (isHelicopterInvincible)
@@ -463,6 +458,12 @@ public class Player : MonoBehaviour
                 StartCoroutine(GameOver());
             }
         }
+    }
+
+    IEnumerator DeActiveAfterSeconds(GameObject obj, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        obj.SetActive(false);
     }
 
     void OnDrawGizmos()
