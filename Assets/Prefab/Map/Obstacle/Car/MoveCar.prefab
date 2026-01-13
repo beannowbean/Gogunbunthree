@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 813829206676160114}
   - component: {fileID: 4387797753938981335}
   - component: {fileID: 1945662270127916317}
-  - component: {fileID: 6113611395946980982}
   - component: {fileID: 3470168282482127330}
   - component: {fileID: -7081636869248511323}
   - component: {fileID: 921147733298921098}
@@ -101,28 +100,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6113611395946980982
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173682462123208}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -8865497852118134067, guid: 3cdb7334d89ffba41b53f4855a42606d, type: 3}
 --- !u!65 &3470168282482127330
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -183,9 +160,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a67c8b3bffaac43b366382495f6aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arrowObject: {fileID: 5905268719822019649}
   isLeft: 1
   moveSpeed: 10
-  arrowObject: {fileID: 5905268719822019649}
   blinkTime: 0.25
 --- !u!1 &122458689962290054
 GameObject:
@@ -575,9 +552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99947eaf89b2de14db2ac39e0ce1c1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayNightCycle: {fileID: 0}
   maxIntensity: 2.5
-  changeSpeed: 2
 --- !u!65 &7082372324507032090
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -706,9 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99947eaf89b2de14db2ac39e0ce1c1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayNightCycle: {fileID: 0}
   maxIntensity: 2.5
-  changeSpeed: 2
 --- !u!65 &998613053162289804
 BoxCollider:
   m_ObjectHideFlags: 0

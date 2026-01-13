@@ -17,6 +17,11 @@ public class Star : MonoBehaviour
 
     public GameObject starEffectPrefab; //이펙
 
+    void OnEnable() 
+    {
+        isCollected = false;
+    }
+
     void Update()
     {
         // 1. Z축을 기준으로 뱅글뱅글 회전
@@ -48,8 +53,8 @@ public class Star : MonoBehaviour
             GameObject effect = Instantiate(starEffectPrefab, transform.position, Quaternion.identity);
             Destroy(effect, 1.0f); // 1초 뒤 삭제
 
-            // 별 아이템 삭제
-            Destroy(gameObject);
+            // 별 아이템 비활성화
+            gameObject.SetActive(false);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ public class ObjectPooler : MonoBehaviour
     [Header("아이템 배열")]
     public List<GameObject> starObstacles;  // 별 아이템 배열
     public List<GameObject> heliObstacles;  // 헬기 아이템 배열
+    public List<GameObject> magnetObstacles; // 자석 아이템 배열
     
     // 내부 변수
     Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>(); // 프리팹-오브젝트 큐 딕셔너리
@@ -39,6 +41,7 @@ public class ObjectPooler : MonoBehaviour
 
         InitializePool(starObstacles);
         InitializePool(heliObstacles);
+        InitializePool(magnetObstacles);
     }
 
     // 프리팹 리스트를 받아서 딕셔너리에 초기화
@@ -85,6 +88,24 @@ public class ObjectPooler : MonoBehaviour
         }
 
         obj.SetActive(true);
+
+        // 자식 오브젝트 활성화
+        foreach(Transform child in obj.transform)
+        {
+            child.gameObject.SetActive(true); // 자식 오브젝트들도 활성화
+        }
+
+        // 자식 리지드바디 초기화
+        Rigidbody[] carRb = obj.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in carRb)
+        {
+            rb.velocity = Vector3.zero; // 리지드바디 속도 초기화
+            rb.angularVelocity = Vector3.zero; // 리지드바디 각속도 초기화
+            rb.isKinematic = true; // 리지드바디 키네마틱 모드로 설정
+            rb.useGravity = false; // 중력 비활성화
+        }
+
+        // 위치 및 회전 설정
         obj.transform.position = position;
         obj.transform.rotation = rotation;
         obj.transform.SetParent(parent);
@@ -106,7 +127,7 @@ public class ObjectPooler : MonoBehaviour
         {
             obj.SetActive(false);
             poolDictionary[member.myPrefab].Enqueue(obj);
-        } else Destroy(obj);
+        } else Destroy(obj);    // 풀에 없는 오브젝트는 파괴 (ex. 이펙트)
     }
 }
 

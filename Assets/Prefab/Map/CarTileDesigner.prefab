@@ -188,9 +188,13 @@ MonoBehaviour:
   - {fileID: 3037490845441552490, guid: 9ea2e0078b6442d4a8bc14d8e5c8bd8e, type: 3}
   heliObstacles:
   - {fileID: 3037490845441552490, guid: 101a20800b656fd4f90db62813558663, type: 3}
-  itemRate: 0.5
+  magnetObstacles:
+  - {fileID: 1853532972408782514, guid: 5a22e61fac296f54a9be6176db385f31, type: 3}
+  itemRate: 0.3
   itemCooltime: 30
   starHeliRate: 0.7
+  magnetRate: 0.3
+  magnetCooltime: 45
   score: 0
   level_2Score: 5000
   level_3Score: 15000

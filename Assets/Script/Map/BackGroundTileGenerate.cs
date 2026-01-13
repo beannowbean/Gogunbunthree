@@ -71,7 +71,7 @@ public class BackGroundTileGenerate : MonoBehaviour // 플레이어 뒤 박스 �
 
         // 가장 먼 타일 기준 새로운 타일 배치 (오차 0.1f 겹치게)
         oldTile.transform.position = new Vector3(oldTile.transform.position.x, oldTile.transform.position.y, 
-            maxZ + TileLength - 0.1f);
+            maxZ + TileLength - 1f);
     }
 
     //  타일 위에 빌딩 생성

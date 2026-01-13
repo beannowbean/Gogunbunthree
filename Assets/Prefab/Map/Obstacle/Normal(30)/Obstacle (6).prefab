@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5589244861812919660}
   - component: {fileID: 7043612722830874706}
+  - component: {fileID: 7248657386484772775}
   m_Layer: 0
   m_Name: Obstacle (6)
   m_TagString: Untagged
@@ -59,6 +60,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 30, y: 50, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7248657386484772775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123837780187204746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dca5addd59d9b64a859f5da39e54d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &744403494634181192
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,14 +150,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5589244861812919660}
     m_Modifications:
-    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: isLeft
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 173682462123208, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: m_Name
       value: MoveCar
@@ -196,6 +201,14 @@ PrefabInstance:
     - target: {fileID: 921147733298921098, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: isLeft
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: isLeft
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -289,14 +302,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5589244861812919660}
     m_Modifications:
-    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: isLeft
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 173682462123208, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: m_Name
       value: MoveCar (2)
@@ -345,6 +350,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: isLeft
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -363,14 +376,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5589244861812919660}
     m_Modifications:
-    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: isLeft
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 173682462123208, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: m_Name
       value: MoveCar (1)
@@ -434,6 +439,14 @@ PrefabInstance:
     - target: {fileID: 921147733298921098, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: isLeft
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: isLeft
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

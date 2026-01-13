@@ -227,7 +227,6 @@ GameObject:
   - component: {fileID: 3713364285816579023}
   - component: {fileID: 299312016956796010}
   - component: {fileID: 2577090296108538016}
-  - component: {fileID: 6309881947920720533}
   - component: {fileID: 134943983157014837}
   - component: {fileID: 2193691200728253574}
   m_Layer: 0
@@ -314,28 +313,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6309881947920720533
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4090206930579519861}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 9001293460107514281, guid: a33ce5f236905db4e975e1283aafc172, type: 3}
 --- !u!65 &134943983157014837
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -707,9 +684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99947eaf89b2de14db2ac39e0ce1c1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayNightCycle: {fileID: 0}
   maxIntensity: 2.5
-  changeSpeed: 2
 --- !u!65 &634915344090206924
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -871,9 +846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99947eaf89b2de14db2ac39e0ce1c1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayNightCycle: {fileID: 0}
   maxIntensity: 2.5
-  changeSpeed: 2
 --- !u!65 &1234863652215438388
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -8,6 +8,18 @@ public class Coin : MonoBehaviour
     public float flySpeed = 30.0f; // 날아가는 속도
     public float magnetRange = 10.0f; // 자석 감지 범위 (무제한으로 하려면 아주 큰 수)
 
+    private Vector3 initialPos; // 초기 위치 저장 변수
+
+    void Awake()
+    {
+        initialPos = transform.localPosition; // 초기 위치 저장
+    }
+
+    void OnEnable()
+    {
+        transform.localPosition = initialPos; // 활성화될 때마다 초기 위치로 리셋
+    }
+
     void Start()
     {
         // 게임 시작 시 플레이어 찾아두기

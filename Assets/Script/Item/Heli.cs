@@ -14,10 +14,15 @@ public class Heli : MonoBehaviour
 
     private GameObject currentAurora;   //오오라 이펙트 관리
 
-    void Start()
+    void OnEnable()
     {
-        // 아이템 생성 시 오오라 이펙트 추가
-        currentAurora = Instantiate(heliAuroraEffectPrefab, transform.position, Quaternion.Euler(-90f, 0f, 0f));
+        if(currentAurora == null)
+        {
+            // 아이템 생성 시 오오라 이펙트 추가
+            currentAurora = Instantiate(heliAuroraEffectPrefab, transform.position, Quaternion.Euler(-90f, 0f, 0f));
+            currentAurora.transform.SetParent(transform); // 아이템의 자식으로 설정
+        }
+        currentAurora.SetActive(true); // 활성화
     }
 
     void Update()
@@ -48,10 +53,10 @@ public class Heli : MonoBehaviour
 
             SFXManager.Instance.Play("HeliSound");  // 헬기 아이템 먹을 시 획득 사운드	
             SFXManager.Instance.Play("Helicopter");    // 헬리콥터 내려오는 사운드
-            Destroy(currentAurora); // 헬기 아래 이펙트 삭제
+            currentAurora.SetActive(false); // 헬기 아래 이펙트 비활성화
 
-            // 아이템 삭제
-            Destroy(gameObject);
+            // 아이템 비활성화
+            gameObject.SetActive(false);
         }
     }
 }
