@@ -264,7 +264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: sounds.Array.size
-      value: 12
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: sounds.Array.data[0].clip
@@ -315,6 +315,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 4bfb60fb6713949f3977dc3d9533e0b3, type: 3}
     - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: sounds.Array.data[12].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 836e43ca2626c4a199a22f0e6a814e80, type: 3}
+    - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: sounds.Array.data[13].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 113492e45470249dd88e46e56861d297, type: 3}
+    - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: sounds.Array.data[0].volume
       value: 1
       objectReference: {fileID: 0}
@@ -324,6 +332,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
       propertyPath: sounds.Array.data[11].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: sounds.Array.data[12].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802356369687677683, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
+      propertyPath: sounds.Array.data[13].volume
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9100888040610301167, guid: f5b1ee9276b747e4991df1ee7f0bc716, type: 3}
@@ -386,46 +402,6 @@ PrefabInstance:
     - target: {fileID: 6490136728237138907, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: isEnding
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: isControl
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: rayLength
-      value: 0.501
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: vanRoofTag
-      value: VanRoof
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: isInvincible
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: heliSpawnChance
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: coinEffectPrefab
-      value: 
-      objectReference: {fileID: 9035389033025327860, guid: a5030b96398a749c182cc73b42009d3e, type: 3}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: helicopterPrefab
-      value: 
-      objectReference: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
-    - target: {fileID: 6502128198573726866, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: groundLayer.m_Bits
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8120824050876661377, guid: f468f60e7e86746e6b7b71a1d1901d67, type: 3}
-      propertyPath: m_Interpolate
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

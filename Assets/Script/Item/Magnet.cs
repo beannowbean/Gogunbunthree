@@ -6,6 +6,9 @@ public class Magnet : MonoBehaviour
     public float rotateSpeed = 100.0f;
     public float duration = 10.0f; // 자석 지속 시간
 
+    // UI에 넣을 이미지
+    public Sprite iconSprite;
+
     void Update()
     {
         // 아이템 뱅글뱅글 회전
@@ -22,8 +25,10 @@ public class Magnet : MonoBehaviour
                 // 플레이어에게 자석 효과 켜라고 명령
                 player.ActivateMagnet(duration);
 
-                // 효과음
-                // SFXManager.Instance.Play("ItemGet");
+                ItemUIController.Instance.ActivateNextAvailableItem(duration, iconSprite);
+
+                // 자석 지속시간동안 효과음
+                SFXManager.Instance.Play("MagnetSound");
             }
             Destroy(gameObject);
         }
