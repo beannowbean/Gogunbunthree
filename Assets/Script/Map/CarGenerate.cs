@@ -16,10 +16,14 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     [Header("아이템 배열")]
     public GameObject[] starObstacles;  // 별 아이템 배열
     public GameObject[] heliObstacles;  // 헬기 아이템 배열
-    public float itemRate = 0.1f;   // 아이템 등장 확률
+    public GameObject[] magnetObstacles; // 자석 아이템 배열
+    public float itemRate = 0.3f;   // 아이템 등장 확률
     public float itemCooltime = 30f; // 아이템 등장 쿨타임
     public float starHeliRate = 0.7f; // 별 확률 (나머지는 헬기)
+    public float magnetRate = 0.3f; // 자석 확률
+    public float magnetCooltime = 45f; // 자석 쿨타임
     float itemTimer; // 아이템 타이머
+    float magnetTimer; // 자석 타이머
     
     [Header("난이도 설정")]
     public int score = 0;   // 점수
@@ -52,6 +56,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
 
         // 아이템 타이머 초기화
         itemTimer = Time.time;
+        magnetTimer = Time.time;
 
         // 게임 시작 시 보이는 차 생성
         MakeStartCar();
@@ -177,8 +182,9 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         // 일반 차 생성
         else
         {
-            // 일정 확률로 아이템 배열 사용 (배열의 마지막 인덱스 장애물은 무조건 star 사용한 장애물)
+            // 일정 확률로 별/헬기 아이템 배열 사용
             bool itemTile = (Time.time >= itemTimer + itemCooltime) && (Random.value < itemRate);   // itemCooltime 지나고, itemRate 확률 시
+            bool magnetTile = (Time.time >= magnetTimer + magnetCooltime) && (Random.value < magnetRate); // magnetCooltime 지나고, magnetRate 확률 시
             if(itemTile == true)
             {
                 // 아이템 배열 중 별 or 헬기 선택
@@ -189,6 +195,17 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
 
                 // itemTimer 초기화
                 itemTimer = Time.time;
+            }
+            else if(magnetTile == true)
+            {
+                // 자석 배열 사용
+                obstacles = magnetObstacles;
+
+                // 자석 배열에서 하나 선택
+                nextObstacle = ChooseObstacle(obstacles);
+
+                // magnetTimer 초기화
+                magnetTimer = Time.time;
             }
             // 아이템 아닐 시 일반 차 생성
             else

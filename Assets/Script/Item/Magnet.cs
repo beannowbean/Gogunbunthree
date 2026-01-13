@@ -30,7 +30,7 @@ public class Magnet : MonoBehaviour
                 // 자석 지속시간동안 효과음
                 SFXManager.Instance.Play("MagnetSound");
             }
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

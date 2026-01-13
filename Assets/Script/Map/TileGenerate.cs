@@ -82,6 +82,6 @@ public class TileGenerate : MonoBehaviour
 
         // 가장 먼 타일 기준 새로운 타일 배치
         oldTile.transform.position = new Vector3(oldTile.transform.position.x, targetY, 
-            maxZ + TileLength - 0.1f);
+            maxZ + TileLength - 1f);
     }
 }

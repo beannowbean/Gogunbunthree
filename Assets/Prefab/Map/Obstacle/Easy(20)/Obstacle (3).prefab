@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6613254669728299327}
   - component: {fileID: 7142428454185890685}
+  - component: {fileID: -9213122284129562840}
   m_Layer: 0
   m_Name: Obstacle (3)
   m_TagString: Untagged
@@ -69,6 +70,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 30, y: 50, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-9213122284129562840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8838705591399663506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dca5addd59d9b64a859f5da39e54d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &848861645476228280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1039,10 +1052,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6613254669728299327}
     m_Modifications:
-    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: isLeft
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 173682462123208, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: m_Name
       value: MoveCar
@@ -1088,6 +1097,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 921147733298921098, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
+      propertyPath: isLeft
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 921147733298921098, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
       propertyPath: isLeft
       value: 0
       objectReference: {fileID: 0}
