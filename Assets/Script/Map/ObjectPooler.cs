@@ -22,26 +22,32 @@ public class ObjectPooler : MonoBehaviour
     public List<GameObject> heliObstacles;  // 헬기 아이템 배열
     
     // 내부 변수
-    Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
+    Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>(); // 프리팹-오브젝트 큐 딕셔너리
 
     private void Awake()
     {
+        // 싱글톤 인스턴스 설정
         Instance = this;
         
         // 모든 리스트의 프리팹들을 하나의 딕셔너리에 초기화 (각 2개씩)
         InitializePool(backgroundBuildings);
+
         InitializePool(level_1Obstacles);
         InitializePool(level_2Obstacles);
         InitializePool(level_3Obstacles);
         InitializePool(tutorialObstacles);
+
         InitializePool(starObstacles);
         InitializePool(heliObstacles);
     }
 
+    // 프리팹 리스트를 받아서 딕셔너리에 초기화
     private void InitializePool(List<GameObject> prefabList)
     {
+        // 각 프리팹마다 오브젝트 풀 생성
         foreach (GameObject prefab in prefabList)
         {
+            // 이미 딕셔너리에 있거나 null이면 건너뜀
             if (prefab == null || poolDictionary.ContainsKey(prefab)) continue;
 
             Queue<GameObject> objectPool = new Queue<GameObject>();
@@ -49,8 +55,7 @@ public class ObjectPooler : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 GameObject obj = Instantiate(prefab);
-                obj.AddComponent<PoolMember>().myPrefab = prefab;
-                // obj.name = prefab.name; 
+                obj.AddComponent<PoolMember>().myPrefab = prefab;   // 풀 멤버 컴포넌트 추가 (어떤 프리팹에서 왔는지 추적용)
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
             }
@@ -58,8 +63,10 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
+    // 오브젝트 풀에서 꺼내는 함수
     public GameObject GetPool(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
     {
+        // 이미 딕셔너리에 있거나 null이면 null 반환
         if (prefab == null && !poolDictionary.ContainsKey(prefab)) return null;
 
         // 큐에서 꺼냈는데 혹시 파괴된 오브젝트라면 다시 꺼내도록 루프
@@ -86,10 +93,15 @@ public class ObjectPooler : MonoBehaviour
         return obj;
     }
 
+    // 오브젝트 풀에 반환하는 함수
     public void ReturnPool(GameObject obj)
     {
+        // 인스턴스가 없거나 null이면 건너뜀
         if(Instance == null || obj == null) return;
-        PoolMember member = obj.GetComponent<PoolMember>();
+
+        PoolMember member = obj.GetComponent<PoolMember>(); // 풀 멤버 컴포넌트 참조 (어떤 프리팹에서 왔는지 추적용)
+
+        // 딕셔너리에 해당 프리팹이 있으면 큐에 반환, 없으면 파괴
         if (member != null && poolDictionary.ContainsKey(member.myPrefab))
         {
             obj.SetActive(false);
@@ -98,6 +110,7 @@ public class ObjectPooler : MonoBehaviour
     }
 }
 
+// 풀 멤버 컴포넌트 (어떤 프리팹에서 왔는지 추적용)
 public class PoolMember : MonoBehaviour
 {
     public GameObject myPrefab;

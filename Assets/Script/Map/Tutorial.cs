@@ -1,32 +1,48 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
+/// <summary>
+/// 튜토리얼 스크립트
+/// </summary>
+public class Tutorial : MonoBehaviour
 {
-    int tutorialStage = 0;
-    public bool isPaused = false;
-    public GameObject[] tutorialObject;
-    Player player;
-    private bool inputUsed = false;
+    public bool isPaused = false;   // 튜토리얼 일시정지 상태
+    public GameObject[] tutorialObject; // 튜토리얼 관련 UI 오브젝트
+    public bool isTutorialEnd = false; // 튜토리얼 종료 여부 (외부에서 튜토리얼 끝났는지 확인하려면 이 변수 사용)
+
+    // 내부 변수
+    Player player;  // 플레이어 참조
+    int tutorialStage = 0;  // 튜토리얼 단계
+    bool inputUsed = false; // 입력 사용 여부
 
     void Start() 
     {
+        // 참조 설정
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+        // 모든 튜토리얼 오브젝트 비활성화
         for(int i = 0; i < tutorialObject.Length; i++)
         {
             tutorialObject[i].SetActive(false);
-        }    
+        }
+
+        // 튜토리얼 배치가 끝나면 tutorialSkip이 true가 되므로 바로 종료되는 것 방지
         if(isPaused == false) return;
+
+        // 튜토리얼 스킵 시 플레이어 조작 가능
         if(UIController.tutorialSkip == true) {
             player.isControl = true;
+            isTutorialEnd = true;
         }
     }
+
     void Update()
     {
+        // 입력 대기 중이면 무시
         if(inputUsed == true) return;
-        // 튜토리얼 단계별 입력 대기
-        if(tutorialStage == 1)
+
+        // 튜토리얼 단계별 입력 대기, 키 입력시 튜토리얼 진행
+        if(tutorialStage == 1)  // 점프 튜토리얼
         {
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             {
@@ -35,7 +51,8 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
                 player.Jump();
             }
         }
-        if(tutorialStage == 2)
+
+        if(tutorialStage == 2)  // 좌우 이동 튜토리얼
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow)) {
                 tutorialObject[tutorialStage - 1].SetActive(false);
@@ -48,7 +65,8 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
                 player.ChangeLane(1);
             }
         }
-        if(tutorialStage == 3)
+
+        if(tutorialStage == 3)  // 다시 점프 튜토리얼
         {
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             {
@@ -57,7 +75,8 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
                 player.Jump();
             }
         }
-        if(tutorialStage == 4)
+
+        if(tutorialStage == 4)  // 후크 튜토리얼
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -75,7 +94,9 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
         {
             inputUsed = false;
             tutorialStage++;
-            isPaused = true;
+
+            // 일시정지 상태 설정
+            isPaused = true;    
             Time.timeScale = 0f;
             tutorialObject[tutorialStage - 1].SetActive(true);
         }  
@@ -87,10 +108,12 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
         inputUsed = true;
         isPaused = false;
         Time.timeScale = 1f;
+
         // 약간의 딜레이 후 일시정지
-        yield return null;
+        yield return null;  // 한 프레임 대기
         yield return null;
         yield return new WaitForSecondsRealtime(0.1f);
+
         isPaused = true;
         Time.timeScale = 0f;
         tutorialObject[tutorialStage].SetActive(true);
@@ -105,8 +128,11 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
         inputUsed = true;
         isPaused = false;
         Time.timeScale = 1f;
+
         yield return null;
         yield return null;
+
+        // 튜토리얼 끝나면 tutorialStage 5로 설정
         if (endTutorial)
         {
             tutorialStage = 5;
@@ -119,5 +145,9 @@ public class Tutorial : MonoBehaviour   // 튜토리얼 스크립트
         yield return new WaitForSecondsRealtime(0.5f);
         player.isControl = true;
         UIController.tutorialSkip = true;
+
+        // 튜토리얼 종료 플래그 설정
+        yield return new WaitForSecondsRealtime(3f);
+        isTutorialEnd = true;
     }
 }
