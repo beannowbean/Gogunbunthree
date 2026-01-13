@@ -18,11 +18,13 @@ public class ScoreManager : MonoBehaviour
 
     private int currentScore = 0;       // 최종 계산된 점수
     private int bestScore = 0;          // 최고 점수
+    private int lastDisplayedScore = -1; // 마지막으로 표시된 점수 (최적화용)
     
     private bool IsNewRecord = false;   // 뉴 레코드 여부
     private bool isGameOver = false;    // 게임 오버 여부
 
-    public TextMeshProUGUI inGameScoreText; // 인게임 점수 표시용
+    public TextMeshProUGUI inGameScoreText; // 현재 점수 표시용
+    public TextMeshProUGUI bestScoreText;   // 베스트 점수 표시용
     public TextMeshProUGUI bonusScoreText;  // 보너스 점수 표시용 (점수 위에 표시)
 
 
@@ -58,18 +60,38 @@ public class ScoreManager : MonoBehaviour
         float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100) + (carKnockCount * 50);
         currentScore = Mathf.FloorToInt(rawScore);
 
-        // 점수 표시 업데이트
-        UpdateScoreDisplay();
+        // 점수가 변경되었을 때만 UI 업데이트 (성능 최적화)
+        if (currentScore != lastDisplayedScore)
+        {
+            UpdateScoreDisplay();
+            lastDisplayedScore = currentScore;
+        }
     }
 
     void UpdateScoreDisplay()
     {
-        if(currentScore < bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}\nBEST:\t{bestScore - currentScore}";
-        else if (currentScore == bestScore)
-            inGameScoreText.text = $"SCORE:\t{currentScore}";
-        else
-            inGameScoreText.text = $"SCORE:\t{currentScore}\n<color=#FF5A11>NEW RECORD!</color>";
+        // 현재 점수 표시
+        if (inGameScoreText != null)
+        {
+            inGameScoreText.text = $"SCORE:\t{currentScore}";;
+        }
+        
+        // 베스트 점수 표시
+        if (bestScoreText != null)
+        {
+            if (currentScore < bestScore)
+            {
+                bestScoreText.text = $"BEST:\t{bestScore - currentScore}";
+            }
+            else if (currentScore == bestScore)
+            {
+                bestScoreText.text = "";
+            }
+            else
+            {
+                bestScoreText.text = "<color=#FF5A11>NEW RECORD!</color>";
+            }
+        }
     }
 
 
@@ -129,6 +151,7 @@ public class ScoreManager : MonoBehaviour
         carKnockCount = 0;
         currentScore = 0;
         survivalTime = 0f;
+        lastDisplayedScore = -1;
         IsNewRecord = false;
         isGameOver = false;
     }
@@ -151,6 +174,31 @@ public class ScoreManager : MonoBehaviour
             
             // 초기 위치와 알파값 설정
             bonusText.transform.localPosition = bonusScoreText.transform.localPosition;
+            
+            // 점수 텍스트의 너비를 계산하여 보너스 텍스트 위치를 오른쪽으로 이동
+            if (inGameScoreText != null)
+            {
+                // TextMeshPro의 textInfo를 사용하여 실제 문자 위치 기반으로 너비 계산
+                inGameScoreText.ForceMeshUpdate();
+                TMP_TextInfo textInfo = inGameScoreText.textInfo;
+                
+                float scoreTextWidth = 0f;
+                
+                // 문자가 있을 때만 계산
+                if (textInfo.characterCount > 0)
+                {
+                    // 마지막 문자의 오른쪽 끝 위치 찾기
+                    TMP_CharacterInfo lastChar = textInfo.characterInfo[textInfo.characterCount - 1];
+                    scoreTextWidth = lastChar.xAdvance;
+                }
+                
+                // 보너스 텍스트를 점수 텍스트의 오른쪽에 배치 (왼쪽 정렬 기준)
+                Vector3 adjustedPos = bonusText.transform.localPosition;
+                float baseX = inGameScoreText.transform.localPosition.x;
+                adjustedPos.x = baseX + scoreTextWidth + 130f; // 시작점 + 너비 + 여백
+                bonusText.transform.localPosition = adjustedPos;
+            }
+            
             Color startColor = bonusText.color;
             startColor.a = 1f;
             bonusText.color = startColor;
