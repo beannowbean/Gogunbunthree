@@ -459,11 +459,18 @@ public class Player : MonoBehaviour
         {
             if (isInvincible)
             {
-                other.gameObject.tag = "Untagged";  // 스타상태로 부딪힐 시 중복 충돌 판정 삭제를 위한 태그삭제
+                // 중복 충돌 판정 버그 수정
+                Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
+
+                // 만약 차가 날아가고있다면 리턴
+                if (carRb != null && carRb.useGravity == true)
+                {
+                    return;
+                }
+
 
                 // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
                 SFXManager.Instance.Play("CarBounceOff");
-                Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
                 if (carRb != null)
                 {
                     carRb.isKinematic = false;
