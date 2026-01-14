@@ -228,6 +228,12 @@ public class Player : MonoBehaviour
         if (currentHook != null)
         {
             if (!lineRenderer.enabled) lineRenderer.enabled = true;
+
+            // 헬기 랜딩에서 지점을 없앴기에 다시 재선
+            if (lineRenderer.positionCount != 2)
+            {
+                lineRenderer.positionCount = 2;
+            }
             lineRenderer.SetPosition(0, hookStartingPoint.position);
             lineRenderer.SetPosition(1, currentHook.transform.position);
         }
@@ -239,6 +245,8 @@ public class Player : MonoBehaviour
 
     public void hookShoot()
     {
+        if (isHelicopterInvincible && !isGrounded) return;  // 헬기에서 내려올 때는 갈고리 발사 금지
+
         if (currentHook != null) return;
         Quaternion projectileRotation = Quaternion.Euler(-90f - hookAngle, transform.eulerAngles.y, 0f);
         currentHook = Instantiate(hookPrefab, hookStartingPoint.position, projectileRotation);
@@ -252,17 +260,17 @@ public class Player : MonoBehaviour
 
     void ReleaseHook()
     {
-        // 훅 해제 시 중력을 다시 켜줍니다.
+        // 헬리콥터에서 내리고 3초 무적일 때, 갈고리가 유지되는 현상수정
+        // 변수 초기화 순서 변경
+        isHooked = false;
         rb.useGravity = true;
+        lineRenderer.enabled = false;
 
         if (currentHook != null)
         {
             Destroy(currentHook);
             currentHook = null;
         }
-
-        isHooked = false;
-        lineRenderer.enabled = false;
     }
 
     void MoveToHook()
@@ -312,7 +320,24 @@ public class Player : MonoBehaviour
     public void ReleaseHelicopter()
     {
         isHelicopter = false;
-        ReleaseHook();
+
+        // 플레이어가 헬리콥터에서 내린 후 갈고리와 로프가 헬리콥터에서 안 사라지고 남아있는 현상 수정을 위한 release hook 로직 직접 적용
+        isHooked = false;
+
+        rb.velocity = Vector3.zero;
+        rb.useGravity = true;
+
+        if (currentHook != null)
+        {
+            Destroy(currentHook); 
+            currentHook = null;   
+        }
+
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = false;
+            lineRenderer.positionCount = 0;
+        }
 
         // 헬리콥터에서 내린 후 3초간 무적 코루틴 
         StartCoroutine(GetOffHelicopter());
@@ -352,7 +377,7 @@ public class Player : MonoBehaviour
         isHelicopterInvincible = false; // 무적 끄기
     }
 
-    void QuickDive()
+    public void QuickDive() // 참조 가능하게 수정
     {
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
     }
@@ -417,7 +442,13 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Coin"))
         {
-            if (isGameOver) return;
+            // 게임 오버시 부딪힌 코인은 삭제
+            if (isGameOver)
+            {
+                other.gameObject.SetActive(false);
+                return;
+            }
+
             SFXManager.Instance.Play("Coin", 0.98f, 1.02f);
             GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
             Destroy(effect, 1.0f);
@@ -428,6 +459,8 @@ public class Player : MonoBehaviour
         {
             if (isInvincible)
             {
+                other.gameObject.tag = "Untagged";  // 스타상태로 부딪힐 시 중복 충돌 판정 삭제를 위한 태그삭제
+
                 // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
                 SFXManager.Instance.Play("CarBounceOff");
                 Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
@@ -586,7 +619,7 @@ public class Player : MonoBehaviour
         SFXManager.Instance.Play("Crashed");
 
         yield return new WaitForSecondsRealtime(3.0f);
-        SFXManager.Instance.Stop("Helicopter");
+        SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정
         Time.timeScale = 0f;
         UIController.Instance.EndGame();
     }
