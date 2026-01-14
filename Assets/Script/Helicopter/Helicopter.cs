@@ -24,7 +24,6 @@ public class Helicopter : MonoBehaviour
     private float stayDuration = 5.0f;
 
     private float currentHeight;
-    private bool isChasing = true;
 
     // 아이템 로직을 위해 갈고리가 걸려있는지 확인하는 변수
     private bool isHookedHelicopter = false;
@@ -51,11 +50,6 @@ public class Helicopter : MonoBehaviour
     void Update()
     {
         transform.position = new Vector3(transform.position.x, currentHeight, transform.position.z);
-    }
-
-    public void StopChasing()
-    {
-        isChasing = false;
     }
 
     // Hook.cs에서 이 함수를 호출하여 훅이 걸렸다고 전달.
@@ -103,7 +97,7 @@ public class Helicopter : MonoBehaviour
         yield return new WaitForSeconds(coinMapDuration);
 
         // [5단계] CoinMap에서 지상으로 하강
-        while (Mathf.Abs(currentHeight - targetHeight) > 0.1f)
+        while (Mathf.Abs(currentHeight - (targetHeight + 1)) > 0.1f)  // 차에 부딪히면 죽는 현상 수정 (좀 더 높은 데서 떨어짐)
         {
             currentHeight = Mathf.MoveTowards(currentHeight, targetHeight, moveSpeed * Time.deltaTime);
             yield return null;

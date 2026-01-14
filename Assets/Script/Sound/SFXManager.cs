@@ -195,4 +195,13 @@ public class SFXManager : MonoBehaviour
             if (src != null) src.UnPause();
         }
     }
+
+    // 게임 오버 시 소리 전부 stop
+    public void StopAll()
+    {
+        foreach (var src in sources)
+        {
+            if (src != null) src.Stop();
+        }
+    }
 }
