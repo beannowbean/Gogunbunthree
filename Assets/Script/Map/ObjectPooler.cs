@@ -101,8 +101,8 @@ public class ObjectPooler : MonoBehaviour
         Rigidbody[] carRb = obj.GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody rb in carRb)
         {
-            rb.velocity = Vector3.zero; // 리지드바디 속도 초기화
-            rb.angularVelocity = Vector3.zero; // 리지드바디 각속도 초기화
+            //rb.velocity = Vector3.zero; // 리지드바디 속도 초기화
+            //rb.angularVelocity = Vector3.zero; // 리지드바디 각속도 초기화
             rb.isKinematic = true; // 리지드바디 키네마틱 모드로 설정
             rb.useGravity = false; // 중력 비활성화
         }
