@@ -46,6 +46,7 @@ public class Coin : MonoBehaviour
             {
                 // MoveTowards로 플레이어 위치로 이동
                 transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, flySpeed * Time.deltaTime);
+                if(playerScript.isGameOver) gameObject.SetActive(false);
             }
         }
     }
