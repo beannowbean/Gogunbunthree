@@ -137,7 +137,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             maxZ + TileLength);
     }
 
-    //  타일 위에 빌딩 생성
+    //  타일 위에 차 생성
     private void MakeCar(Collider oldTile)
     {
         // 오브젝트 풀러 대기 확인
@@ -215,7 +215,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             }
         }
 
-        // 기존 빌딩의 위치, 부모 정보 기억 후 반납
+        // 기존 차의 위치, 부모 정보 기억 후 반납
         Vector3 pos = obstacle.position;
         Transform parent = oldTile.transform;
 
