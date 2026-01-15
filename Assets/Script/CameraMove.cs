@@ -7,7 +7,7 @@ public class CameraMove : MonoBehaviour // 디자이너 -> 충돌 감지 콜라�
 {
     public TileGenerate tileGenerate;   // 타일 생성기 참조
     public GameObject[] designer;   // 디자이너
-    public GameObject VarDesigner;  // MovingCar 디자이너
+    public GameObject varDesigner;  // MovingCar 디자이너
     public Transform target;    // 따라갈 플레이어
     public Vector3 offset = new Vector3(0, 3, -5);   // 기본 오프셋
     public float followSpeed = 5f;    // 위치 따라가기 속도 
@@ -24,7 +24,7 @@ public class CameraMove : MonoBehaviour // 디자이너 -> 충돌 감지 콜라�
         {
             designerOffsets[i] = designer[i].transform.position - transform.position;
         }
-        varDesignerOffset = VarDesigner.transform.position - transform.position;
+        varDesignerOffset = varDesigner.transform.position - transform.position;
     }
 
     void LateUpdate()
@@ -60,6 +60,6 @@ public class CameraMove : MonoBehaviour // 디자이너 -> 충돌 감지 콜라�
                 break;
         }
         varDesiredPos.y = 0;
-        VarDesigner.transform.position = varDesiredPos;
+        varDesigner.transform.position = varDesiredPos;
     }
 }

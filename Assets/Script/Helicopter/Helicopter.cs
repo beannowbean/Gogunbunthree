@@ -56,6 +56,7 @@ public class Helicopter : MonoBehaviour
     public void PlayerHooked()
     {
         isHookedHelicopter = true;
+        CoinMapGenerate();
     }
 
     IEnumerator MoveRoutine()
@@ -123,4 +124,13 @@ public class Helicopter : MonoBehaviour
         SFXManager.Instance.Stop("Helicopter");
         Destroy(gameObject);
     } 
+
+    // 헬기 코인 맵 생성
+    void CoinMapGenerate()
+    {
+        float reachTime = (coinMapHeight - targetHeight) / moveSpeed;
+        TileGenerate tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>(); // tileSpeed 참조용
+        HeliCoinGenerate heliCoinGenerate = GameObject.FindGameObjectWithTag("HeliCoinGenerator").GetComponent<HeliCoinGenerate>(); // startCoinMap 호출용
+        heliCoinGenerate.StartCoinMap(tileGenerate.tileSpeed, reachTime);
+    }
 }
