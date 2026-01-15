@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     public float groundCheckDistance = 1.1f;
     public LayerMask groundLayer;
     public float rayOffsetY = 0.5f;
-    public float rayLength = 0.501f;
+    private float rayLength = 0.6f; // van위에서 점프 딜레이 해결을 위한 바닥 인식 범위 늘리기
 
     // Hook 관련 설정
     public GameObject hookPrefab;
@@ -42,9 +42,14 @@ public class Player : MonoBehaviour
     public LineRenderer lineRenderer;
     public int hookAngle = 30;
     public float hookPullSpeed = 30.0f;
+    private bool isHookVisible = false;    // 훅이 안보이도록 하는 변수
+    private Coroutine visualDelayCoroutine; // 훅이 안보이게 하는 코루틴 선언
+
+    // Helicopter 관련 변수
     public bool isHelicopter = false;
     public float helicopterDistance = 4.0f;
     private bool isHelicopterInvincible = false; // 헬리콥터에서 내릴 때 무적 확인 변수
+    private bool isDroppingHeli = false;    // 헬리콥터에서 내려오는 동안인지 확인하는 변수
 
     // GameOver 관련 변수
     public bool isGameOver = false;
@@ -139,68 +144,84 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(moveVector.x, transform.position.y, transform.position.z);
     }
 
+    // 스와이프 중복 인식을 막기 위한 변수
+    private bool hasSwiped = false;
+
+    // 모바일 시 갈고리와 스와이프로직 충돌 수정
     void CheckInput()
     {
-        if (Time.timeScale == 0f || isResuming) return;     // 일시정지시 Input 안받도록
+        if (Time.timeScale == 0f || isResuming) return;
+
+        // 키보드 입력 유지
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
         if (Input.GetKeyDown(KeyCode.RightArrow)) ChangeLane(1);
+
         if (!isHelicopter)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) Jump();
-
-            // 훅 발사 조건: 마우스 클릭 시 + 공중이거나 땅이어도 상관없다면 조건 제거 가능
-            // 여기서는 기존 로직 유지하되, 땅에서도 쏠 수 있게 하려면 !isGrounded 제거하면 됨
-            if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
-
-            if (Input.GetMouseButtonUp(0) && isHooked == false) ReleaseHook();
             if (Input.GetKeyDown(KeyCode.DownArrow) && !isGrounded) QuickDive();
+
+            if (Input.GetMouseButtonDown(0) && !isGrounded) hookShoot();
+            if (Input.GetMouseButtonUp(0)) ReleaseHook();
         }
-        
+
+        // 모바일 입력 수정
+        // 터치 후 갈고리는 나가지만 일정거리 움직였다면 바로 끊고 스와이프
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
-            {
-                touchStartPos = touch.position;
-            }
-            else if (touch.phase == TouchPhase.Ended)
-            {
-                touchEndPos = touch.position;
-                if (!isGrounded) hookShoot();
-                CalculateSwipeOrTap();
-            }
-        }
-    }
 
-    void CalculateSwipeOrTap()
-    {
-        float swipeDistanceX = touchEndPos.x - touchStartPos.x;
-        float swipeDistanceY = touchEndPos.y - touchStartPos.y;
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    touchStartPos = touch.position;
+                    hasSwiped = false; // 스와이프 상태 초기화
 
-        bool isSwipe = Mathf.Abs(swipeDistanceX) > minSwipeDistance || Mathf.Abs(swipeDistanceY) > minSwipeDistance;
+                    // 터치하자마자 공중이라면 갈고리 발사
+                    if (!isHelicopter && !isGrounded)
+                    {
+                        hookShoot();
+                    }
+                    break;
 
-        if (isSwipe)
-        {
-            if (Mathf.Abs(swipeDistanceX) > Mathf.Abs(swipeDistanceY))
-            {
-                if (swipeDistanceX > 0) ChangeLane(1);
-                else ChangeLane(-1);
-            }
-            else
-            {
-                if (!isHelicopter)
-                {
-                    if (swipeDistanceY > 0) Jump();
-                    else if (swipeDistanceY < 0) QuickDive();
-                }
-            }
-        }
-        else
-        {
-            if (!isHelicopter)
-            {
-                if (!isGrounded) hookShoot();
-                else ReleaseHook();
+                case TouchPhase.Moved:
+                    // 이미 스와이프 되었다면 리턴
+                    if (hasSwiped) return;
+
+                    Vector2 currentSwipe = touch.position - touchStartPos;
+
+                    // 터치 후 일정거리 움직였다면 스와이프로 판단
+                    if (currentSwipe.magnitude > minSwipeDistance)
+                    {
+                        // 갈고리 취소
+                        ReleaseHook();
+
+                        // 스와이프 실행
+                        if (Mathf.Abs(currentSwipe.x) > Mathf.Abs(currentSwipe.y))
+                        {
+                            if (currentSwipe.x > 0) ChangeLane(1);
+                            else ChangeLane(-1);
+                        }
+                        else
+                        {
+                            if (!isHelicopter)
+                            {
+                                if (currentSwipe.y > 0) Jump();
+                                else QuickDive();
+                            }
+                        }
+
+                        // 중복 실행 버그 방지
+                        hasSwiped = true;
+                    }
+                    break;
+
+                case TouchPhase.Ended:
+                case TouchPhase.Canceled:
+                    // 손을 떼면 무조건 갈고리 해제
+                    ReleaseHook();
+                    hasSwiped = false;
+                    break;
             }
         }
     }
@@ -225,6 +246,20 @@ public class Player : MonoBehaviour
 
     void DrawRope()
     {
+        // 헬기에서 내리는 상태라면 안보이도록
+        if (isHelicopterInvincible)
+        {
+            lineRenderer.enabled = false;
+            return;
+        }
+
+        // 0.1초가 지난 후에만 그리도록 
+        if (!isHookVisible)
+        {
+            lineRenderer.enabled = false;
+            return;
+        }
+
         if (currentHook != null)
         {
             if (!lineRenderer.enabled) lineRenderer.enabled = true;
@@ -245,7 +280,7 @@ public class Player : MonoBehaviour
 
     public void hookShoot()
     {
-        if (isHelicopterInvincible && !isGrounded) return;  // 헬기에서 내려올 때는 갈고리 발사 금지
+        if (isDroppingHeli) return;  // 헬기에서 내려오는 동안에는 갈고리 발사 금지 
 
         if (currentHook != null) return;
         Quaternion projectileRotation = Quaternion.Euler(-90f - hookAngle, transform.eulerAngles.y, 0f);
@@ -255,13 +290,42 @@ public class Player : MonoBehaviour
         hrb.velocity = shootDirection * hookSpeed;
         Hook hookScript = currentHook.GetComponent<Hook>();
         hookScript.player = this;
-        SFXManager.Instance.Play("Hook");
+
+        // 갈고리 안보이도록 설정
+        isHookVisible = false;
+        Renderer hookRenderer = currentHook.GetComponent<Renderer>();
+        if (hookRenderer != null) hookRenderer.enabled = false;
+        lineRenderer.enabled = false;
+        if (visualDelayCoroutine != null) StopCoroutine(visualDelayCoroutine);
+        visualDelayCoroutine = StartCoroutine(ShowHookDelay(0.1f));
+    }
+
+    // 0.1초간 훅이 안보이는 코루틴
+    IEnumerator ShowHookDelay(float delay)
+    {
+        // 0.1초 대기
+        yield return new WaitForSeconds(delay);
+
+        // 0.1초 뒤에도 갈고리가 있다면 
+        if (currentHook != null)
+        {
+            isHookVisible = true; // 줄을 그리도록 변수 선언
+
+            // 갈고리 다시 보이게 켜기 
+            Renderer hookRenderer = currentHook.GetComponent<Renderer>();
+            if (hookRenderer != null) hookRenderer.enabled = true;
+
+            SFXManager.Instance.Play("Hook");
+        }
     }
 
     void ReleaseHook()
     {
-        // 헬리콥터에서 내리고 3초 무적일 때, 갈고리가 유지되는 현상수정
-        // 변수 초기화 순서 변경
+        // 안보이는 코루틴 종료
+        if (visualDelayCoroutine != null) StopCoroutine(visualDelayCoroutine);
+
+        isHookVisible = false; // 안보이도록
+
         isHooked = false;
         rb.useGravity = true;
         lineRenderer.enabled = false;
@@ -339,6 +403,9 @@ public class Player : MonoBehaviour
             lineRenderer.positionCount = 0;
         }
 
+        // 헬기에서 내려오는 중임을 선언
+        isDroppingHeli = true;
+
         // 헬리콥터에서 내린 후 3초간 무적 코루틴 
         StartCoroutine(GetOffHelicopter());
     }
@@ -379,6 +446,7 @@ public class Player : MonoBehaviour
 
     public void QuickDive() // 참조 가능하게 수정
     {
+        SFXManager.Instance.Play("Move");   // 퀵다이브 시 효과음 재생
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
     }
 
@@ -399,6 +467,9 @@ public class Player : MonoBehaviour
             {
                 isGrounded = true;
                 anim.SetBool("isGrounded", true);
+
+                // 헬리콥터에서 내려서 바닥에 닿았는지 확인
+                if (isDroppingHeli) isDroppingHeli = false;
 
                 if (!isHooked)
                 {
@@ -442,10 +513,9 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Coin"))
         {
-            // 게임 오버시 부딪힌 코인은 삭제
+            // 게임 오버시 코인과 부딪혀도 반응없도
             if (isGameOver)
             {
-                other.gameObject.SetActive(false);
                 return;
             }
 
