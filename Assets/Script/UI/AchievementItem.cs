@@ -44,9 +44,9 @@ public class AchievementItem : MonoBehaviour
         if (iconImage != null && data.icon != null)
             iconImage.sprite = data.icon;
 
-        // 잠금 상태 표시
+        // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)
-            lockOverlay.gameObject.SetActive(!isUnlocked);
+            lockOverlay.gameObject.SetActive(data.IsCompleted);
         
         // 진척도 UI 업데이트
         UpdateProgress(data);
@@ -54,8 +54,8 @@ public class AchievementItem : MonoBehaviour
     
     private void UpdateProgress(AchievementData data)
     {
-        // targetValue가 0이면 진척도 UI 숨김
-        bool showProgress = data.targetValue > 0 && !data.IsCompleted;
+        // targetValue가 0이면 진척도 UI 숨김, 완료되어도 표시
+        bool showProgress = data.targetValue > 0;
         
         if (progressContainer != null)
         {
@@ -66,11 +66,13 @@ public class AchievementItem : MonoBehaviour
         {
             progressSlider.maxValue = data.targetValue;
             progressSlider.value = data.currentValue;
-            Debug.Log($"Slider 설정: {data.currentValue}/{data.targetValue}");
         }
         
         if (progressText != null && data.targetValue > 0)
         {
+            progressText.enabled = true;
+            progressText.gameObject.SetActive(true);
+            
             if (data.IsCompleted)
             {
                 progressText.text = "COMPLETED";
@@ -80,6 +82,18 @@ public class AchievementItem : MonoBehaviour
                 float percentage = (data.currentValue / (float)data.targetValue) * 100f;
                 progressText.text = $"{percentage:F0}%";
             }
+            
         }
+    }
+    
+    // 업적 UI 업데이트 메서드
+    public void UpdateDisplay(AchievementData data)
+    {
+        // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
+        if (lockOverlay != null)
+            lockOverlay.gameObject.SetActive(data.IsCompleted);
+        
+        // 진척도 UI 업데이트
+        UpdateProgress(data);
     }
 }

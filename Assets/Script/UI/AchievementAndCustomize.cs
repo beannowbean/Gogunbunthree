@@ -14,6 +14,7 @@ public class AchievementAndCustomize : MonoBehaviour
     [SerializeField] private List<AchievementData> achievements = new List<AchievementData>();
 
     private Dictionary<string, bool> temporarySelections = new Dictionary<string, bool>();
+    private Dictionary<string, AchievementItem> achievementItems = new Dictionary<string, AchievementItem>();
 
     private void Start()
     {
@@ -36,30 +37,22 @@ public class AchievementAndCustomize : MonoBehaviour
             bool isUnlocked = PlayerPrefs.GetInt($"Achievement_{achievement.id}", 0) == 1;
             temporarySelections[achievement.id] = isUnlocked;
             
-            // 진척도 로드
-            achievement.currentValue = PlayerPrefs.GetInt($"Achievement_{achievement.id}_Progress", 0);
+            // 진척도 로드 - Inspector 기본값을 유지하고, 저장된 값이 있으면 사용
+            if (PlayerPrefs.HasKey($"Achievement_{achievement.id}_Progress"))
+            {
+                achievement.currentValue = PlayerPrefs.GetInt($"Achievement_{achievement.id}_Progress", 0);
+            }
         }
     }
 
     private void PopulateAchievementList()
     {
-        if (scrollViewContent == null)
-        {
-            Debug.LogError("ScrollViewContent가 연결되지 않았습니다!");
-            return;
-        }
-        
-        if (achievementItemPrefab == null)
-        {
-            Debug.LogError("AchievementItemPrefab이 연결되지 않았습니다!");
-            return;
-        }
-
         // 기존 아이템 제거
         foreach (Transform child in scrollViewContent)
         {
             Destroy(child.gameObject);
         }
+        achievementItems.Clear();
 
         // 업적 아이템 생성
         foreach (var achievement in achievements)
@@ -72,10 +65,7 @@ public class AchievementAndCustomize : MonoBehaviour
             if (itemComponent != null)
             {
                 itemComponent.Initialize(achievement, temporarySelections[achievement.id], null);
-            }
-            else
-            {
-                Debug.LogError("AchievementItem 컴포넌트를 찾을 수 없습니다!");
+                achievementItems[achievement.id] = itemComponent;
             }
         }
     }
@@ -111,7 +101,22 @@ public class AchievementAndCustomize : MonoBehaviour
             }
             
             PlayerPrefs.Save();
-            PopulateAchievementList();
+            
+            // 개별 UI만 업데이트
+            UpdateAchievementItemUI(achievementId);
+        }
+    }
+    
+    // 개별 업적 아이템 UI 업데이트
+    private void UpdateAchievementItemUI(string achievementId)
+    {
+        if (achievementItems.TryGetValue(achievementId, out AchievementItem item))
+        {
+            var achievement = achievements.Find(a => a.id == achievementId);
+            if (achievement != null)
+            {
+                item.UpdateDisplay(achievement);
+            }
         }
     }
     
