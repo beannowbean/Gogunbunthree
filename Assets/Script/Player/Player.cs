@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     public float groundCheckDistance = 1.1f;
     public LayerMask groundLayer;
     public float rayOffsetY = 0.5f;
-    private float rayLength = 0.6f; // van위에서 점프 딜레이 해결을 위한 바닥 인식 범위 늘리기
+    private float rayLength = 0.6f; // van위에서 점프 딜레이 해결을 위한 바닥 인식 범위 늘리/
 
     // Hook 관련 설정
     public GameObject hookPrefab;
@@ -246,12 +246,7 @@ public class Player : MonoBehaviour
 
     void DrawRope()
     {
-        // 헬기에서 내리는 상태라면 안보이도록
-        if (isHelicopterInvincible)
-        {
-            lineRenderer.enabled = false;
-            return;
-        }
+        // 저번 오류로 인한 코드 불필요로 삭
 
         // 0.1초가 지난 후에만 그리도록 
         if (!isHookVisible)
@@ -393,8 +388,8 @@ public class Player : MonoBehaviour
 
         if (currentHook != null)
         {
-            Destroy(currentHook); 
-            currentHook = null;   
+            Destroy(currentHook);
+            currentHook = null;
         }
 
         if (lineRenderer != null)
@@ -467,14 +462,8 @@ public class Player : MonoBehaviour
             {
                 isGrounded = true;
                 anim.SetBool("isGrounded", true);
-
                 // 헬리콥터에서 내려서 바닥에 닿았는지 확인
                 if (isDroppingHeli) isDroppingHeli = false;
-
-                if (!isHooked)
-                {
-                    isHooked = false;
-                }
             }
         }
         else
@@ -692,13 +681,40 @@ public class Player : MonoBehaviour
     IEnumerator GameOver()
     {
         isGameOver = true;
-        ScoreManager.Instance.StopScoring();
-        SFXManager.Instance.Play("Crashed");
 
-        yield return new WaitForSecondsRealtime(3.0f);
-        SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정
-        Time.timeScale = 0f;
-        UIController.Instance.EndGame();
+        // 게임오버시 자석 아이템 종료
+        if (isMagnetActive)
+        {
+            if (magnetCoroutine != null) StopCoroutine(magnetCoroutine); // 시간 체크 중단
+            if (currentMagnetEffect != null) Destroy(currentMagnetEffect); // 자석 이펙트 삭제
+            isMagnetActive = false; // 상태 끄기
+        }
+
+        // 게임오버시 스타 아이템 종료
+        if (isInvincible)
+        {
+            if (currentInvincibilityCoroutine != null) StopCoroutine(currentInvincibilityCoroutine);
+
+            if (allRenderers != null && originalMaterials != null)
+            {
+                for (int i = 0; i < allRenderers.Length; i++)
+                {
+                    if (allRenderers[i] != null && i < originalMaterials.Length && originalMaterials[i] != null)
+                    {
+                        allRenderers[i].material = originalMaterials[i];
+                        allRenderers[i].enabled = true;
+                    }
+                }
+            }
+
+            ScoreManager.Instance.StopScoring();
+            SFXManager.Instance.Play("Crashed");
+
+            yield return new WaitForSecondsRealtime(3.0f);
+            SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정
+            Time.timeScale = 0f;
+            UIController.Instance.EndGame();
+        }
     }
 
     IEnumerator CarSound()
@@ -717,4 +733,5 @@ public class Player : MonoBehaviour
             }
         }
     }
+    
 }

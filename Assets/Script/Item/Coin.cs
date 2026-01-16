@@ -6,7 +6,7 @@ public class Coin : MonoBehaviour
     private Player playerScript;
 
     public float flySpeed = 30.0f; // 날아가는 속도
-    public float magnetRange = 10.0f; // 자석 감지 범위 (무제한으로 하려면 아주 큰 수)
+    public float magnetRange = 7.0f; // 자석 감지 범위 (무제한으로 하려면 아주 큰 수)
 
     private Vector3 initialPos; // 초기 위치 저장 변수
 
