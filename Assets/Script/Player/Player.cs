@@ -707,14 +707,14 @@ public class Player : MonoBehaviour
                 }
             }
 
-            ScoreManager.Instance.StopScoring();
-            SFXManager.Instance.Play("Crashed");
-
-            yield return new WaitForSecondsRealtime(3.0f);
-            SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정
-            Time.timeScale = 0f;
-            UIController.Instance.EndGame();
         }
+        ScoreManager.Instance.StopScoring();
+        SFXManager.Instance.Play("Crashed");
+
+        yield return new WaitForSecondsRealtime(3.0f);
+        SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정
+        Time.timeScale = 0f;
+        UIController.Instance.EndGame();
     }
 
     IEnumerator CarSound()
