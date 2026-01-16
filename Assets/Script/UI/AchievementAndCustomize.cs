@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class AchievementAndCustomize : MonoBehaviour
 {
     [Header("UI References")]
+    [SerializeField] private GameObject achievementUI;
+    [SerializeField] private GameObject customizeUI;
     [SerializeField] private Button quitButton;
     [SerializeField] private Transform scrollViewContent;
     [SerializeField] private GameObject achievementItemPrefab;
@@ -18,6 +20,21 @@ public class AchievementAndCustomize : MonoBehaviour
 
     private void Start()
     {
+        // PlayerPrefs에서 모드 읽기
+        string mode = PlayerPrefs.GetString("AchievementCustomizeMode", "Achievement");
+        
+        // UI 활성화/비활성화
+        if (mode == "Achievement")
+        {
+            if (achievementUI != null) achievementUI.SetActive(true);
+            if (customizeUI != null) customizeUI.SetActive(false);
+        }
+        else if (mode == "Customize")
+        {
+            if (achievementUI != null) achievementUI.SetActive(false);
+            if (customizeUI != null) customizeUI.SetActive(true);
+        }
+        
         InitializeButtons();
         LoadAchievements();
         PopulateAchievementList();
@@ -27,6 +44,20 @@ public class AchievementAndCustomize : MonoBehaviour
     {
         if (quitButton != null)
             quitButton.onClick.AddListener(OnQuitClicked);
+    }
+    
+    // Achievement UI 활성화
+    public void ShowAchievementUI()
+    {
+        if (achievementUI != null) achievementUI.SetActive(true);
+        if (customizeUI != null) customizeUI.SetActive(false);
+    }
+    
+    // Customize UI 활성화
+    public void ShowCustomizeUI()
+    {
+        if (achievementUI != null) achievementUI.SetActive(false);
+        if (customizeUI != null) customizeUI.SetActive(true);
     }
 
     private void LoadAchievements()

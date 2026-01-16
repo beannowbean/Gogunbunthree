@@ -86,6 +86,10 @@ public class MainMenuController : MonoBehaviour
             SFXManager.Instance.Play("Button");
         }
         
+        // Achievement 모드로 설정
+        PlayerPrefs.SetString("AchievementCustomizeMode", "Achievement");
+        PlayerPrefs.Save();
+        
         isLoadingScene = true;
         SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
     }
@@ -99,6 +103,10 @@ public class MainMenuController : MonoBehaviour
         {
             SFXManager.Instance.Play("Button");
         }
+        
+        // Customize 모드로 설정
+        PlayerPrefs.SetString("AchievementCustomizeMode", "Customize");
+        PlayerPrefs.Save();
         
         isLoadingScene = true;
         SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
