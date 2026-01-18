@@ -2285,6 +2285,7 @@ MonoBehaviour:
   - {fileID: 2600367174308168890, guid: 3db2e53013327e14da967dcedf4ed612, type: 3}
   - {fileID: 2600367174308168890, guid: a79863273772e2a40a6fae739584be2d, type: 3}
   - {fileID: 2600367174308168890, guid: a79863273772e2a40a6fae739584be2d, type: 3}
+  debugLog: 0
 --- !u!64 &6397483617853245844
 MeshCollider:
   m_ObjectHideFlags: 0

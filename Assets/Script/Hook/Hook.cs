@@ -11,8 +11,31 @@ public class Hook : MonoBehaviour
     // 추가 중력의 세기
     public float extraGravity = 20.0f;
 
+    // 스킨변경을 위한 static 선언
+    public static Material currentSkin;
+
     void Start()
     {
+        // 스킨 변경을 위한 코드
+        if (currentSkin != null)
+        {
+            Renderer r = GetComponent<Renderer>();
+            if (r != null)
+            {
+                // 갈고리 머터리얼 3개 모두 변경
+                int count = r.materials.Length;
+                Material[] newMats = new Material[count];
+
+                for (int i = 0; i < count; i++)
+                {
+                    newMats[i] = currentSkin;
+                }
+
+                // 적용
+                r.materials = newMats;
+            }
+        }
+
         // Player를 찾을 때 태그가 없거나 비활성화 상태면 에러가 날 수 있으므로 예외처리 추천
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)

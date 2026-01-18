@@ -8,9 +8,15 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;   // List 라이브러리 사용
 
 public class Helicopter : MonoBehaviour
 {
+    // 스킨 적용을 위한 변수
+    [Header("Skin Settings")]
+    public Renderer[] partsRenderers;   // helicopter의 blade와 body를 대입
+    public static Texture currentSkin;
+    
     private Transform playerTransform; // 플레이어 위치 참조
 
     private float targetHeight = 4.0f; // 내려올 높이
@@ -30,6 +36,12 @@ public class Helicopter : MonoBehaviour
 
     void Start()
     {
+        // 게임 시작 시 선택된 스킨 적용
+        if (currentSkin != null)
+        {
+            ApplySkin(currentSkin);
+        }
+
         // 1. 플레이어 찾기 (태그 이용)
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj == null)
@@ -57,6 +69,22 @@ public class Helicopter : MonoBehaviour
     {
         isHookedHelicopter = true;
         CoinMapGenerate();
+    }
+
+    // 스킨을 변경하는 함수
+    void ApplySkin(Texture texture)
+    {
+        if (partsRenderers != null)
+        {
+            foreach (Renderer r in partsRenderers)
+            {
+                if (r != null)
+                {
+                    // 텍스처 교체
+                    r.material.mainTexture = texture;
+                }
+            }
+        }
     }
 
     IEnumerator MoveRoutine()
