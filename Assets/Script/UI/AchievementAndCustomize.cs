@@ -8,12 +8,15 @@ public class AchievementAndCustomize : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private GameObject achievementUI;
     [SerializeField] private GameObject customizeUI;
+
+    [Header("Achievement UI Elements")]
     [SerializeField] private Button quitButton;
     [SerializeField] private Transform scrollViewContent;
     [SerializeField] private GameObject achievementItemPrefab;
-
-    [Header("Achievement Data")]
     [SerializeField] private List<AchievementData> achievements = new List<AchievementData>();
+
+    [Header("Customize UI Elements")]
+    
 
     private Dictionary<string, bool> temporarySelections = new Dictionary<string, bool>();
     private Dictionary<string, AchievementItem> achievementItems = new Dictionary<string, AchievementItem>();
@@ -121,17 +124,13 @@ public class AchievementAndCustomize : MonoBehaviour
         var achievement = achievements.Find(a => a.id == achievementId);
         if (achievement != null)
         {
-            achievement.currentValue = progressValue;
-            PlayerPrefs.SetInt($"Achievement_{achievementId}_Progress", progressValue);
+            AchievementItem.UpdateAchievementProgress(achievement, progressValue);
             
-            // 목표 달성 시 자동 언락
+            // temporarySelections 업데이트
             if (achievement.IsCompleted && !temporarySelections[achievementId])
             {
                 temporarySelections[achievementId] = true;
-                PlayerPrefs.SetInt($"Achievement_{achievementId}", 1);
             }
-            
-            PlayerPrefs.Save();
             
             // 개별 UI만 업데이트
             UpdateAchievementItemUI(achievementId);
@@ -157,7 +156,16 @@ public class AchievementAndCustomize : MonoBehaviour
         var achievement = achievements.Find(a => a.id == achievementId);
         if (achievement != null)
         {
-            UpdateAchievementProgress(achievementId, achievement.currentValue + incrementValue);
+            AchievementItem.IncrementAchievementProgress(achievement, incrementValue);
+            
+            // temporarySelections 업데이트
+            if (achievement.IsCompleted && !temporarySelections[achievementId])
+            {
+                temporarySelections[achievementId] = true;
+            }
+            
+            // 개별 UI만 업데이트
+            UpdateAchievementItemUI(achievementId);
         }
     }
 }
