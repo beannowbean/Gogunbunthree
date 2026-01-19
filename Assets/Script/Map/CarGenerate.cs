@@ -245,9 +245,16 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     private int ChooseObstacle(GameObject[] obstacles)
     {
         int nextObstacle;
+        int safety = 0; // 무한 루프 방지용
         do
         {
             nextObstacle = Random.Range(0, obstacles.Length);
+            safety++;
+            if(safety > 100)
+            {
+                Debug.LogWarning("무한 루프 방지 작동");
+                break;
+            }
         } while(nextObstacle == lastObstacle || CountObstacles(obstacles[nextObstacle]) >= 2);
         return nextObstacle;
     }

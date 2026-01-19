@@ -159,10 +159,10 @@ public class Helicopter : MonoBehaviour
         // 코인 도달 시간 계산
         float reachTime = (coinMapHeight - targetHeight) / moveSpeed;
 
-        TileGenerate tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>(); // tileSpeed 참조용
+        TileGenerate tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>(); // carSpeed 참조용
         HeliCoinGenerate heliCoinGenerate = GameObject.FindGameObjectWithTag("HeliCoinGenerator").GetComponent<HeliCoinGenerate>(); // startCoinMap 호출용
 
         // 코인 맵 생성
-        heliCoinGenerate.StartCoinMap(tileGenerate.tileSpeed, reachTime, coinMapDuration);
+        heliCoinGenerate.StartCoinMap(tileGenerate.carSpeed, reachTime, coinMapDuration);
     }
 }

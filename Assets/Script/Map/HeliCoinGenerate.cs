@@ -10,8 +10,6 @@ public class HeliCoinGenerate : MonoBehaviour
     public GameObject heliCoinTile; // 코인 타일 배열 부모
     public GameObject[] tiles;  // 기준 바닥 배열
     public GameObject[] heliCoinObstacles;  // 코인 패턴 배열
-
-    public bool debugLog = false;
     
     // 내부 변수
     GameObject player;  // 플레이어 참조
@@ -20,7 +18,6 @@ public class HeliCoinGenerate : MonoBehaviour
     float duration; // 헬기 맵 유지 시간
     int tileCount;  // 배치할 총 타일 갯수
     int tileElapsed; // 배치한 총 타일 갯수
-    int tilePassed;  // 씬에 활성화 된 타일 갯수
 
     int lastFrameCount = -1;
     HashSet<int>processedObjects = new HashSet<int>();
@@ -33,7 +30,6 @@ public class HeliCoinGenerate : MonoBehaviour
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
-        if(debugLog) Debug.Log($"[HeliDebug] TileLength 초기화 완료: {TileLength}");
 
         // 시작 시 코인 타일 비활성화
         heliCoinTile.SetActive(false);
@@ -55,11 +51,8 @@ public class HeliCoinGenerate : MonoBehaviour
             if (processedObjects.Contains(instanceId)) return; // 이미 이번 프레임에 옮긴 타일이면 무시
             
             processedObjects.Add(instanceId);
-            if(debugLog) Debug.Log($"[HeliDebug] 트리거 감지 및 처리 시작: {other.name}");
 
             MoveOldTile(other);    // 지나간 타일 제일 뒤로 이동
-
-            tilePassed++;   // 지나간 타일 갯수 증가
 
             if(tileElapsed < tileCount)
             {
@@ -76,13 +69,10 @@ public class HeliCoinGenerate : MonoBehaviour
     // 첫 코인 패턴 생성
     private void MakeStartCoin()
     {
-        if(debugLog) Debug.Log("[HeliDebug] MakeStartCoin 시작");
         tileElapsed = 0;
-        tilePassed = 0;
 
         for (int i = 0; i < tiles.Length; i++)
         {
-            if(debugLog) Debug.Log($"[HeliDebug] 초기화 루프 진행 중: {i}/{tiles.Length}");
             clearTile(tiles[i]);    // 기존 코인 제거
 
             if(tileElapsed < tileCount)
@@ -95,7 +85,6 @@ public class HeliCoinGenerate : MonoBehaviour
                 tileElapsed++;
             }
         }
-        if(debugLog) Debug.Log("[HeliDebug] MakeStartCoin 완료");
     }
 
     // 지나간 타일 제일 멀리 이동
@@ -118,7 +107,6 @@ public class HeliCoinGenerate : MonoBehaviour
     //  타일 위에 코인 생성
     private void MakeCoin(Collider oldTile)
     {
-        if(debugLog) Debug.Log($"[HeliDebug] MakeCoin 호출됨: {oldTile.name}");
         // 오브젝트 풀러 대기 확인
         if (ObjectPooler.Instance == null) return;
 
@@ -140,21 +128,18 @@ public class HeliCoinGenerate : MonoBehaviour
     public void StartCoinMap(float mapSpeed, float time, float mapDuration)
     {
         StopAllCoroutines();
-        if(debugLog) Debug.Log($"[HeliDebug] StartCoinMap 시작! Speed: {mapSpeed}, Duration: {mapDuration}");
         // 헬기 관련 변수 저장
         speed = mapSpeed;
-        duration = mapDuration;
+        duration = mapDuration - 1.0f;
 
         if (TileLength <= 0)
         {
-            if(debugLog) Debug.LogError("[HeliDebug] 오류: TileLength가 0입니다! 계산을 중단합니다.");
             return;
         }
 
         // 배치할 타일 갯수 계산
         float fullTileLength = speed * duration;
         tileCount = Mathf.FloorToInt(fullTileLength / TileLength);
-        if(debugLog) Debug.Log($"[HeliDebug] 계산된 총 타일 수: {tileCount}");
         tileElapsed = 0;
 
         // 배치할 타일 위치 계산
@@ -175,7 +160,7 @@ public class HeliCoinGenerate : MonoBehaviour
         // 타일 활성화
         heliCoinTile.SetActive(true);
 
-        StartCoroutine(EndCoin(duration + 5.0f));
+        StartCoroutine(EndCoin(duration + 4.0f));
     }
 
     void clearTile(GameObject tile)
@@ -197,7 +182,6 @@ public class HeliCoinGenerate : MonoBehaviour
     IEnumerator EndCoin(float time)
     {
         yield return new WaitForSeconds(time);
-        if(debugLog) Debug.Log("[HeliDebug] 코루틴 종료 시간 도달");
         heliCoinTile.SetActive(false);
     }
 }
