@@ -11,6 +11,8 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     public GameObject[] level_1Obstacles;  // 레벨1 배열
     public GameObject[] level_2Obstacles; // 레벨2 배열
     public GameObject[] level_3Obstacles; // 레벨3 배열
+    public GameObject[] level_4Obstacles; // 레벨4 배열
+    public GameObject[] level_5Obstacles; // 레벨5 배열
     public GameObject[] tutorialObstacles;  // 튜토리얼 배열
 
     [Header("아이템 배열")]
@@ -28,12 +30,17 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     [Header("난이도 설정")]
     public int score = 0;   // 점수
     public int level_2Score = 5000; // 레벨2 점수
-    public int level_3Score = 15000; // 레벨3 점수
-    public int level_2Speed = 30;    // 레벨2 차 속도
-    public int level_3Speed = 40;  // 레벨3 차 속도
+    public int level_3Score = 10000; // 레벨3 점수
+    public int level_4Score = 15000; // 레벨4 점수
+    public int level_5Score = 20000; // 레벨5 점수
+    public int level_1Speed = 20;   // 레벨1 차 속도
+    public int level_2Speed = 25;   // 레벨2 차 속도
+    public int level_3Speed = 30;   // 레벨3 차 속도
+    public int level_4Speed = 35;   // 레벨4 차 속도
+    public int level_5Speed = 40;   // 레벨 5 차 속도
 
     // 난이도 설정 변수
-    enum Difficulty{Level1, Level2, Level3}
+    enum Difficulty{Level1, Level2, Level3, Level4, Level5}
     Difficulty currentDifficulty = Difficulty.Level1;   // 현재 난이도 (초기 레벨1)
     
     // 내부 변수
@@ -263,28 +270,54 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     private GameObject[] GetDifficultyArray()
     {
         if(!UIController.tutorialSkip) return tutorialObstacles;    // 튜토리얼시 튜토리얼 장애물
-        if(score >= level_3Score) {  // 레벨3 (속도 40, 15000점 이상 -> CarTileDesigner에서 변경)
+        if(score >= level_5Score) {  // 레벨5 (속도 40, 20000점 이상 -> CarTileDesigner에서 변경)
+            tileGenerate.carSpeed = level_5Speed;
+            return level_5Obstacles;
+        }
+        else if(score >= level_4Score) {  // 레벨4 (속도 35, 15000점 이상)
+            tileGenerate.carSpeed = level_4Speed;
+            return level_4Obstacles;
+        }
+        else if(score >= level_3Score) {  // 레벨3 (속도 30, 10000점 이상)
             tileGenerate.carSpeed = level_3Speed;
             return level_3Obstacles;
         }
-        else if(score >= level_2Score) {   // 레벨2 (속도 30, 5000점 이상)
+        else if(score >= level_2Score) {   // 레벨2 (속도 25, 5000점 이상)
             tileGenerate.carSpeed = level_2Speed;
             return level_2Obstacles;
         }
-        else return level_1Obstacles;  // 레벨1 (속도 20)
+        else {  // 레벨1 (속도 20)
+            tileGenerate.carSpeed = level_1Speed;
+            return level_1Obstacles;  
+        }
     }
 
     // 난이도 변경 감지
     private void DifficultyDetection()
     {
         if(!UIController.tutorialSkip) return;
-        if(score >= level_3Score) {  // 레벨3 (속도 40, 15000점 이상 -> CarTileDesigner에서 변경)
-            if(currentDifficulty != Difficulty.Level3){
+        if(score >= level_5Score) {  // 레벨5 (속도 40, 20000점 이상 -> CarTileDesigner에서 변경)
+            if(currentDifficulty != Difficulty.Level5)
+            {
+                currentDifficulty = Difficulty.Level5;
+                dayNightCycle.NightToDay();
+            }
+        }
+        else if(score >= level_4Score) {   // 레벨4 (속도 30, 15000점 이상)
+            if(currentDifficulty != Difficulty.Level4)
+            {
+                currentDifficulty = Difficulty.Level4;
+                dayNightCycle.DayToNight();
+            }
+        }
+        else if(score >= level_3Score) {   // 레벨3 (속도 25, 10000점 이상)
+            if(currentDifficulty != Difficulty.Level3)
+            {
                 currentDifficulty = Difficulty.Level3;
                 dayNightCycle.NightToDay();
             }
         }
-        else if(score >= level_2Score) {   // 레벨2 (속도 30, 5000점 이상)
+        else if(score >= level_2Score) {   // 레벨2 (속도 20, 5000점 이상)
             if(currentDifficulty != Difficulty.Level2)
             {
                 currentDifficulty = Difficulty.Level2;
