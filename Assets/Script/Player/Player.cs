@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
 
     // 플레이어 렌더러와 재질을 저장하기 위한 배열 선언
     private Renderer[] allRenderers;
-    private Material[] originalMaterials;
+    private Material[][] originalMaterials;
 
     // 컴포넌트 선언
     private Rigidbody rb;
@@ -137,11 +137,11 @@ public class Player : MonoBehaviour
         anim.SetBool("isGrounded", true);
 
         allRenderers = GetComponentsInChildren<Renderer>();
-        originalMaterials = new Material[allRenderers.Length];
+        originalMaterials = new Material[allRenderers.Length][];
 
         for (int i = 0; i < allRenderers.Length; i++)
         {
-            originalMaterials[i] = allRenderers[i].material;
+            originalMaterials[i] = allRenderers[i].materials;
         }
         StartCoroutine(CarSound());
     }
@@ -701,14 +701,17 @@ public class Player : MonoBehaviour
                     return;
                 }
 
-
                 // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
                 SFXManager.Instance.Play("CarBounceOff");
+
+                // 차 날리기 점수 추가
+                ScoreManager.Instance.AddCarKnockScore();
+
                 if (carRb != null)
                 {
                     carRb.isKinematic = false;
                     carRb.useGravity = true;
-                    Vector3 flyDirection = transform.forward + Vector3.up * 1.5f;
+                    Vector3 flyDirection = transform.forward + Vector3.up * 1f;
                     float finalForce = carImpactForce * 1.5f;
                     carRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
                     carRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
@@ -773,7 +776,17 @@ public class Player : MonoBehaviour
             {
                 if (rend != null)
                 {
-                    rend.material = invincibleMaterial;
+                    int matCount = rend.materials.Length;
+
+                    // 노란색 스킨 적용할 부분 배열 생성
+                    Material[] newMats = new Material[matCount];
+                    for (int j = 0; j < matCount; j++)
+                    {
+                        newMats[j] = invincibleMaterial;
+                    }
+
+                    // 적용
+                    rend.materials = newMats;
                     rend.enabled = true;
                 }
             }
@@ -802,13 +815,11 @@ public class Player : MonoBehaviour
 
         bool showingInvincibleMat = true; // 현재 보여주는 재질 상태
 
-        // [수정] 순서 변경: 재질 먼저 바꾸고 -> 그 다음에 대기
+        // 
         foreach (float delay in blinkDelays)
         {
-            // 1. 재질 반전 (즉시 실행)
             showingInvincibleMat = !showingInvincibleMat;
 
-            // 2. 렌더러에 적용
             if (allRenderers != null && originalMaterials != null)
             {
                 for (int i = 0; i < allRenderers.Length; i++)
@@ -818,19 +829,24 @@ public class Player : MonoBehaviour
 
                     if (showingInvincibleMat)
                     {
-                        if (invincibleMaterial != null) rend.material = invincibleMaterial;
+                        // 노란색으로 덮어쓰기
+                        if (invincibleMaterial != null)
+                        {
+                            Material[] newMats = new Material[rend.materials.Length];
+                            for (int j = 0; j < newMats.Length; j++) newMats[j] = invincibleMaterial;
+                            rend.materials = newMats;
+                        }
                     }
                     else
                     {
+                        // 복구하기
                         if (i < originalMaterials.Length && originalMaterials[i] != null)
                         {
-                            rend.material = originalMaterials[i];
+                            rend.materials = originalMaterials[i];
                         }
                     }
                 }
             }
-
-            // 3. 정해진 시간만큼 대기 (이게 뒤로 가야 0초에 바로 바뀜)
             yield return new WaitForSeconds(delay);
         }
 
@@ -844,7 +860,7 @@ public class Player : MonoBehaviour
             {
                 if (allRenderers[i] != null && i < originalMaterials.Length && originalMaterials[i] != null)
                 {
-                    allRenderers[i].material = originalMaterials[i];
+                    allRenderers[i].materials = originalMaterials[i];
                     allRenderers[i].enabled = true;
                 }
             }
@@ -875,7 +891,7 @@ public class Player : MonoBehaviour
                 {
                     if (allRenderers[i] != null && i < originalMaterials.Length && originalMaterials[i] != null)
                     {
-                        allRenderers[i].material = originalMaterials[i];
+                        allRenderers[i].materials = originalMaterials[i];
                         allRenderers[i].enabled = true;
                     }
                 }
