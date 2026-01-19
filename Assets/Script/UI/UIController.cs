@@ -15,33 +15,43 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance;
 
+    [Header("UI Panels")]
     public GameObject gamePauseRoot;            // PauseePanel Root
     public GameObject inGameUIRoot;             // InGamePanel Root
     public GameObject confirmationPanel;        // QuitReconfirm Root
     public GameObject gameOverRoot;             // GameOverPanel Root
     public GameObject pauseButton;              // InGameUI의 일시정지 버튼
 
+    [Header("Pause Panel UI")]
     public TextMeshProUGUI PasueScoreText;      // PausePanel의 점수 text
+    public TextMeshProUGUI PauseCoinText;       // PausePanel의 코인 수 text
+
+    [Header("Game Over Panel UI")]
     public TextMeshProUGUI gameOverScoreText;   // GameOverPanel의 점수 text (거리 점수 → 최종 점수)
     public TextMeshProUGUI gameOverCoinCountText; // GameOverPanel의 코인 개수 text (선택사항)
-    public TextMeshProUGUI countdownText;       // Text_ResumeDelay
     public TextMeshProUGUI gameOverOrClearText; // "GAME OVER" or "GAME CLEAR" 텍스트
     public GameObject newRecordText;
 
+    [Header("Other UI")]
+    public TextMeshProUGUI countdownText;       // Text_ResumeDelay
+
+    [Header("Sound Icons")]
     public GameObject[] musicOnIcons;           // 소리 켜짐 아이콘들 (메인 + 일시정지)
     public GameObject[] musicOffIcons;          // 소리 꺼짐 아이콘들 (메인 + 일시정지)
     public GameObject[] sfxOnIcons;
     public GameObject[] sfxOffIcons;
+
+    [Header("References")]
     public Tutorial tutorial;
 
-    // 재개 지연 시간
-    public float resumeDelay = 3f;
+    [Header("Settings")]
+    public float resumeDelay = 3f;              // 재개 지연 시간
 
+    [Header("State")]
     public static bool isRestarting = false;
-    private bool isGameStarted = false;     // 게임 시작 여부
-    private bool isCountingDown = false;    // 재개 카운트다운 여부
-    
-    public static bool tutorialSkip = false;         // 튜토리얼 스킵 여부 (false = 튜토리얼 실행, true = 스킵)
+    private bool isGameStarted = false;         // 게임 시작 여부
+    private bool isCountingDown = false;        // 재개 카운트다운 여부
+    public static bool tutorialSkip = false;    // 튜토리얼 스킵 여부 (false = 튜토리얼 실행, true = 스킵)
 
 
     void Awake()
@@ -119,10 +129,11 @@ public class UIController : MonoBehaviour
         inGameUIRoot.SetActive(false);
         gamePauseRoot.SetActive(true);
 
-        // 최신 점수 업데이트
+        // 최신 점수 및 코인 수 업데이트
         if (ScoreManager.Instance != null)
         {
             UpdateScoreDisplay(ScoreManager.Instance.GetCurrentScore());
+            UpdateCoinDisplay(ScoreManager.Instance.GetCoinCount());
         }
     }
 
@@ -274,6 +285,15 @@ public class UIController : MonoBehaviour
         }
     }
 
+    // 코인 수 표시
+    public void UpdateCoinDisplay(int coinCount)
+    {
+        if (PauseCoinText != null)
+        {
+            PauseCoinText.text = coinCount.ToString();
+        }
+    }
+
     public void RestartGame()
     {
         // Time.timeScale을 먼저 복구
@@ -287,6 +307,12 @@ public class UIController : MonoBehaviour
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.ResetScore();
+        }
+
+        // BGM 재시작 (처음부터)
+        if (BGMManager.Instance != null)
+        {
+            BGMManager.Instance.RestartInGameBGM();
         }
 
         // InGame 씬으로 이동
