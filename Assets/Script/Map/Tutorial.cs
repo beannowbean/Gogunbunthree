@@ -40,13 +40,7 @@ public class Tutorial : MonoBehaviour
     }
 
     void Update()
-    {
-        if(player == null)
-        {
-            player = Player.Instance;
-            return;
-        }
-        
+    {        
         // 입력 대기 중이면 무시
         if(inputUsed == true) return;
 
