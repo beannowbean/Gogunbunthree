@@ -1,9 +1,42 @@
+/*
+    플레이어 가방과 모자를 바꾸는 함수 (Equip을 하면 자동으로 원래 있던거 unequip함수 불러와짐)
+    EquipHat(), UnequipHat()
+    EquipBag(), UnequipBag()
+    싱글톤 인스턴스를 사용해서 앞에 "Player.Instance." 을 붙이면 됨
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // 스킨 장착을 위해 싱글톤 도입
+    public static Player Instance;
+
+    // 스킨 장착을 위한 변수들
+    [Header("Accessory Settings")]
+    // 장비를 장착시키기 위한 위치 받기
+    public Transform headBone;
+    public Transform backBone;
+    private Texture currentBeanieSkinTexture;
+    private Texture currentBagSkinTexture;
+
+    // 기본 오프셋
+    public Vector3 hatPositionOffset;
+    public Vector3 hatRotationOffset;
+    public Vector3 bagPositionOffset;
+    public Vector3 bagRotationOffset;
+
+    // 현재 장착된 아이템 관리
+    private GameObject currentBeanie;
+    private GameObject currentBag;
+
+    // 스킨 장착 관리
+    [Header("Skin Settings")]
+    public SkinnedMeshRenderer playerRenderer;
+    public int targetMaterialIndex = 1;
+
     // 캐릭터 이동 속도
     public float moveSpeed = 0f;
 
@@ -87,6 +120,10 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
+        // 싱글톤 초기화
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         if (UIController.tutorialSkip == true) isControl = true;
         else isControl = false;
     }
@@ -496,6 +533,143 @@ public class Player : MonoBehaviour
         Destroy(currentMagnetEffect);
 
         isMagnetActive = false;
+    }
+
+    // 모자 프리펩을 장착하는 함수
+    public void EquipBeanie(GameObject beaniePrefab)
+    {
+        // 기존 모자를 삭제
+        UnequipBeanie();
+
+        // 새 모자 생성 및 장착
+        if (beaniePrefab != null && headBone != null)
+        {
+            currentBeanie = Instantiate(beaniePrefab);
+            currentBeanie.transform.SetParent(headBone); // 머리 뼈에 부착
+
+            // 위치 회전값 초기화 및 오프셋 적용
+            currentBeanie.transform.localPosition = hatPositionOffset;
+            currentBeanie.transform.localRotation = Quaternion.Euler(hatRotationOffset);
+            currentBeanie.transform.localScale = Vector3.one;
+
+            // 스킨 적
+            if (currentBeanieSkinTexture != null)
+            {
+                ApplyTexture(currentBeanie, currentBeanieSkinTexture);
+            }
+        }
+
+    }
+
+    // 모자 벗기 함수
+    public void UnequipBeanie()
+    {
+        if (currentBeanie != null)
+        {
+            Destroy(currentBeanie);
+            currentBeanie = null;
+        }
+    }
+
+    // 가방 프리펩을 장착하는 함수
+    public void EquipBag(GameObject bagPrefab)
+    {
+        // 기존 가방 삭제 
+        UnequipBag();
+
+        if (bagPrefab != null && backBone != null)
+        {
+            currentBag = Instantiate(bagPrefab);
+            currentBag.transform.SetParent(backBone); // 척추 뼈에 부착
+
+            // 위치 회전값 초기화 및 오프셋 적용
+            currentBag.transform.localPosition = bagPositionOffset;
+            currentBag.transform.localRotation = Quaternion.Euler(bagRotationOffset);
+            currentBag.transform.localScale = Vector3.one;
+
+            // 스킨 적용
+            if (currentBagSkinTexture != null)
+            {
+                ApplyTexture(currentBag, currentBagSkinTexture);
+            }
+        }
+    }
+
+    // 가방 벗기 함수
+    public void UnequipBag()
+    {
+        if (currentBag != null)
+        {
+            Destroy(currentBag);
+            currentBag = null;
+        }
+    }
+
+    // 외부에서 texture를 받아서 albedo를 바꾸는 함수 
+    public void ChangeSkinTexture(Texture newTexture)
+    {
+        if (playerRenderer != null && newTexture != null)
+        {
+            Material[] mats = playerRenderer.materials;
+            playerRenderer.material.mainTexture = newTexture;
+
+            if (mats.Length > targetMaterialIndex)
+            {
+                mats[targetMaterialIndex].mainTexture = newTexture;
+            }
+            else
+            {
+                Debug.LogError("오류: 머티리얼 Element 번호가 존재하지 않습니다!");
+            }
+            playerRenderer.materials = mats;
+        }
+    }
+
+    // 비니 스킨 변경 함수
+    public void ChangeBeanieSkin(Texture newTexture)
+    {
+        // 1. 선택된 스킨을 기억해둠 (나중에 모자 갈아껴도 유지되게)
+        currentBeanieSkinTexture = newTexture;
+
+        // 2. 현재 모자가 머리에 있다면 즉시 색깔 변경
+        if (currentBeanie != null)
+        {
+            ApplyTexture(currentBeanie, newTexture);
+        }
+    }
+
+    // 가방 스킨 변경 함수
+    public void ChangeBagSkin(Texture newTexture)
+    {
+        currentBagSkinTexture = newTexture;
+
+        if (currentBag != null)
+        {
+            ApplyTexture(currentBag, newTexture);
+        }
+    }
+
+    // 가방과 비니 스킨 텍스쳐 입히는 함수
+    private void ApplyTexture(GameObject obj, Texture texture)
+    {
+        if (obj == null || texture == null) return;
+
+        Renderer r = obj.GetComponent<Renderer>();
+        if (r == null) r = obj.GetComponentInChildren<Renderer>();
+
+        if (r != null)
+        {
+            r.material.mainTexture = texture;
+        }
+    }
+
+    // 갈고리 로프 머터리얼 변경 함수
+    public void ChangeRopeMaterial(Material newMaterial)
+    {
+        if (lineRenderer != null && newMaterial != null)
+        {
+            lineRenderer.material = newMaterial;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
