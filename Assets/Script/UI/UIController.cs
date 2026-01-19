@@ -22,7 +22,8 @@ public class UIController : MonoBehaviour
     public GameObject pauseButton;              // InGameUI의 일시정지 버튼
 
     public TextMeshProUGUI PasueScoreText;      // PausePanel의 점수 text
-    public TextMeshProUGUI gameOverScoreText;   // GameOverPanel의 점수 text
+    public TextMeshProUGUI gameOverScoreText;   // GameOverPanel의 점수 text (거리 점수 → 최종 점수)
+    public TextMeshProUGUI gameOverCoinCountText; // GameOverPanel의 코인 개수 text (선택사항)
     public TextMeshProUGUI countdownText;       // Text_ResumeDelay
     public TextMeshProUGUI gameOverOrClearText; // "GAME OVER" or "GAME CLEAR" 텍스트
     public GameObject newRecordText;
@@ -243,15 +244,19 @@ public class UIController : MonoBehaviour
         // Game Over / Game Clear 텍스트 설정
         gameOverOrClearText.text = "GAME\nOVER";
 
-        // 점수 표시
-        UpdateScoreDisplay(ScoreManager.Instance.GetFinalScore());
-
-        // 4. 뉴 레코드 메시지 활성화/비활성화
-        bool isNewRecord = ScoreManager.Instance != null && ScoreManager.Instance.GetIsNewRecord();
-        newRecordText.SetActive(isNewRecord);
-
-        // 점수 초기화
-        ScoreManager.Instance.ResetScore();
+        // 점수 애니메이션 시작 (애니메이션 완료 후 뉴 레코드 표시)
+        StartCoroutine(ScoreManager.Instance.AnimateGameOverScore(
+            gameOverScoreText,
+            gameOverCoinCountText, // 인스펙터에서 할당 안 하면 null이어도 됨
+            () => {
+                // 애니메이션 완료 후 뉴 레코드 메시지 표시
+                bool isNewRecord = ScoreManager.Instance != null && ScoreManager.Instance.GetIsNewRecord();
+                newRecordText.SetActive(isNewRecord);
+                
+                // 점수 초기화
+                ScoreManager.Instance.ResetScore();
+            }
+        ));
     }
 
     // 점수 표시

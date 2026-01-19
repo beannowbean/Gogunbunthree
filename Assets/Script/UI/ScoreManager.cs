@@ -13,6 +13,9 @@ public class ScoreManager : MonoBehaviour
 
     public static ScoreManager Instance;
 
+    private const int COIN_SCORE_VALUE = 10;  // 코인 1개당 점수 가중치
+    private const int CAR_KNOCK_SCORE_VALUE = 25; // 차 날리기당 점수 가중치
+
     public int coinCount = 0;           // 획득한 코인 수
     public int carKnockCount = 0;       // 무적 상태에서 날린 차 수
 
@@ -56,9 +59,8 @@ public class ScoreManager : MonoBehaviour
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;
         
-        // 2. 점수 계산 공식: 시간 * 속도 + 코인 * 100 + 차 날리기 * 50
-        float rawScore = (survivalTime * currentCarSpeed) + (coinCount * 100) + (carKnockCount * 50);
-        currentScore = Mathf.FloorToInt(rawScore);
+        // 2. 점수 계산: 거리 점수 + 코인 점수
+        currentScore = GetDistanceScore() + GetCoinScore();
 
         // 점수가 변경되었을 때만 UI 업데이트 (성능 최적화)
         if (currentScore != lastDisplayedScore)
@@ -95,24 +97,45 @@ public class ScoreManager : MonoBehaviour
     }
 
 
-    // 최종 점수 return
+    // 거리 점수만 반환 (시간 * 속도 + 차 날리기 * 가중치)
+    public int GetDistanceScore()
+    {
+        float rawDistanceScore = (survivalTime * currentCarSpeed) + (carKnockCount * CAR_KNOCK_SCORE_VALUE);
+        return Mathf.FloorToInt(rawDistanceScore);
+    }
+
+    // 코인 점수만 반환 (코인 * 가중치)
+    public int GetCoinScore()
+    {
+        return coinCount * COIN_SCORE_VALUE;
+    }
+
+    // 코인 개수 반환
+    public int GetCoinCount()
+    {
+        return coinCount;
+    }
+
+    // 현재 점수 return
     public int GetCurrentScore()
     {
-        return currentScore;
+        return GetDistanceScore() + GetCoinScore();
     }
 
     public int GetFinalScore()
     {
-        if (currentScore > bestScore)
+        int finalScore = GetCurrentScore();
+        
+        if (finalScore > bestScore)
         {
-            bestScore = currentScore;
+            bestScore = finalScore;
 
             // 기기에 저장 (Key 이름을 "BestScore"로 지정)
             PlayerPrefs.SetInt("BestScore", bestScore);
             IsNewRecord = true;
         }
 
-        return currentScore;
+        return finalScore;
     }
 
     // 코인 획득량
@@ -122,14 +145,14 @@ public class ScoreManager : MonoBehaviour
         coinCount += amount;
         
         // 코인 먹을 때마다 보너스 표시 (중단하지 않음)
-        StartCoroutine(ShowBonus("+100"));
+        StartCoroutine(ShowBonus($"+{COIN_SCORE_VALUE * amount}"));
     }
 
     // 무적 상태에서 차 날리기 점수 추가
     public void AddCarKnockScore()
     {
         carKnockCount++;
-        StartCoroutine(ShowBonus("+50"));
+        StartCoroutine(ShowBonus($"+{CAR_KNOCK_SCORE_VALUE}"));
     }
 
     // 차량 속도 업데이트
@@ -240,5 +263,65 @@ public class ScoreManager : MonoBehaviour
     public bool GetIsNewRecord()
     {
         return IsNewRecord;
+    }
+
+    // 게임오버 화면에서 점수를 단계적으로 표시하는 코루틴
+    // scoreTextUI: 점수를 표시할 TextMeshProUGUI (거리 점수 → 최종 점수)
+    // coinCountTextUI: 코인 개수를 표시할 TextMeshProUGUI (선택사항, null이면 코인 개수 미표시)
+    // onComplete: 애니메이션 완료 후 실행할 콜백
+    public IEnumerator AnimateGameOverScore(TextMeshProUGUI scoreTextUI, TextMeshProUGUI coinCountTextUI = null, System.Action onComplete = null)
+    {
+        if (scoreTextUI == null) yield break;
+
+        int distanceScore = GetDistanceScore();
+        int coinScore = GetCoinScore();
+        int totalCoinCount = GetCoinCount();
+        int totalScore = GetFinalScore();
+
+        // 1단계: 거리 점수와 코인 개수를 각각 표시
+        scoreTextUI.text = distanceScore.ToString();
+        
+        if (coinCountTextUI != null)
+        {
+            coinCountTextUI.text = totalCoinCount.ToString();
+        }
+        
+        // 0.5초 대기 (Time.timeScale 영향을 받지 않음)
+        yield return new WaitForSecondsRealtime(0.5f);
+        
+        // 2단계: 코인 개수가 줄어들면서 점수가 증가하는 애니메이션
+        float duration = 0.5f;
+        float elapsed = 0f;
+        
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime; // Time.timeScale 영향을 받지 않음
+            float t = elapsed / duration;
+            
+            // 거리 점수에서 최종 점수까지 보간
+            int currentDisplayScore = Mathf.FloorToInt(Mathf.Lerp(distanceScore, totalScore, t));
+            scoreTextUI.text = currentDisplayScore.ToString();
+            
+            // 코인 개수가 줄어드는 효과 (역방향 보간)
+            if (coinCountTextUI != null)
+            {
+                int currentCoinCount = Mathf.CeilToInt(Mathf.Lerp(0, totalCoinCount, 1f - t));
+                coinCountTextUI.text = currentCoinCount.ToString();
+            }
+            
+            yield return null;
+        }
+        
+        // 최종 점수로 정확히 설정
+        scoreTextUI.text = totalScore.ToString();
+        
+        // 코인 개수를 0으로 설정
+        if (coinCountTextUI != null)
+        {
+            coinCountTextUI.text = "0";
+        }
+        
+        // 완료 콜백 실행
+        onComplete?.Invoke();
     }
 }
