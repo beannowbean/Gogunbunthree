@@ -16,6 +16,8 @@ public class ObjectPooler : MonoBehaviour
     public List<GameObject> level_1Obstacles;   // 레벨1 배열
     public List<GameObject> level_2Obstacles;   // 레벨2 배열
     public List<GameObject> level_3Obstacles;   // 레벨3 배열
+    public List<GameObject> level_4Obstacles;   // 레벨4 배열
+    public List<GameObject> level_5Obstacles;   // 레벨5 배열
     public List<GameObject> tutorialObstacles;  // 튜토리얼 배열
 
     [Header("아이템 배열")]

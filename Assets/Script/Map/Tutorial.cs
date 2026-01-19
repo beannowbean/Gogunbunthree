@@ -21,7 +21,7 @@ public class Tutorial : MonoBehaviour
     void Start() 
     {
         // 참조 설정
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = Player.Instance;
 
         // 모든 튜토리얼 오브젝트 비활성화
         for(int i = 0; i < tutorialObject.Length; i++)
@@ -41,6 +41,12 @@ public class Tutorial : MonoBehaviour
 
     void Update()
     {
+        if(player == null)
+        {
+            player = Player.Instance;
+            return;
+        }
+        
         // 입력 대기 중이면 무시
         if(inputUsed == true) return;
 
@@ -216,7 +222,10 @@ public class Tutorial : MonoBehaviour
     IEnumerator TutorialEndDelay()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-        player.isControl = true;
+
+        if(Player.Instance != null)
+            Player.Instance.isControl = true;
+            
         UIController.tutorialSkip = true;
 
         // 튜토리얼 종료 플래그 설정
