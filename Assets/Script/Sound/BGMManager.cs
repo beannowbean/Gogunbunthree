@@ -113,6 +113,16 @@ public class BGMManager : MonoBehaviour
         PlayBGM(inGameBGM);
     }
 
+    // 인게임 BGM 재시작 (처음부터)
+    public void RestartInGameBGM()
+    {
+        if (audioSource == null || inGameBGM == null) return;
+        
+        audioSource.Stop();
+        audioSource.clip = inGameBGM;
+        audioSource.Play();
+    }
+
     // BGM 재생
     private void PlayBGM(AudioClip clip)
     {

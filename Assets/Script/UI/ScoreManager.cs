@@ -10,30 +10,32 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-
     public static ScoreManager Instance;
 
+    [Header("Score Settings")]
     private const int COIN_SCORE_VALUE = 10;  // 코인 1개당 점수 가중치
     private const int CAR_KNOCK_SCORE_VALUE = 25; // 차 날리기당 점수 가중치
 
+    [Header("Game Stats")]
     public int coinCount = 0;           // 획득한 코인 수
     public int carKnockCount = 0;       // 무적 상태에서 날린 차 수
+    public float currentCarSpeed = 0f;  // 현재 자동차 속도 (외부에서 받아옴)
 
+    [Header("Score Data")]
     private int currentScore = 0;       // 최종 계산된 점수
     private int bestScore = 0;          // 최고 점수
     private int lastDisplayedScore = -1; // 마지막으로 표시된 점수 (최적화용)
+    private float survivalTime = 0f;    // 게임 생존 시간 (초 단위)
     
+    [Header("State")]
     private bool IsNewRecord = false;   // 뉴 레코드 여부
     private bool isGameOver = false;    // 게임 오버 여부
 
+    [Header("UI References")]
     public TextMeshProUGUI inGameScoreText; // 현재 점수 표시용
+    public TextMeshProUGUI inGameCoinText;  // 현재 코인 수 표시용
     public TextMeshProUGUI bestScoreText;   // 베스트 점수 표시용
     public TextMeshProUGUI bonusScoreText;  // 보너스 점수 표시용 (점수 위에 표시)
-
-
-    // 점수 계산 공식: 시간 * 속도 + 코인 * 100
-    public float currentCarSpeed = 0f;  // 현재 자동차 속도 (외부에서 받아옴)
-    private float survivalTime = 0f;    // 게임 생존 시간 (초 단위)
 
     void Awake()
     {
@@ -54,6 +56,13 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // P 키로 최고 점수 초기화
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            ResetBestScore();
+            UpdateScoreDisplay();
+        }
+
         if (isGameOver || !UIController.tutorialSkip) return;
 
         // 1. 시간 흐름 측정
@@ -76,6 +85,12 @@ public class ScoreManager : MonoBehaviour
         if (inGameScoreText != null)
         {
             inGameScoreText.text = $"SCORE:\t{currentScore}";;
+        }
+        
+        // 현재 코인 수 표시
+        if (inGameCoinText != null)
+        {
+            inGameCoinText.text = $"{coinCount}";
         }
         
         // 베스트 점수 표시
