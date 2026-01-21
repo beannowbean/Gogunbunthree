@@ -19,21 +19,9 @@ public class Hook : MonoBehaviour
         // 스킨 변경을 위한 코드
         if (currentSkin != null)
         {
-            Renderer r = GetComponent<Renderer>();
-            if (r != null)
-            {
-                // 갈고리 머터리얼 3개 모두 변경
-                int count = r.materials.Length;
-                Material[] newMats = new Material[count];
-
-                for (int i = 0; i < count; i++)
-                {
-                    newMats[i] = currentSkin;
-                }
-
-                // 적용
-                r.materials = newMats;
-            }
+            ApplySkin(GetComponent<Renderer>());
+            Transform fireTransform = transform.Find("Fire");
+            ApplySkin(fireTransform.GetComponent<Renderer>());
         }
 
         // Player를 찾을 때 태그가 없거나 비활성화 상태면 에러가 날 수 있으므로 예외처리 추천
@@ -52,6 +40,20 @@ public class Hook : MonoBehaviour
         if (rb != null && rb.useGravity && !rb.isKinematic)
         {
             rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        }
+    }
+
+    void ApplySkin(Renderer r)
+    {
+        if (r != null)
+        {
+            int count = r.materials.Length;
+            Material[] newMats = new Material[count];
+            for (int i = 0; i < count; i++)
+            {
+                newMats[i] = currentSkin;
+            }
+            r.materials = newMats;
         }
     }
 
