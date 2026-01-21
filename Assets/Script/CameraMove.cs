@@ -52,11 +52,17 @@ public class CameraMove : MonoBehaviour // 디자이너 -> 충돌 감지 콜라�
         {
             case 20:
                 break;
+            case 25:
+                varDesiredPos.z += 2.5f;
+                break;
             case 30:
-                varDesiredPos.z += 5;
+                varDesiredPos.z += 5.0f;
+                break;
+            case 35:
+                varDesiredPos.z += 7.5f;
                 break;
             case 40:
-                varDesiredPos.z += 10;
+                varDesiredPos.z += 10.0f;
                 break;
         }
         varDesiredPos.y = 0;
