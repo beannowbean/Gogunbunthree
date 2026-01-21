@@ -34,8 +34,11 @@ public class Helicopter : MonoBehaviour
     // 아이템 로직을 위해 갈고리가 걸려있는지 확인하는 변수
     private bool isHookedHelicopter = false;
 
+    private Collider heliCollider;
+
     void Start()
     {
+        heliCollider = GetComponent<Collider>();
         // 게임 시작 시 선택된 스킨 적용
         if (currentSkin != null)
         {
@@ -108,6 +111,7 @@ public class Helicopter : MonoBehaviour
         }
 
         // [3단계] 상승 (Target -> Sky)
+        if (!isHookedHelicopter) heliCollider.enabled = false;
         while (Mathf.Abs(currentHeight - coinMapHeight) > 0.1f)
         {
             currentHeight = Mathf.MoveTowards(currentHeight, coinMapHeight, moveSpeed * Time.deltaTime);
@@ -118,6 +122,7 @@ public class Helicopter : MonoBehaviour
         if (isHookedHelicopter == false)
         {
             SFXManager.Instance.Stop("Helicopter"); // 오디오 멈춤.
+            heliCollider.enabled = true;
             Destroy(gameObject);
             yield break;    // 코루틴 강제 종료
         }

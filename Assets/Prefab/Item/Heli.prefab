@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 5559614180685418375}
   - component: {fileID: 8306748062235250690}
   - component: {fileID: 3471116081039329332}
+  - component: {fileID: 2335465485308642019}
   m_Layer: 0
   m_Name: Heli
   m_TagString: Untagged
@@ -189,6 +190,21 @@ MonoBehaviour:
   helicopterPrefab: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
   heliEffectPrefab: {fileID: 1429954232896169633, guid: 94b1ba276f67a49f39de2f097ffdcc9b, type: 3}
   heliAuroraEffectPrefab: {fileID: 5137123306192418792, guid: ee1c95175b994425da8c7ddd6544d328, type: 3}
+--- !u!114 &2335465485308642019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5158458192742715028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b214a164d01bf40e18b549a254c7a3df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pullSpeed: 25
+  magnetRange: 7
+  collectDistance: 0.5
 --- !u!1 &9166405950102362063
 GameObject:
   m_ObjectHideFlags: 0
