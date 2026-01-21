@@ -398,7 +398,7 @@ public class Player : MonoBehaviour
 
             float distance = Vector3.Distance(transform.position, currentHook.transform.position);
 
-            if (distance <= 2.0f)
+            if (distance <= 1.0f)
             {
                 ReleaseHook();
             }
@@ -674,16 +674,18 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isGameOver) return; // 게임 오버시 아무 상호작용 없도록
         if (other.CompareTag("Coin"))
         {
-            // 게임 오버시 코인과 부딪혀도 반응없도
+            // 게임 오버시 코인과 부딪혀도 반응없도록
             if (isGameOver)
             {
                 return;
             }
 
             SFXManager.Instance.Play("Coin", 0.98f, 1.02f);
-            GameObject effect = Instantiate(coinEffectPrefab, other.transform.position, Quaternion.identity);
+            Vector3 effectPos = transform.position + Vector3.up * 1.0f;
+            GameObject effect = Instantiate(coinEffectPrefab, effectPos, Quaternion.identity);
             Destroy(effect, 1.0f);
             other.gameObject.SetActive(false);
             ScoreManager.Instance.AddCoin(1);
@@ -711,7 +713,11 @@ public class Player : MonoBehaviour
                 {
                     carRb.isKinematic = false;
                     carRb.useGravity = true;
-                    Vector3 flyDirection = transform.forward + Vector3.up * 1f;
+
+                    // 차 여러방향으로 날아가도록 설정
+                    float randomX = Random.Range(-2.0f, 2.0f);
+                    float randomY = Random.Range(1.0f, 2.0f);
+                    Vector3 flyDirection = transform.forward * 3.0f + (transform.right * randomX) + (Vector3.up * randomY);
                     float finalForce = carImpactForce * 1.5f;
                     carRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
                     carRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
