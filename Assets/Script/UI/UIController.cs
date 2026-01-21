@@ -153,7 +153,7 @@ public class UIController : MonoBehaviour
         isCountingDown = true;
 
         // 플레이어가 일시정지 재개 카운트다운시 입력 못받도
-        Player player = FindObjectOfType<Player>();
+        Player player = FindFirstObjectByType<Player>();
         if (player != null) player.isResuming = true;
 
         float timer = resumeDelay;
