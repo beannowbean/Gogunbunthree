@@ -6,6 +6,9 @@ public class PlayerAchivementList : MonoBehaviour
 {
     public static PlayerAchivementList Instance;
 
+    [Header("Achievement Definitions")]
+    [SerializeField] private List<AchievementDefinition> achievementDefinitions = new List<AchievementDefinition>();
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -14,6 +17,9 @@ public class PlayerAchivementList : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 업적 데이터를 AchievementManager에 등록
+        RegisterAchievementsToManager();
+        
         // [Newbie1] 게임 시작 시 체크
         Newbie();
     }
@@ -23,21 +29,42 @@ public class PlayerAchivementList : MonoBehaviour
     {
 
     }
+    
+    /// <summary>
+    /// 정의된 업적들을 AchievementManager에 등록
+    /// </summary>
+    private void RegisterAchievementsToManager()
+    {
+        if (AchievementManager.Instance == null)
+        {
+            Debug.LogError("[PlayerAchievementList] AchievementManager가 없습니다! MainMenu 씬에 AchievementManager를 추가하세요.");
+            return;
+        }
+
+        // Inspector에서 정의된 업적들을 Manager에 등록
+        foreach (var definition in achievementDefinitions)
+        {
+            AchievementManager.Instance.RegisterAchievement(definition.ToAchievementData());
+        }
+        
+        Debug.Log($"[PlayerAchievementList] {achievementDefinitions.Count}개 업적 등록 완료");
+    }
 
     // 업적을 달성했는지 처리하는 함수
-    private void UnlockAchievement(string key, string title)
+    private void UnlockAchievement(string achievementId, string title)
     {
-        // 이미 달성 했다면(저장된 값이 있음 = 1) 리턴
-        if (PlayerPrefs.GetInt(key, 0) == 1) return;
-
-        // 달성했다면 1을 저장
-        PlayerPrefs.SetInt(key, 1);
-        PlayerPrefs.Save(); // 저장 확정
-
-        // 달성했는지 로그 확인
-        Debug.Log($"[업적 달성] {title}!");
-
-        // UI 코드 여기 추가
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.UnlockAchievement(achievementId);
+        }
+        else
+        {
+            // Manager가 없을 경우 기존 방식 사용
+            if (PlayerPrefs.GetInt(achievementId, 0) == 1) return;
+            PlayerPrefs.SetInt(achievementId, 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[업적 달성] {title}!");
+        }
     } 
 
     /* 
@@ -188,5 +215,43 @@ public class PlayerAchivementList : MonoBehaviour
     {
         // key = Achieve_Rapunzel, 이름 = Rapunzel
         UnlockAchievement("Achieve_Rapunzel", "Rapunzel");
+    }
+}
+
+/// <summary>
+/// Inspector에서 업적을 정의하기 위한 클래스
+/// </summary>
+[System.Serializable]
+public class AchievementDefinition
+{
+    public string id;
+    public string title;
+    [TextArea(2, 4)]
+    public string description;
+    public Sprite icon;
+    public AchievementConditionType conditionType;
+    public int targetValue;
+    
+    [Header("Reward Settings")]
+    public RewardType rewardType;
+    public string rewardId;
+    
+    /// <summary>
+    /// AchievementData로 변환
+    /// </summary>
+    public AchievementData ToAchievementData()
+    {
+        return new AchievementData
+        {
+            id = this.id,
+            title = this.title,
+            description = this.description,
+            icon = this.icon,
+            conditionType = this.conditionType,
+            targetValue = this.targetValue,
+            currentValue = 0,
+            rewardType = this.rewardType,
+            rewardId = this.rewardId
+        };
     }
 }
