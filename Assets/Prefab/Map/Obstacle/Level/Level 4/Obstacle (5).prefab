@@ -9,8 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3083693796899197018}
-  - component: {fileID: 8866348812429254478}
-  - component: {fileID: -2070502087229890915}
+  - component: {fileID: -2917391585609773524}
   m_Layer: 0
   m_Name: Obstacle (5)
   m_TagString: Untagged
@@ -37,28 +36,7 @@ Transform:
   - {fileID: 3102107993089256022}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &8866348812429254478
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2430064930278268692}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 30, y: 50, z: 100}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-2070502087229890915
+--- !u!114 &-2917391585609773524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6309881947920720533, guid: c413276f5d96db844a503150127f9901, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -194,10 +172,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 813829206676160114, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113611395946980982, guid: 7322d44da5fec9345bd6176c73765056, type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6113611395946980982, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
@@ -270,10 +244,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8861376237318333127, guid: 0c0b58eecc4c29948b4cd67595b64034, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8861376237318333127, guid: 9a5d0a44bd82cde43bdf64e20ce4b53f, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -298,7 +268,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3512463849322042386, guid: aab39be592b0ee6418aebae37594dfdc, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4863458930354453342, guid: aab39be592b0ee6418aebae37594dfdc, type: 3}
       propertyPath: m_LocalPosition.x
