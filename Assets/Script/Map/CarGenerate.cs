@@ -50,6 +50,8 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     int tutorialIndex = 0;  // 튜토리얼 확인용 인덱스
     int lastObstacle = -1;  // 마지막 장애물 인덱스
     GameObject[] currentObstacles = new GameObject[8];  // 현재 차 프리펩 갯수 확인
+    bool isLastHardObstacle = false;    // 마지막 장애물 어려운지 확인
+    bool isLastCoin = false;    // 마지막 장애물 코인인지 확인
 
     void Start()
     {
@@ -109,13 +111,13 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 {
                     UIController.tutorialSkip = true;
                     obstacles = GetDifficultyArray();
-                    nextObstacle = ChooseObstacle(obstacles);
+                    nextObstacle = ChooseObstacle(obstacles, true);
                 }
             }
             // 일반 차 생성
             else
             {
-                nextObstacle = ChooseObstacle(obstacles);
+                nextObstacle = ChooseObstacle(obstacles, true);
             }
 
             lastObstacle = nextObstacle;
@@ -183,7 +185,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             {
                 UIController.tutorialSkip = true;
                 obstacles = GetDifficultyArray();
-                nextObstacle = ChooseObstacle(obstacles);
+                nextObstacle = ChooseObstacle(obstacles, true);
             }
         }
         // 일반 차 생성
@@ -198,7 +200,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 obstacles = (Random.value < starHeliRate) ? starObstacles : heliObstacles;
 
                 // 위에서 정해진 별 or 헬기 배열에서 하나 선택
-                nextObstacle = ChooseObstacle(obstacles);
+                nextObstacle = ChooseObstacle(obstacles, false);
 
                 // itemTimer 초기화
                 itemTimer = Time.time;
@@ -209,7 +211,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 obstacles = magnetObstacles;
 
                 // 자석 배열에서 하나 선택
-                nextObstacle = ChooseObstacle(obstacles);
+                nextObstacle = ChooseObstacle(obstacles, false);
 
                 // magnetTimer 초기화
                 magnetTimer = Time.time;
@@ -218,7 +220,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             else
             {
                 obstacles = GetDifficultyArray();
-                nextObstacle = ChooseObstacle(obstacles);
+                nextObstacle = ChooseObstacle(obstacles, true);
             }
         }
 
@@ -249,12 +251,16 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     }
 
     // 차 랜덤 생성 (최대 2개)
-    private int ChooseObstacle(GameObject[] obstacles)
+    private int ChooseObstacle(GameObject[] obstacles, bool isObstacle) // isObstacle은 아이템인지 장애물인지 확인용
     {
         int nextObstacle;
+        int hardDifficulty = Mathf.Max(0, obstacles.Length - 5);    // 어려운 난이도 갯수
+        bool isCurrentCoin; // 현재 코인 맵인지
         int safety = 0; // 무한 루프 방지용
         do
         {
+            isCurrentCoin = false;
+
             nextObstacle = Random.Range(0, obstacles.Length);
             safety++;
             if(safety > 100)
@@ -262,7 +268,41 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 Debug.LogWarning("무한 루프 방지 작동");
                 break;
             }
-        } while(nextObstacle == lastObstacle || CountObstacles(obstacles[nextObstacle]) >= 2);
+            if(isObstacle == false) // 아이템 맵일 경우 코인 맵
+            {
+                isCurrentCoin = true;
+            }
+            else    // 장애물 맵일 경우 코인 맵인지 확인
+            {
+                if(obstacles[nextObstacle].GetComponent<IsCoin>() != null)
+                {
+                    isCurrentCoin = true;
+                }
+            }
+        } while(nextObstacle == lastObstacle    // 다음 장애물과 중복 X
+            || CountObstacles(obstacles[nextObstacle]) >= 2 // 전체 맵에서 중복 맵 2개 이하
+            || isLastHardObstacle && isObstacle && nextObstacle >= hardDifficulty   // 어려운 4개의 난이도 맵 중복 X
+            || isLastCoin && isCurrentCoin);    // 코인 맵 중복 X
+
+        if(isObstacle == true)  // 장애물 배열일 경우 상태 업데이트
+        {
+            isLastHardObstacle = nextObstacle >= hardDifficulty;    // 어려운 난이도 확인
+
+            if(obstacles[nextObstacle].GetComponent<IsCoin>() != null)  // 코인 장애물 확인
+            {
+                isLastCoin = true;
+            }
+            else
+            {
+                isLastCoin = false;
+            }
+        }
+        else    // 아이템 배열일 경우 자동 true
+        {
+            isLastHardObstacle = true;
+            isLastCoin = true;
+        }
+
         return nextObstacle;
     }
 

@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5313283868542325403}
-  - component: {fileID: 5303705070023406736}
   - component: {fileID: -5695854198548309740}
   m_Layer: 0
   m_Name: Obstacle (11)
@@ -40,27 +39,6 @@ Transform:
   - {fileID: 5116887617340372027}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5303705070023406736
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8126686776152823733}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 30, y: 50, z: 100}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-5695854198548309740
 MonoBehaviour:
   m_ObjectHideFlags: 0
