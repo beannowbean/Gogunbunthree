@@ -56,6 +56,10 @@ public class Player : MonoBehaviour
     public float jumpForce = 6.0f;
     private bool isGrounded = true;
 
+    // [14. Iceman] 플레이어가 게임 시작 후 7초간 움직였는지 확인하는 변수 + 중복처리 방지
+    private bool hasPlayerMoved = false;
+    private bool isIcemanChecked = false;
+
     // 바닥 tag 입력
     public string groundTag = "Tile";
     public string vanRoofTag;
@@ -81,22 +85,28 @@ public class Player : MonoBehaviour
     // Helicopter 관련 변수
     public bool isHelicopter = false;
     public float helicopterDistance = 4.0f;
+    private int heliCoinCount = 0;  // [5. Eagle] 헬리콥터 탄 상태에서의 코인 개수 변수
+    private int heliCount = 0;  // [9. TopGun] 헬리콥터를 몇 번 탔는지 확인하는 변수
     private bool isHelicopterInvincible = false; // 헬리콥터에서 내릴 때 무적 확인 변수
     private bool isDroppingHeli = false;    // 헬리콥터에서 내려오는 동안인지 확인하는 변수
 
     // GameOver 관련 변수
     public bool isGameOver = false;
 
-    // Item (무적) 관련 변수
+    // Item Star(무적) 관련 변수
     public bool isInvincible = false;
     public float carImpactForce = 20.0f;
+    private bool hitCar = false;   // [11. Gentleman] star 아이템을 먹은 동안 차에 부딪쳤는지 확인하는 변수
+    private int carHitCount = 0;    // [12. Wrecker] star 아이템을 먹은 동안 차를 날린 개수 확인 변수
+    public int starCount = 0;  // [13. Superstar] star 아이템 먹은 개수 확인 변수 (star.cs에서)
     public Material invincibleMaterial;
 
-    // coin effect 관련 변수
+    // coin effect 관련 변수 
     public GameObject coinEffectPrefab;
 
     // Magnet 관련 변수
     public bool isMagnetActive = false;
+    private int magnetCoinCount = 0;    // [4. TreasureHunter] 자석아이템 먹고 코인 갯수 세는 변수
     private Coroutine magnetCoroutine;
     public GameObject magnetEffectPrefab;       // 자석 아이템 프리펩
     private GameObject currentMagnetEffect;     // 현재 자석 코루틴 활성화 중인지 확인 변수
@@ -118,6 +128,12 @@ public class Player : MonoBehaviour
     // 아이템 로직 관련
     private Coroutine currentInvincibilityCoroutine;
 
+    // [2. Dumb] 업적 달성을 위한 변수
+    private float gameStartTime;
+
+    // [6. Bunny] 퀵다이브를 한 시간을 기록하는 리스트
+    private List<float> quickDiveTime = new List<float>();
+
     void Awake()
     {
         // 싱글톤 초기화
@@ -129,6 +145,13 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        starCount = 0;  // [13. Superstar] 별을 먹은 개수 초기화
+        heliCount = 0;  // [9. TopGun] 헬리콥터에 탄 횟수 초기화
+
+        // [14. Iceman] 변수 초기화
+        hasPlayerMoved = false;
+        isIcemanChecked = false;
+
         groundLayer = LayerMask.GetMask("Ground");
         currentLane = 2;
         rb = GetComponent<Rigidbody>();
@@ -143,6 +166,10 @@ public class Player : MonoBehaviour
         {
             originalMaterials[i] = allRenderers[i].materials;
         }
+
+        // [2. Dumb] 게임 시작 시점의 시간 저장
+        gameStartTime = Time.time;
+
         StartCoroutine(CarSound());
     }
 
@@ -150,6 +177,25 @@ public class Player : MonoBehaviour
     {
         // 일시정지와 일시정지 재개중인 3초간 아무 실행을 안하도록
         if (isGameOver || Time.timeScale == 0.0f || isResuming) return;
+
+        // [14. Iceman] 아직 업적 달성이 안되어 있고 플레이어가 게임오버가 안되었다면 업적 확인
+        if (!isIcemanChecked && !isGameOver)
+        {
+            // 플레이어가 한 번이라도 움직였으면 -> 업적 실패 (체크 종료)
+            if (hasPlayerMoved)
+            {
+                isIcemanChecked = true;
+            }
+            // 아직 안 움직였는데 7초가 지났다면? -> 업적 성공
+            else if (Time.time - gameStartTime >= 7.0f)
+            {
+                if (PlayerAchivementList.Instance != null)
+                {
+                    PlayerAchivementList.Instance.Iceman();
+                }
+                isIcemanChecked = true; // 체크 완료
+            }
+        }
 
         CheckGround();
         DrawRope();
@@ -161,7 +207,7 @@ public class Player : MonoBehaviour
 
             if (isHelicopter)
             {
-
+                
             }
             else
             {
@@ -188,6 +234,16 @@ public class Player : MonoBehaviour
     void CheckInput()
     {
         if (Time.timeScale == 0f || isResuming) return;
+
+        // [14. Iceman] 움직였다고 체크 안될 때만 검사
+        if (!hasPlayerMoved)
+        {
+            // 키보드나 마우스, 터치 입력이 하나라도 들어오면
+            if (Input.anyKeyDown || Input.touchCount > 0)
+            {
+                hasPlayerMoved = true; // "움직였음" 표시
+            }
+        }
 
         // 키보드 입력 유지
         if (Input.GetKeyDown(KeyCode.LeftArrow)) ChangeLane(-1);
@@ -283,8 +339,6 @@ public class Player : MonoBehaviour
 
     void DrawRope()
     {
-        // 저번 오류로 인한 코드 불필요로 삭
-
         // 0.1초가 지난 후에만 그리도록 
         if (!isHookVisible)
         {
@@ -378,6 +432,15 @@ public class Player : MonoBehaviour
         // transform으로 이동하던 로직을 Lerp를 사용한 벡터로 이동하도록.
         if (isHelicopter)
         {
+            // [10. HeliVIP] 아이템을 먹은 상태로 헬리콥터에 탑승했을 시 업적 달성
+            if (isMagnetActive || isInvincible)
+            {
+                if (PlayerAchivementList.Instance != null)
+                {
+                    PlayerAchivementList.Instance.HeliVIP();
+                }
+            }
+
             Vector3 targetPos = new Vector3(
                 transform.position.x,                                  // X값은 그대로
                 currentHook.transform.position.y - helicopterDistance, // Y값은 헬리콥터보다 일정거리 아래
@@ -415,6 +478,9 @@ public class Player : MonoBehaviour
 
     public void ReleaseHelicopter()
     {
+        // [5. Eagle] 헬리콥터에서 내리면 카운트 초기화
+        heliCoinCount = 0;
+
         isHelicopter = false;
 
         // 플레이어가 헬리콥터에서 내린 후 갈고리와 로프가 헬리콥터에서 안 사라지고 남아있는 현상 수정을 위한 release hook 로직 직접 적용
@@ -433,6 +499,16 @@ public class Player : MonoBehaviour
         {
             lineRenderer.enabled = false;
             lineRenderer.positionCount = 0;
+        }
+
+        // [9. TopGun] 헬리콥터에 탈때마다 카운, 3번 이상이면 업적 달성
+        heliCount++;
+        if (heliCount >= 3)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.TopGun();
+            }
         }
 
         // 헬기에서 내려오는 중임을 선언
@@ -480,6 +556,32 @@ public class Player : MonoBehaviour
     {
         SFXManager.Instance.Play("Move");   // 퀵다이브 시 효과음 재생
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
+
+        // [6. Bunny] 5초 안에 3번 퀵다이브를 하였는지 체크
+        float currentTime = Time.time;
+        quickDiveTime.Add(currentTime);
+
+        // [6. Bunny] 5초가 지나면 리스트에서 삭제
+        for (int i = quickDiveTime.Count - 1; i >= 0; i--)
+        {
+            if (quickDiveTime[i] < currentTime - 5.0f)
+            {
+                quickDiveTime.RemoveAt(i);
+            }
+        }
+
+        // [6. Bunny] 리스트에 3개 이상 존재한다면 업적 달성
+        if (quickDiveTime.Count >= 3)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Bunny();
+            }
+
+            // 중복 해제
+            quickDiveTime.Clear(); 
+        }
+
     }
 
     void CheckGround()
@@ -514,7 +616,8 @@ public class Player : MonoBehaviour
     public void ActivateMagnet(float duration)
     {
         if (magnetCoroutine != null) StopCoroutine(magnetCoroutine);
-        if (currentMagnetEffect != null) Destroy(currentMagnetEffect);  // 아이템 겹침 현상 방
+        if (currentMagnetEffect != null) Destroy(currentMagnetEffect);  // 아이템 겹침 현상 방지
+        magnetCoinCount = 0;    // [4. TreasureHunter] 자석 아이템 먹을 때마다 초기화
         magnetCoroutine = StartCoroutine(MagnetRoutine(duration));
     }
 
@@ -552,7 +655,7 @@ public class Player : MonoBehaviour
             currentBeanie.transform.localRotation = Quaternion.Euler(hatRotationOffset);
             currentBeanie.transform.localScale = Vector3.one;
 
-            // 스킨 적
+            // 스킨 적용
             if (currentBeanieSkinTexture != null)
             {
                 ApplyTexture(currentBeanie, currentBeanieSkinTexture);
@@ -563,7 +666,7 @@ public class Player : MonoBehaviour
 
     // 모자 벗기 함수
     public void UnequipBeanie()
-    {
+    { 
         if (currentBeanie != null)
         {
             Destroy(currentBeanie);
@@ -676,7 +779,7 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Coin"))
         {
-            // 게임 오버시 코인과 부딪혀도 반응없도
+            // 게임 오버시 코인과 부딪혀도 반응없도록
             if (isGameOver)
             {
                 return;
@@ -687,11 +790,56 @@ public class Player : MonoBehaviour
             Destroy(effect, 1.0f);
             other.gameObject.SetActive(false);
             ScoreManager.Instance.AddCoin(1);
+
+            // [4. TreasureHunter] 자석 아이템을 먹고 코인 30개 이상 먹었을 시 업적 달성
+            if (isMagnetActive)
+            {
+                // [4. TreasureHunter] 코인 먹을 때마다 1씩 더하기
+                magnetCoinCount++;
+
+                // [4. TreasureHunter] 30개 이상 먹을 시 업적달성
+                if (magnetCoinCount >= 30)
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.TreasureHunter();
+                    }
+                }
+            }
+
+            // [5. Eagle] 헬리콥터에 탄 상태로 코인 30개 이상 먹었을 시 업적 달성
+            if (isHelicopter)
+            {
+                // [5. Eagle] 코인 먹을 때마다 1씩 더하기
+                heliCoinCount++;
+
+                // [5. Eagle] 30개 이상 먹을 시 업적달성
+                if (heliCoinCount >= 30)
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.TreasureHunter();
+                    }
+                }
+            }
         }
         else if (other.CompareTag("Car"))
         {
             if (isInvincible)
             {
+                hitCar = true;  // [11. Gentleman] 무적인 상태로 차에 부딪쳤다면 true
+
+                carHitCount++;  // [12. Wrecker] 차에 부딪힌 카운트 추가
+
+                // [12. Wrecker] 차를 20대 이상 날렸다면 업적 달
+                if (carHitCount >= 20)
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.Wrecker();
+                    }
+                }
+
                 // 중복 충돌 판정 버그 수정
                 Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
 
@@ -728,6 +876,16 @@ public class Player : MonoBehaviour
             else
             {
                 if (isGameOver) return;
+
+                // [3. Hit-And-Run] 치여서 죽은게 깜빡이 차라면 업적 달
+                if (other.gameObject.name.Contains("MoveCar"))
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.HitAndRun();
+                    }
+                }
+
                 ReleaseHook();
                 anim.SetTrigger("isCrashed");
                 rb.constraints = RigidbodyConstraints.None;
@@ -768,6 +926,9 @@ public class Player : MonoBehaviour
     IEnumerator InvincibilityRoutine(float duration)
     {
         isInvincible = true;
+
+        hitCar = false;     // [11. Gentleman] 차에 부딪쳤는지 확인하는 변수 초기화
+        carHitCount = 0;    //[12. Wrecker] 차를 날린 횟수 초기화
 
         // 1. 시작: 모든 파츠를 무적 재질로 변경
         if (allRenderers != null && invincibleMaterial != null)
@@ -850,6 +1011,15 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
 
+        // [11. Gentleman] 게임오버가 아니면서 차를 한 번도 안쳐서 hitCar가 false라면 업적달성
+        if (!isGameOver && !hitCar)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Gentleman();
+            }
+        }
+
         // --- 종료 처리 ---
         isInvincible = false;
 
@@ -871,6 +1041,25 @@ public class Player : MonoBehaviour
     IEnumerator GameOver()
     {
         isGameOver = true;
+
+        // [7. Bruh] 아이템 효과가 켜져있는 상태에서 죽었는지 체크 후 업적 달성
+        if (isMagnetActive || isInvincible || isHelicopter)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Bruh();
+            }
+        }
+
+        // [2. Dumb] 게임시작 10초안에 죽었는지 체크
+        if (Time.time - gameStartTime <= 10.0f)
+        {
+            // [2. Dumb] 업적 호출
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Dumb();
+            }
+        }
 
         // 게임오버시 자석 아이템 종료
         if (isMagnetActive)
@@ -900,6 +1089,8 @@ public class Player : MonoBehaviour
         }
         ScoreManager.Instance.StopScoring();
         SFXManager.Instance.Play("Crashed");
+        // 게임오버 루틴에서 일시정지시 버그 수정
+        UIController.Instance.pauseButton.SetActive(false);
 
         yield return new WaitForSecondsRealtime(3.0f);
         SFXManager.Instance.StopAll();  // 게임 오버시에도 소리가 들리는 현상 수정

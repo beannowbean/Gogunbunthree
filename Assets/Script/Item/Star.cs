@@ -10,12 +10,12 @@ public class Star : MonoBehaviour
     // 무적 지속 시간
     public float invincibilityDuration = 10.0f;
 
-    // ★ [추가 1] 인스펙터에서 아이콘 이미지를 넣을 변수
+    // 인스펙터에서 아이콘 이미지를 넣을 변수
     public Sprite iconSprite;
 
     private bool isCollected = false;   // 중복 획득 방지 변수
 
-    public GameObject starEffectPrefab; //이펙
+    public GameObject starEffectPrefab; // 이펙트
 
     void OnEnable() 
     {
@@ -46,9 +46,21 @@ public class Star : MonoBehaviour
                 // 실제 플레이어 무적 로직 실행
                 playerScript.ActivateInvincibility(invincibilityDuration);
 
-                // ★ [추가 2] UI 매니저에게 "UI 슬롯에 아이콘 띄워줘!" 라고 요청
+                // UI 매니저에게 "UI 슬롯에 아이콘 띄워줘!" 라고 요청
                 // 지속시간은 위에서 설정한 invincibilityDuration을 그대로 사용
                 ItemUIController.Instance.ActivateNextAvailableItem(invincibilityDuration, iconSprite);
+
+                // [13.Superstar] star 아이템을 먹고 count 추가
+                playerScript.starCount++;
+
+                // [13. Superstar] star 아이템을 5개 이상 먹었다면 업적 달성
+                if (playerScript.starCount >= 5)
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.Superstar();
+                    }
+                }
             }
             GameObject effect = Instantiate(starEffectPrefab, transform.position, Quaternion.identity);
             Destroy(effect, 1.0f); // 1초 뒤 삭제
