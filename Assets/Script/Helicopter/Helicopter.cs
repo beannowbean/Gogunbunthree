@@ -117,7 +117,7 @@ public class Helicopter : MonoBehaviour
         // 플레이어가 헬리콥터에 갈고리를 걸지 않았다면 헬리콥터 삭제
         if (isHookedHelicopter == false)
         {
-            // [Acrophobia8] 플레어이가 살아있는데 안 탔다면 업적 달성
+            // [8. Acrophobia] 플레어이가 살아있는데 안 탔다면 업적 달성
             if (Player.Instance != null && !Player.Instance.isGameOver)
             {
                 if (PlayerAchivementList.Instance != null)
