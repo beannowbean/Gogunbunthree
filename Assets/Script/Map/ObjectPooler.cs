@@ -40,6 +40,8 @@ public class ObjectPooler : MonoBehaviour
         InitializePool(level_1Obstacles);
         InitializePool(level_2Obstacles);
         InitializePool(level_3Obstacles);
+        InitializePool(level_4Obstacles);
+        InitializePool(level_5Obstacles);
         InitializePool(tutorialObstacles);
 
         InitializePool(starObstacles);

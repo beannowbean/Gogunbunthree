@@ -310,19 +310,19 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     private GameObject[] GetDifficultyArray()
     {
         if(!UIController.tutorialSkip) return tutorialObstacles;    // 튜토리얼시 튜토리얼 장애물
-        if(score >= level_5Score) {  // 레벨5 (속도 40, 20000점 이상 -> CarTileDesigner에서 변경)
+        if(score >= level_5Score) {  // 레벨5 (속도 40 -> CarTileDesigner에서 변경)
             tileGenerate.carSpeed = level_5Speed;
             return level_5Obstacles;
         }
-        else if(score >= level_4Score) {  // 레벨4 (속도 35, 15000점 이상)
+        else if(score >= level_4Score) {  // 레벨4 (속도 35)
             tileGenerate.carSpeed = level_4Speed;
             return level_4Obstacles;
         }
-        else if(score >= level_3Score) {  // 레벨3 (속도 30, 10000점 이상)
+        else if(score >= level_3Score) {  // 레벨3 (속도 30)
             tileGenerate.carSpeed = level_3Speed;
             return level_3Obstacles;
         }
-        else if(score >= level_2Score) {   // 레벨2 (속도 25, 5000점 이상)
+        else if(score >= level_2Score) {   // 레벨2 (속도 25)
             tileGenerate.carSpeed = level_2Speed;
             return level_2Obstacles;
         }
@@ -336,28 +336,28 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     private void DifficultyDetection()
     {
         if(!UIController.tutorialSkip) return;
-        if(score >= level_5Score) {  // 레벨5 (속도 40, 20000점 이상 -> CarTileDesigner에서 변경)
+        if(score >= level_5Score) {  // 레벨5 (속도 40 -> CarTileDesigner에서 변경)
             if(currentDifficulty != Difficulty.Level5)
             {
                 currentDifficulty = Difficulty.Level5;
                 dayNightCycle.NightToDay();
             }
         }
-        else if(score >= level_4Score) {   // 레벨4 (속도 30, 15000점 이상)
+        else if(score >= level_4Score) {   // 레벨4 (속도 30)
             if(currentDifficulty != Difficulty.Level4)
             {
                 currentDifficulty = Difficulty.Level4;
                 dayNightCycle.DayToNight();
             }
         }
-        else if(score >= level_3Score) {   // 레벨3 (속도 25, 10000점 이상)
+        else if(score >= level_3Score) {   // 레벨3 (속도 25)
             if(currentDifficulty != Difficulty.Level3)
             {
                 currentDifficulty = Difficulty.Level3;
                 dayNightCycle.NightToDay();
             }
         }
-        else if(score >= level_2Score) {   // 레벨2 (속도 20, 5000점 이상)
+        else if(score >= level_2Score) {   // 레벨2 (속도 20)
             if(currentDifficulty != Difficulty.Level2)
             {
                 currentDifficulty = Difficulty.Level2;
