@@ -304,72 +304,23 @@ public class AchievementManager : MonoBehaviour
         return PlayerPrefs.GetInt($"Achievement_{achievementId}", 0) == 1;
     }
 
-    #region Type Specific Update Methods
-    
+    #region Progress Update API
+
     /// <summary>
-    /// Score 타입 업적 업데이트
+    /// 진척도 절댓값으로 설정
     /// </summary>
-    public bool UpdateScoreAchievement(string achievementId, int score)
+    public bool UpdateProgress(string achievementId, int value)
     {
-        var achievement = GetAchievement(achievementId);
-        if (achievement != null && achievement.conditionType == AchievementConditionType.Score)
-        {
-            return UpdateAchievementProgress(achievementId, score);
-        }
-        return false;
+        return UpdateAchievementProgress(achievementId, value);
     }
-    
+
     /// <summary>
-    /// PlayTime 타입 업적 업데이트 (초 단위)
+    /// 진척도를 상대값으로 증가
     /// </summary>
-    public bool UpdatePlayTimeAchievement(string achievementId, int playTimeInSeconds)
+    public bool IncrementProgress(string achievementId, int incrementValue = 1)
     {
-        var achievement = GetAchievement(achievementId);
-        if (achievement != null && achievement.conditionType == AchievementConditionType.PlayTime)
-        {
-            return UpdateAchievementProgress(achievementId, playTimeInSeconds);
-        }
-        return false;
+        return IncrementAchievementProgress(achievementId, incrementValue);
     }
-    
-    /// <summary>
-    /// CollectCoins 타입 업적 업데이트
-    /// </summary>
-    public bool UpdateCollectCoinsAchievement(string achievementId, int coinCount)
-    {
-        var achievement = GetAchievement(achievementId);
-        if (achievement != null && achievement.conditionType == AchievementConditionType.CollectCoins)
-        {
-            return UpdateAchievementProgress(achievementId, coinCount);
-        }
-        return false;
-    }
-    
-    /// <summary>
-    /// CollectItems 타입 업적 업데이트
-    /// </summary>
-    public bool UpdateCollectItemsAchievement(string achievementId, int itemCount)
-    {
-        var achievement = GetAchievement(achievementId);
-        if (achievement != null && achievement.conditionType == AchievementConditionType.CollectItems)
-        {
-            return UpdateAchievementProgress(achievementId, itemCount);
-        }
-        return false;
-    }
-    
-    /// <summary>
-    /// Custom 타입 업적 업데이트
-    /// </summary>
-    public bool UpdateCustomAchievement(string achievementId, int customValue)
-    {
-        var achievement = GetAchievement(achievementId);
-        if (achievement != null && achievement.conditionType == AchievementConditionType.Custom)
-        {
-            return UpdateAchievementProgress(achievementId, customValue);
-        }
-        return false;
-    }
-    
+
     #endregion
 }
