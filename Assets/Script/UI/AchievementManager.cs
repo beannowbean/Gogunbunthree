@@ -176,14 +176,34 @@ public class AchievementManager : MonoBehaviour
     /// </summary>
     public bool ClaimReward(string achievementId)
     {
+        Debug.Log($"[AchievementManager] ClaimReward called for '{achievementId}'");
+
         var achievement = GetAchievement(achievementId);
-        if (achievement == null || !achievement.IsCompleted) return false;
+        if (achievement == null)
+        {
+            Debug.LogWarning($"[AchievementManager] ClaimReward failed: achievement '{achievementId}' not found.");
+            return false;
+        }
+
+        Debug.Log($"[AchievementManager] Achievement found: {achievement.title} (Completed: {achievement.IsCompleted}, RewardType: {achievement.rewardType}, RewardIndex: {achievement.rewardIndex})");
+
+        if (!achievement.IsCompleted)
+        {
+            Debug.LogWarning($"[AchievementManager] ClaimReward failed: achievement '{achievementId}' is not completed yet.");
+            return false;
+        }
         
         // 이미 수령했는지 확인
-        if (IsRewardClaimed(achievementId)) return false;
+        if (IsRewardClaimed(achievementId))
+        {
+            Debug.LogWarning($"[AchievementManager] ClaimReward failed: reward already claimed for '{achievementId}'.");
+            return false;
+        }
         
         // 보상 지급
+        Debug.Log($"[AchievementManager] Attempting to give reward: {achievement.rewardType} (index: {achievement.rewardIndex})");
         bool success = GiveReward(achievement);
+        Debug.Log($"[AchievementManager] GiveReward returned: {success} for '{achievementId}'");
         
         if (success)
         {
@@ -191,7 +211,11 @@ public class AchievementManager : MonoBehaviour
             PlayerPrefs.SetInt($"Achievement_{achievementId}_Reward", 1);
             PlayerPrefs.Save();
             
-            Debug.Log($"[보상 수령] {achievement.title} - {achievement.rewardType}");
+            Debug.Log($"[AchievementManager] Reward claimed and saved for {achievement.title} - {achievement.rewardType}");
+        }
+        else
+        {
+            Debug.LogWarning($"[AchievementManager] ClaimReward failed: GiveReward returned false for '{achievementId}'.");
         }
         
         return success;
@@ -216,25 +240,35 @@ public class AchievementManager : MonoBehaviour
                 return false;
                 
             case RewardType.PlayerSkin:
-                // TODO: 플레이어 스킨 해금
-                Debug.Log($"플레이어 스킨 해금: {achievement.rewardId}");
-                UnlockPlayerSkin(achievement.rewardId);
-                return true;
+                {
+                    int index = achievement.rewardIndex;
+                    Debug.Log($"플레이어 스킨 해금: index {index}");
+                    if (Customize.Instance != null)
+                    {
+                        Customize.Instance.UnlockPlayerSkinByIndex(index);
+                    }
+                    // 호환성: 인덱스 기반 키로 저장
+                    PlayerPrefs.SetInt($"PlayerSkin_{index}_Unlocked", 1);
+                    PlayerPrefs.Save();
+                    return true;
+                }
                 
             case RewardType.RopeSkin:
-                // TODO: 로프 스킨 해금
-                Debug.Log($"로프 스킨 해금: {achievement.rewardId}");
-                UnlockRopeSkin(achievement.rewardId);
-                return true;
-                
-            case RewardType.Coins:
-                // TODO: 코인 지급
-                Debug.Log($"코인 지급: {achievement.rewardId}");
-                return true;
+                {
+                    int index = achievement.rewardIndex;
+                    Debug.Log($"로프 스킨 해금: index {index}");
+                    if (Customize.Instance != null)
+                    {
+                        Customize.Instance.UnlockRopeSkinByIndex(index);
+                    }
+                    PlayerPrefs.SetInt($"RopeSkin_{index}_Unlocked", 1);
+                    PlayerPrefs.Save();
+                    return true;
+                }
                 
             case RewardType.CustomItem:
                 // TODO: 커스텀 아이템 지급
-                Debug.Log($"커스텀 아이템 지급: {achievement.rewardId}");
+                Debug.Log($"커스텀 아이템 지급: index {achievement.rewardIndex}");
                 return true;
                 
             default:

@@ -6,12 +6,14 @@ public class PlayerAchivementList : MonoBehaviour
 {
     public static PlayerAchivementList Instance;
 
-    [Header("Achievement Definitions")]
-    [SerializeField] private List<AchievementDefinition> achievementDefinitions = new List<AchievementDefinition>();
+    private List<AchievementDefinition> achievementDefinitions = new List<AchievementDefinition>();
 
     void Awake()
     {
         if (Instance == null) Instance = this;
+        
+        // 업적 정의 초기화
+        InitializeAchievements();
     }
 
     // Start is called before the first frame update
@@ -20,8 +22,7 @@ public class PlayerAchivementList : MonoBehaviour
         // 업적 데이터를 AchievementManager에 등록
         RegisterAchievementsToManager();
         
-        // [Newbie1] 게임 시작 시 체크
-        Newbie();
+        // Newbie는 Start 버튼 클릭 시 달성되므로 여기서 호출하지 않음
     }
 
     // Update is called once per frame
@@ -31,23 +32,250 @@ public class PlayerAchivementList : MonoBehaviour
     }
     
     /// <summary>
+    /// 업적 정의 초기화
+    /// </summary>
+    private void InitializeAchievements()
+    {
+        // 난이도 1짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Newbie",                                  // PlayerPrefs 키
+            title = "Newbie",                                       // 업적 이름
+            description = "",                                       // 업적 설명
+            icon = null,                                            // 업적 보상 아이콘: 보상 이미지
+            conditionType = AchievementConditionType.Custom,        // 조건타입: 점수, 코인 등등
+            targetValue = 1,                                        // 달성조건: e.g. 갯수
+            rewardType = RewardType.PlayerSkin,                     // 보상타입: 스킨, 코인 등등
+            rewardIndex = 0                                         // e.g. Customize.playerSkins[0]을 보상으로 설정
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Dumb",
+            title = "Dumb",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 2짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_HitAndRun",
+            title = "Hit And Run",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_TreasureHunter",
+            title = "Treasure Hunter",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Eagle",
+            title = "Eagle",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 3짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Bunny",
+            title = "Bunny",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Bruh",
+            title = "Bruh",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Acrophobia",
+            title = "Acrophobia",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 4짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_TopGun",
+            title = "Top Gun",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_HeliVIP",
+            title = "Heli VIP",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Gentleman",
+            title = "Gentleman",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Wrecker",
+            title = "Wrecker",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 5짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Superstar",
+            title = "Superstar",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Iceman",
+            title = "Iceman",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Icarus",
+            title = "Icarus",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Hustler",
+            title = "Hustler",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 6짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_SkyWalker",
+            title = "Sky Walker",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Pennyless",
+            title = "Pennyless",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        // 난이도 7짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Billionaire",
+            title = "Billionaire",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Rapunzel",
+            title = "Rapunzel",
+            description = "",
+            icon = null,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.None
+        });
+    }
+    
+    /// <summary>
     /// 정의된 업적들을 AchievementManager에 등록
     /// </summary>
     private void RegisterAchievementsToManager()
     {
-        if (AchievementManager.Instance == null)
-        {
-            Debug.LogError("[PlayerAchievementList] AchievementManager가 없습니다! MainMenu 씬에 AchievementManager를 추가하세요.");
-            return;
-        }
 
-        // Inspector에서 정의된 업적들을 Manager에 등록
+        // 코드에서 정의된 업적들을 Manager에 등록
         foreach (var definition in achievementDefinitions)
         {
             AchievementManager.Instance.RegisterAchievement(definition.ToAchievementData());
         }
-        
-        Debug.Log($"[PlayerAchievementList] {achievementDefinitions.Count}개 업적 등록 완료");
     }
 
     // 업적을 달성했는지 처리하는 함수
@@ -234,7 +462,7 @@ public class AchievementDefinition
     
     [Header("Reward Settings")]
     public RewardType rewardType;
-    public string rewardId;
+    public int rewardIndex = -1; // Customize 리스트의 인덱스 (Inspector에서 설정)
     
     /// <summary>
     /// AchievementData로 변환
@@ -251,7 +479,7 @@ public class AchievementDefinition
             targetValue = this.targetValue,
             currentValue = 0,
             rewardType = this.rewardType,
-            rewardId = this.rewardId
+            rewardIndex = this.rewardIndex
         };
     }
 }

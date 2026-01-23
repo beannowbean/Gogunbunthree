@@ -15,7 +15,8 @@ public class AchievementData
     
     [Header("Reward Settings")]
     public RewardType rewardType;
-    public string rewardId; // 스킨 ID 또는 아이템 ID
+    // 인스펙터에서 직접 선택 가능한 리스트 인덱스 (Customize의 리스트 인덱스)
+    public int rewardIndex = -1; // -1 means not set
     
     public bool IsCompleted => currentValue >= targetValue;
     public float ProgressPercentage => targetValue > 0 ? (float)currentValue / targetValue : 0f;
@@ -35,6 +36,5 @@ public enum RewardType
     None,          // 보상 없음
     PlayerSkin,    // 플레이어 스킨
     RopeSkin,      // 로프 스킨
-    Coins,         // 코인
     CustomItem     // 커스텀 아이템
 }

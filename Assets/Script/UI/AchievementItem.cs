@@ -66,28 +66,15 @@ public class AchievementItem : MonoBehaviour
     /// </summary>
     private void SetupRewardUI(AchievementData data)
     {
-        // 버튼 상태 상세 로그
-        if (claimRewardButton != null)
-        {
-            var btnImage = claimRewardButton.GetComponent<UnityEngine.UI.Image>();
-            Debug.Log($"[업적UI][ButtonState] Button.enabled={claimRewardButton.enabled}, interactable={claimRewardButton.interactable}, Image.enabled={btnImage?.enabled}, Image.raycastTarget={btnImage?.raycastTarget}");
-            var cg = claimRewardButton.GetComponentInParent<CanvasGroup>();
-            if (cg != null)
-                Debug.Log($"[업적UI][ButtonState] CanvasGroup.interactable={cg.interactable}, blocksRaycasts={cg.blocksRaycasts}, alpha={cg.alpha}");
-        }
         bool isRewardClaimed = AchievementManager.Instance != null && 
                               AchievementManager.Instance.IsRewardClaimed(data.id);
 
-        // 로그 추가: 조건별 값 출력
-        Debug.Log($"[업적UI] id={data.id}, IsCompleted={data.IsCompleted}, isRewardClaimed={isRewardClaimed}, rewardType={data.rewardType}");
 
         // 보상 수령 버튼 (완료 + 미수령 + 보상 있음)
-        bool canClaim = data.IsCompleted && !isRewardClaimed && data.rewardType != RewardType.None;
-        Debug.Log($"[업적UI] canClaim={canClaim}");
+        bool canClaim = data.IsCompleted && !isRewardClaimed;
         if (claimRewardButton != null)
         {
             claimRewardButton.gameObject.SetActive(canClaim);
-            // 임시 우회: 버튼 활성화 시 Button.enabled, Image.enabled를 true로 강제 설정
             var btnImage = claimRewardButton.GetComponent<UnityEngine.UI.Image>();
             if (canClaim)
             {
@@ -111,22 +98,44 @@ public class AchievementItem : MonoBehaviour
     /// </summary>
     private void OnClaimRewardClicked()
     {
-        Debug.Log($"[업적UI] Claim 버튼 클릭: id={currentData?.id}");
-        if (AchievementManager.Instance != null && currentData != null)
+        Debug.Log($"[AchievementItem] Claim button clicked for '{achievementId}'");
+
+        if (AchievementManager.Instance == null)
         {
-            bool success = AchievementManager.Instance.ClaimReward(currentData.id);
-            Debug.Log($"[업적UI] ClaimReward 결과: success={success}");
-            if (success)
+            Debug.LogWarning("[AchievementItem] AchievementManager.Instance is null. Cannot claim reward.");
+            return;
+        }
+
+        if (currentData == null)
+        {
+            Debug.LogWarning("[AchievementItem] currentData is null. Cannot claim reward.");
+            return;
+        }
+
+        // 상태 로그(완료 여부, 보상 수령 여부, 보상 타입)
+        bool isUnlocked = AchievementManager.Instance.IsAchievementUnlocked(currentData.id);
+        bool isRewardClaimed = AchievementManager.Instance.IsRewardClaimed(currentData.id);
+        Debug.Log($"[AchievementItem] State before claim - IsCompleted: {currentData.IsCompleted}, IsUnlocked(PlayerPrefs): {isUnlocked}, IsRewardClaimed: {isRewardClaimed}, RewardType: {currentData.rewardType}, RewardIndex: {currentData.rewardIndex}");
+
+        bool success = AchievementManager.Instance.ClaimReward(currentData.id);
+        Debug.Log($"[AchievementItem] ClaimReward returned: {success} for '{currentData.id}'");
+
+        if (success)
+        {
+            // UI 업데이트
+            SetupRewardUI(currentData);
+            // 사운드 재생
+            if (SFXManager.Instance != null)
             {
-                // UI 업데이트
-                SetupRewardUI(currentData);
-                Debug.Log($"[업적UI] SetupRewardUI 호출 완료");
-                // 사운드 재생
-                if (SFXManager.Instance != null)
-                {
-                    SFXManager.Instance.Play("Button");
-                }
+                SFXManager.Instance.Play("Button");
             }
+        }
+        else
+        {
+            // 실패 시 원인 추가 검사 로그
+            isRewardClaimed = AchievementManager.Instance.IsRewardClaimed(currentData.id);
+            isUnlocked = AchievementManager.Instance.IsAchievementUnlocked(currentData.id);
+            Debug.LogWarning($"[AchievementItem] Claim failed - IsCompleted: {currentData.IsCompleted}, IsUnlocked(PlayerPrefs): {isUnlocked}, IsRewardClaimed: {isRewardClaimed}, RewardType: {currentData.rewardType}, RewardIndex: {currentData.rewardIndex}");
         }
     }
     
