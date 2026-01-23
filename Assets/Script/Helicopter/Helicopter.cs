@@ -110,16 +110,10 @@ public class Helicopter : MonoBehaviour
             yield return null;
         }
 
-        // [3단계] 상승 (Target -> Sky)
-        if (!isHookedHelicopter) heliCollider.enabled = false;
-        while (Mathf.Abs(currentHeight - coinMapHeight) > 0.1f)
-        {
-            currentHeight = Mathf.MoveTowards(currentHeight, coinMapHeight, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
 
-        // 플레이어가 헬리콥터에 갈고리를 걸지 않았다면 헬리콥터 삭제
-        if (isHookedHelicopter == false)
+
+        // [3단계] 상승 (Target -> Sky)
+        if (!isHookedHelicopter)
         {
             // [8. Acrophobia] 플레어이가 살아있는데 안 탔다면 업적 달성
             if (Player.Instance != null && !Player.Instance.isGameOver)
@@ -130,8 +124,19 @@ public class Helicopter : MonoBehaviour
                 }
             }
 
+            heliCollider.enabled = false;
+        }
+        
+        while (Mathf.Abs(currentHeight - coinMapHeight) > 0.1f)
+        {
+            currentHeight = Mathf.MoveTowards(currentHeight, coinMapHeight, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        // 플레이어가 헬리콥터에 갈고리를 걸지 않았다면 헬리콥터 삭제
+        if (isHookedHelicopter == false)
+        {
             SFXManager.Instance.Stop("Helicopter"); // 오디오 멈춤.
-            heliCollider.enabled = true;
             Destroy(gameObject);
             yield break;    // 코루틴 강제 종료
         }

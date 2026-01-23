@@ -37,6 +37,11 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI bestScoreText;   // 베스트 점수 표시용
     public TextMeshProUGUI bonusScoreText;  // 보너스 점수 표시용 (점수 위에 표시)
 
+    [Header("Achievement")]
+    private bool hasAchievedBillionaire = false;    // [19. Billionaire] 업적 중복 체크
+    private bool hasAchievedHustler = false;        // [16. Hustler] 업적 중복 체크
+    private bool hasAchievedPennyLess = false;      // [18. Pennyless] 업적 중복 체크
+
     void Awake()
     {
         Instance = this;
@@ -70,6 +75,26 @@ public class ScoreManager : MonoBehaviour
         
         // 2. 점수 계산: 거리 점수 + 코인 점수
         currentScore = GetDistanceScore() + GetCoinScore();
+
+        // [16. Hustler] 점수가 15000점 이상 달성 시 업적 달성, 중복 체크
+        if (!hasAchievedHustler && currentScore >= 15000)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Hustler();
+            }
+            hasAchievedHustler = true; // 달성 완료 표시
+        }
+
+        // [18. Pennyless] 코인카운트가 0이면서 7000점을 넘으면 업적 달성, 중복 체크
+        if (!hasAchievedPennyLess && currentScore >= 7000 && coinCount == 0)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Pennyless();
+            }
+            hasAchievedPennyLess = true; // 달성 완료 표시
+        }
 
         // 점수가 변경되었을 때만 UI 업데이트 (성능 최적화)
         if (currentScore != lastDisplayedScore)
@@ -158,7 +183,17 @@ public class ScoreManager : MonoBehaviour
     public void AddCoin(int amount)
     {
         coinCount += amount;
-        
+
+        // [19. Billionaire] 코인 200개 이상 모을 시 업적 달성
+        if (!hasAchievedBillionaire && coinCount >= 200)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Billionaire();
+            }
+            hasAchievedBillionaire = true; // 중복 달성 방지
+        }
+
         // 코인 먹을 때마다 보너스 표시 (중단하지 않음)
         StartCoroutine(ShowBonus($"+{COIN_SCORE_VALUE * amount}"));
     }
