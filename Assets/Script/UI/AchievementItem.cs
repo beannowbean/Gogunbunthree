@@ -13,12 +13,18 @@ public class AchievementItem : MonoBehaviour
     [SerializeField] private Slider progressSlider;
     [SerializeField] private TextMeshProUGUI progressText;
     [SerializeField] private GameObject progressContainer;
+    
+    [Header("Reward UI")]
+    [SerializeField] private Button claimRewardButton;
+    [SerializeField] private GameObject rewardClaimedIndicator;
 
     private string achievementId;
+    private AchievementData currentData;
 
     public void Initialize(AchievementData data, bool isUnlocked, System.Action<string, bool> callback)
     {
         achievementId = data.id;
+        currentData = data;
 
         // 배경 이미지 활성화
         Image backgroundImage = GetComponent<Image>();
@@ -50,151 +56,124 @@ public class AchievementItem : MonoBehaviour
         
         // 진척도 UI 업데이트
         UpdateProgress(data);
+        
+        // 보상 UI 설정
+        SetupRewardUI(data);
+    }
+    
+    /// <summary>
+    /// 보상 UI 설정
+    /// </summary>
+    private void SetupRewardUI(AchievementData data)
+    {
+        // 버튼 상태 상세 로그
+        if (claimRewardButton != null)
+        {
+            var btnImage = claimRewardButton.GetComponent<UnityEngine.UI.Image>();
+            Debug.Log($"[업적UI][ButtonState] Button.enabled={claimRewardButton.enabled}, interactable={claimRewardButton.interactable}, Image.enabled={btnImage?.enabled}, Image.raycastTarget={btnImage?.raycastTarget}");
+            var cg = claimRewardButton.GetComponentInParent<CanvasGroup>();
+            if (cg != null)
+                Debug.Log($"[업적UI][ButtonState] CanvasGroup.interactable={cg.interactable}, blocksRaycasts={cg.blocksRaycasts}, alpha={cg.alpha}");
+        }
+        bool isRewardClaimed = AchievementManager.Instance != null && 
+                              AchievementManager.Instance.IsRewardClaimed(data.id);
+
+        // 로그 추가: 조건별 값 출력
+        Debug.Log($"[업적UI] id={data.id}, IsCompleted={data.IsCompleted}, isRewardClaimed={isRewardClaimed}, rewardType={data.rewardType}");
+
+        // 보상 수령 버튼 (완료 + 미수령 + 보상 있음)
+        bool canClaim = data.IsCompleted && !isRewardClaimed && data.rewardType != RewardType.None;
+        Debug.Log($"[업적UI] canClaim={canClaim}");
+        if (claimRewardButton != null)
+        {
+            claimRewardButton.gameObject.SetActive(canClaim);
+            // 임시 우회: 버튼 활성화 시 Button.enabled, Image.enabled를 true로 강제 설정
+            var btnImage = claimRewardButton.GetComponent<UnityEngine.UI.Image>();
+            if (canClaim)
+            {
+                claimRewardButton.enabled = true;
+                if (btnImage != null) btnImage.enabled = true;
+            }
+            // 기존 리스너 제거 후 새로 추가
+            claimRewardButton.onClick.RemoveAllListeners();
+            claimRewardButton.onClick.AddListener(OnClaimRewardClicked);
+        }
+
+        // 보상 수령 완료 표시
+        if (rewardClaimedIndicator != null)
+        {
+            rewardClaimedIndicator.SetActive(isRewardClaimed);
+        }
+    }
+    
+    /// <summary>
+    /// 보상 수령 버튼 클릭
+    /// </summary>
+    private void OnClaimRewardClicked()
+    {
+        Debug.Log($"[업적UI] Claim 버튼 클릭: id={currentData?.id}");
+        if (AchievementManager.Instance != null && currentData != null)
+        {
+            bool success = AchievementManager.Instance.ClaimReward(currentData.id);
+            Debug.Log($"[업적UI] ClaimReward 결과: success={success}");
+            if (success)
+            {
+                // UI 업데이트
+                SetupRewardUI(currentData);
+                Debug.Log($"[업적UI] SetupRewardUI 호출 완료");
+                // 사운드 재생
+                if (SFXManager.Instance != null)
+                {
+                    SFXManager.Instance.Play("Button");
+                }
+            }
+        }
     }
     
     private void UpdateProgress(AchievementData data)
     {
-        // targetValue가 0이면 진척도 UI 숨김, 완료되어도 표시
-        bool showProgress = data.targetValue > 0;
+        // 완료되면 진척도 UI 숨김
+        bool showProgress = data.targetValue > 0 && !data.IsCompleted;
         
         if (progressContainer != null)
         {
             progressContainer.SetActive(showProgress);
         }
+
         
-        if (progressSlider != null && data.targetValue > 0)
-        {
-            progressSlider.maxValue = data.targetValue;
-            progressSlider.value = data.currentValue;
-        }
         
-        if (progressText != null && data.targetValue > 0)
+        if (showProgress)
         {
-            progressText.enabled = true;
-            progressText.gameObject.SetActive(true);
-            
-            if (data.IsCompleted)
+            if (progressSlider != null)
             {
-                progressText.text = "COMPLETED";
+                progressSlider.maxValue = data.targetValue;
+                progressSlider.value = data.currentValue;
             }
-            else
+            
+            if (progressText != null)
             {
+                progressText.enabled = true;
+                progressText.gameObject.SetActive(true);
+                
                 float percentage = (data.currentValue / (float)data.targetValue) * 100f;
                 progressText.text = $"{percentage:F0}%";
             }
-            
         }
     }
     
     // 업적 UI 업데이트 메서드
     public void UpdateDisplay(AchievementData data)
     {
+        currentData = data;
+        
         // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)
             lockOverlay.gameObject.SetActive(data.IsCompleted);
         
         // 진척도 UI 업데이트
         UpdateProgress(data);
-    }
-    
-    // 업적 진척도 업데이트 메서드
-    public static void UpdateAchievementProgress(AchievementData achievement, int progressValue)
-    {
-        if (achievement != null)
-        {
-            achievement.currentValue = progressValue;
-            PlayerPrefs.SetInt($"Achievement_{achievement.id}_Progress", progressValue);
-            
-            // 목표 달성 시 자동 언락
-            if (achievement.IsCompleted)
-            {
-                PlayerPrefs.SetInt($"Achievement_{achievement.id}", 1);
-            }
-            
-            PlayerPrefs.Save();
-        }
-    }
-    
-    // 업적 진척도 증가 메서드
-    public static void IncrementAchievementProgress(AchievementData achievement, int incrementValue = 1)
-    {
-        if (achievement != null)
-        {
-            UpdateAchievementProgress(achievement, achievement.currentValue + incrementValue);
-        }
-    }
-    
-    #region Achievement Type Specific Methods
-    
-    // Score 타입 업적 업데이트
-    public static void UpdateScoreAchievement(AchievementData achievement, int score)
-    {
-        if (achievement != null && achievement.conditionType == AchievementConditionType.Score)
-        {
-            UpdateAchievementProgress(achievement, score);
-        }
-    }
-    
-    // PlayTime 타입 업적 업데이트 (초 단위)
-    public static void UpdatePlayTimeAchievement(AchievementData achievement, int playTimeInSeconds)
-    {
-        if (achievement != null && achievement.conditionType == AchievementConditionType.PlayTime)
-        {
-            UpdateAchievementProgress(achievement, playTimeInSeconds);
-        }
-    }
-    
-    // CollectCoins 타입 업적 업데이트
-    public static void UpdateCollectCoinsAchievement(AchievementData achievement, int coinCount)
-    {
-        if (achievement != null && achievement.conditionType == AchievementConditionType.CollectCoins)
-        {
-            UpdateAchievementProgress(achievement, coinCount);
-        }
-    }
-    
-    // CollectItems 타입 업적 업데이트
-    public static void UpdateCollectItemsAchievement(AchievementData achievement, int itemCount)
-    {
-        if (achievement != null && achievement.conditionType == AchievementConditionType.CollectItems)
-        {
-            UpdateAchievementProgress(achievement, itemCount);
-        }
-    }
-    
-    // Custom 타입 업적 업데이트
-    public static void UpdateCustomAchievement(AchievementData achievement, int customValue)
-    {
-        if (achievement != null && achievement.conditionType == AchievementConditionType.Custom)
-        {
-            UpdateAchievementProgress(achievement, customValue);
-        }
-    }
-    
-    // 조건 타입에 따라 자동으로 업적 업데이트
-    public static void UpdateAchievementByType(AchievementData achievement, int value)
-    {
-        if (achievement == null) return;
         
-        switch (achievement.conditionType)
-        {
-            case AchievementConditionType.Score:
-                UpdateScoreAchievement(achievement, value);
-                break;
-            case AchievementConditionType.PlayTime:
-                UpdatePlayTimeAchievement(achievement, value);
-                break;
-            case AchievementConditionType.CollectCoins:
-                UpdateCollectCoinsAchievement(achievement, value);
-                break;
-            case AchievementConditionType.CollectItems:
-                UpdateCollectItemsAchievement(achievement, value);
-                break;
-            case AchievementConditionType.Custom:
-                UpdateCustomAchievement(achievement, value);
-                break;
-        }
+        // 보상 UI 업데이트
+        SetupRewardUI(data);
     }
-    
-    #endregion
 }
