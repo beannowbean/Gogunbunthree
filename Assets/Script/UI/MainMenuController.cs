@@ -62,6 +62,12 @@ public class MainMenuController : MonoBehaviour
             SFXManager.Instance.Play("Button");
         }
         
+        // Start 버튼 클릭 시 Newbie 업적 달성
+        if (PlayerAchivementList.Instance != null)
+        {
+            PlayerAchivementList.Instance.Newbie();
+        }
+        
         isLoadingScene = true;
         
         // 프리로드된 씬이 있으면 즉시 활성화

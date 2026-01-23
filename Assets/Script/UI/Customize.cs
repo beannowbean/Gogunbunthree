@@ -13,6 +13,14 @@ using System.Collections.Generic;
 
 public class Customize : MonoBehaviour
 {
+    public static Customize Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     [Header("PlayerSkin")]
     // assets/Customize/sweater에 있는 이미지들을 리스트로 다 대입
     // 인스펙터에서 해줘야 됨
@@ -143,4 +151,35 @@ public class Customize : MonoBehaviour
             Player.Instance.ChangeBagSkin(bagSkins[index]);
         }
     }
-}
+
+    // 인덱스 기반으로 스킨을 해금 표시 (PlayerPrefs에 저장)
+    public void UnlockPlayerSkinByIndex(int index)
+    {
+        if (index >= 0 && index < playerSkins.Count)
+        {
+            PlayerPrefs.SetInt($"PlayerSkin_{index}_Unlocked", 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[Customize] Player skin index {index} unlocked");
+        }
+    }
+
+    public void UnlockRopeSkinByIndex(int index)
+    {
+        if (index >= 0 && index < ropeSkins.Count)
+        {
+            PlayerPrefs.SetInt($"RopeSkin_{index}_Unlocked", 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[Customize] Rope skin index {index} unlocked");
+        }
+    }
+
+    public bool IsPlayerSkinUnlocked(int index)
+    {
+        return PlayerPrefs.GetInt($"PlayerSkin_{index}_Unlocked", 0) == 1;
+    }
+
+    public bool IsRopeSkinUnlocked(int index)
+    {
+        return PlayerPrefs.GetInt($"RopeSkin_{index}_Unlocked", 0) == 1;
+    }
+} 
