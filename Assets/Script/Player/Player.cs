@@ -134,6 +134,16 @@ public class Player : MonoBehaviour
     // [6. Bunny] 퀵다이브를 한 시간을 기록하는 리스트
     private List<float> quickDiveTime = new List<float>();
 
+    // [15. Icarus] 차 위에서 점프를 했는지 확인하는 변수
+    private bool isJumpingFromVan = false;
+
+    // [17. SkyWalker] 땅을 밟지 않았는지 확인하는 타이머 추가
+    private float skyWalkerTimer = 0.0f;
+
+    // [20. Rapunzel] 갈고리 발사 시점 확인 변수와 중복 확인 변수 추가
+    private float hookStartZ = 0.0f;     
+    private bool isRapunzel = false;
+
     void Awake()
     {
         // 싱글톤 초기화
@@ -186,14 +196,42 @@ public class Player : MonoBehaviour
             {
                 isIcemanChecked = true;
             }
-            // 아직 안 움직였는데 7초가 지났다면? -> 업적 성공
-            else if (Time.time - gameStartTime >= 7.0f)
+            // 아직 안 움직였는데 6초가 지났다면? -> 업적 성공
+            else if (Time.time - gameStartTime >= 6.0f)
             {
                 if (PlayerAchivementList.Instance != null)
                 {
                     PlayerAchivementList.Instance.Iceman();
                 }
                 isIcemanChecked = true; // 체크 완료
+            }
+        }
+
+        // [17. SkyWalker] 밟은 물체가 tile인지 확인. tile을 밟거나 헬리콥터에 탔다면 초기화
+        bool isOnTile = false;
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up * 0.2f, Vector3.down, out hit, 0.5f))
+        {
+            // 밟은 물체의 태그가 "Tile"인지 확인
+            if (hit.collider.CompareTag("Tile"))
+            {
+                isOnTile = true;
+            }
+        }
+        if (isHelicopter || isOnTile)
+        {
+            skyWalkerTimer = 0.0f;
+        }
+        else
+        {
+            skyWalkerTimer += Time.deltaTime;
+
+            if (skyWalkerTimer >= 10.0f)
+            {
+                if (PlayerAchivementList.Instance != null)
+                {
+                    PlayerAchivementList.Instance.SkyWalker();
+                }
             }
         }
 
@@ -204,6 +242,22 @@ public class Player : MonoBehaviour
         if (isHooked && currentHook != null)
         {
             MoveToHook(); // 갈고리 쪽으로 끌려가는 함수 실행
+
+            // [20. Rapunzel] 갈고리 발사의 z위치와 현재 날아가고 있는 z위치 실시간 계산 후 업적 달성
+            if (!isRapunzel)
+            {
+                // (현재 Z 위치 - 갈고리 쏠 때 Z 위치) 계산
+                float distanceMoved = transform.position.z - hookStartZ;
+
+                if (distanceMoved >= 35.0f)
+                {
+                    if (PlayerAchivementList.Instance != null)
+                    {
+                        PlayerAchivementList.Instance.Rapunzel();
+                    }
+                    isRapunzel = true; // 중복 달성 방지
+                }
+            }
 
             if (isHelicopter)
             {
@@ -311,6 +365,15 @@ public class Player : MonoBehaviour
 
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
+                    if (isHooked && currentHook != null)
+                    {
+                        
+                        if (isHelicopter)
+                        {
+                            hasSwiped = false;
+                            break; // ReleaseHook() 실행 안 하고 탈출
+                        }
+                    }
                     // 손을 떼면 무조건 갈고리 해제
                     ReleaseHook();
                     hasSwiped = false;
@@ -328,6 +391,20 @@ public class Player : MonoBehaviour
 
     public void Jump()
     {
+        // [15. Icarus] 점프하기 직전에 Racast를 쏴서 태그가 car라면 isjumpingFromVan은 true
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit, 1.5f))
+        {
+            if (hit.collider.CompareTag("Car"))
+            {
+                isJumpingFromVan = true;
+            }
+            else
+            {
+                isJumpingFromVan = false;
+            }
+        }
+
         if (isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
@@ -377,6 +454,10 @@ public class Player : MonoBehaviour
         Hook hookScript = currentHook.GetComponent<Hook>();
         hookScript.player = this;
 
+        // [20. Rapunzel] 갈고리 발사 시점의 z위치 저장, 중복 초기화
+        hookStartZ = transform.position.z;
+        isRapunzel = false;
+
         // 갈고리 안보이도록 설정
         isHookVisible = false;
         Renderer hookRenderer = currentHook.GetComponent<Renderer>();
@@ -384,11 +465,37 @@ public class Player : MonoBehaviour
         lineRenderer.enabled = false;
         if (visualDelayCoroutine != null) StopCoroutine(visualDelayCoroutine);
         visualDelayCoroutine = StartCoroutine(ShowHookDelay(0.1f));
+
+        // [15. Icarus] 차에서 점프한 상태로 갈고리 발사 시 업적 체크
+        if (isJumpingFromVan)
+        {
+            if (PlayerAchivementList.Instance != null)
+            {
+                PlayerAchivementList.Instance.Icarus();
+            }
+
+            // 중복 방지
+            isJumpingFromVan = false;
+        }
     }
 
     // 0.1초간 훅이 안보이는 코루틴
     IEnumerator ShowHookDelay(float delay)
     {
+        if (currentHook != null)
+        {
+            // 부모 오브젝트 끄기
+            Renderer hookRenderer = currentHook.GetComponent<Renderer>();
+            if (hookRenderer != null) hookRenderer.enabled = false;
+
+            // Fire 자식 오브젝트 끄기
+            Transform fireChild = currentHook.transform.Find("Fire");
+            if (fireChild != null)
+            {
+                fireChild.gameObject.SetActive(false);
+            }
+        }
+
         // 0.1초 대기
         yield return new WaitForSeconds(delay);
 
@@ -397,9 +504,16 @@ public class Player : MonoBehaviour
         {
             isHookVisible = true; // 줄을 그리도록 변수 선언
 
-            // 갈고리 다시 보이게 켜기 
+            // 부모 오브젝트 켜기
             Renderer hookRenderer = currentHook.GetComponent<Renderer>();
             if (hookRenderer != null) hookRenderer.enabled = true;
+
+            // Fire 자식 오브젝트 켜기
+            Transform fireChild = currentHook.transform.Find("Fire");
+            if (fireChild != null)
+            {
+                fireChild.gameObject.SetActive(true);
+            }
 
             SFXManager.Instance.Play("Hook");
         }
@@ -600,6 +714,7 @@ public class Player : MonoBehaviour
             if (hit.collider.CompareTag(groundTag) || hit.collider.CompareTag(vanRoofTag))
             {
                 isGrounded = true;
+                isJumpingFromVan = false;   // [15. Icarus] 바닥에 닿았다면 밴에서 점프함 해제
                 anim.SetBool("isGrounded", true);
                 // 헬리콥터에서 내려서 바닥에 닿았는지 확인
                 if (isDroppingHeli) isDroppingHeli = false;
