@@ -42,6 +42,9 @@ public class ScoreManager : MonoBehaviour
     private bool hasAchievedHustler = false;        // [16. Hustler] 업적 중복 체크
     private bool hasAchievedPennyLess = false;      // [18. Pennyless] 업적 중복 체크
 
+    [Header("Tutorial Reference")]
+    public Tutorial tutorial; // 튜토리얼 스크립트 참조
+
     void Awake()
     {
         Instance = this;
@@ -68,7 +71,8 @@ public class ScoreManager : MonoBehaviour
             UpdateScoreDisplay();
         }
 
-        if (isGameOver || !UIController.tutorialSkip) return;
+        // 게임 오버 상태, 혹은 튜토리얼 미종료 시 점수 갱신 중지
+        if (isGameOver || (!tutorial.isTutorialEnd && !UIController.isRestarting)) return;
 
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;

@@ -75,14 +75,19 @@ public class UIController : MonoBehaviour
         countdownText.gameObject.SetActive(false);
         
         // 재시작인지 확인
-        if (isRestarting)
+        // if (isRestarting)
+        // {
+        //     isRestarting = false;
+        //     // tutorialSkip 값은 RestartGame()에서 이미 true로 설정됨
+        // }
+        // else
+        // {
+        //     // 처음 시작할 때는 tutorialSkip이 false로 유지됨 (튜토리얼 실행)
+        //     tutorialSkip = false;
+        // }
+
+        if (!isRestarting)
         {
-            isRestarting = false;
-            // tutorialSkip 값은 RestartGame()에서 이미 true로 설정됨
-        }
-        else
-        {
-            // 처음 시작할 때는 tutorialSkip이 false로 유지됨 (튜토리얼 실행)
             tutorialSkip = false;
         }
         
@@ -302,6 +307,7 @@ public class UIController : MonoBehaviour
         // Restart 상태 설정
         isRestarting = true;
         tutorialSkip = true;
+        tutorial.isTutorialEnd = true;
         
         // ScoreManager 리셋
         if (ScoreManager.Instance != null)
