@@ -3,7 +3,7 @@ using UnityEngine;
 public class MagneticItem : MonoBehaviour
 {
     [Header("자석 설정")]
-    public float pullSpeed = 25.0f;
+    public float pullSpeed = 40.0f;
     public float magnetRange = 7.0f;
     public float collectDistance = 0.5f; 
 
