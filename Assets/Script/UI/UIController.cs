@@ -295,7 +295,6 @@ public class UIController : MonoBehaviour
         // Restart 상태 설정
         isRestarting = true;
         tutorialSkip = true;
-        tutorial.isTutorialEnd = true;
         
         // ScoreManager 리셋
         if (ScoreManager.Instance != null)
