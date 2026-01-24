@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 헬기 아이템 맵 공중 코인 패턴 생성 스크립트
@@ -9,7 +10,8 @@ public class HeliCoinGenerate : MonoBehaviour
 {
     public GameObject heliCoinTile; // 코인 타일 배열 부모
     public GameObject[] tiles;  // 기준 바닥 배열
-    public GameObject[] heliCoinObstacles;  // 코인 패턴 배열
+    public GameObject[] heliCoinObstacles4;  // 4 코인 패턴 배열
+    public GameObject[] heliCoinObstacles3;  // 3 코인 패턴 배열
     
     // 내부 변수
     GameObject player;  // 플레이어 참조
@@ -19,8 +21,8 @@ public class HeliCoinGenerate : MonoBehaviour
     int tileCount;  // 배치할 총 타일 갯수
     int tileElapsed; // 배치한 총 타일 갯수
 
-    int lastFrameCount = -1;
-    HashSet<int>processedObjects = new HashSet<int>();
+    int lastFrameCount = -1;    // 지난 프레임
+    HashSet<int>processedObjects = new HashSet<int>();  // 처리한 오브젝트 리스트
 
     void Awake()
     {
@@ -77,10 +79,11 @@ public class HeliCoinGenerate : MonoBehaviour
 
             if(tileElapsed < tileCount)
             {
-                int nextObstacle = ChooseObstacle(heliCoinObstacles);
+                GameObject[] obstacles = GetDifficultyArray();
+                int nextObstacle = ChooseObstacle(obstacles);
 
                 // 오브젝트 풀링 이용해 코인 가져오기
-                ObjectPooler.Instance.GetPool(heliCoinObstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
+                ObjectPooler.Instance.GetPool(obstacles[nextObstacle], tiles[i].transform.position, Quaternion.identity, tiles[i].transform);
 
                 tileElapsed++;
             }
@@ -112,16 +115,28 @@ public class HeliCoinGenerate : MonoBehaviour
 
         clearTile(oldTile.gameObject);
 
-        int nextObstacle = ChooseObstacle(heliCoinObstacles);
+        GameObject[] obstacles = GetDifficultyArray();
+        int nextObstacle = ChooseObstacle(obstacles);
 
         // 새로운 코인 생성
-        ObjectPooler.Instance.GetPool(heliCoinObstacles[nextObstacle], oldTile.transform.position, Quaternion.identity, oldTile.transform);
+        ObjectPooler.Instance.GetPool(obstacles[nextObstacle], oldTile.transform.position, Quaternion.identity, oldTile.transform);
     }
 
     // 코인 패턴 랜덤 생성
     private int ChooseObstacle(GameObject[] obstacles)
     {
         return Random.Range(0, obstacles.Length);
+    }
+
+    // 난이도별 장애물 반환
+    private GameObject[] GetDifficultyArray()
+    {
+        if(speed > 30) {  // 속도 30 이상 -> 3개 간격 코인
+            return heliCoinObstacles3;
+        }
+        else {  // 속도 30 미만 -> 4개 간격 코인
+            return heliCoinObstacles4;  
+        }
     }
 
     // 시작 코인 패턴 위치 조정
@@ -163,10 +178,12 @@ public class HeliCoinGenerate : MonoBehaviour
         StartCoroutine(EndCoin(duration + 4.0f));
     }
 
+    // 타일 초기화
     void clearTile(GameObject tile)
     {
         if(tile == null) return;
 
+        // 타일 자식들 가져와서 풀 반환
         int childCount= tile.transform.childCount;
         for(int i = childCount - 1; i >= 0; i--)
         {
@@ -179,6 +196,7 @@ public class HeliCoinGenerate : MonoBehaviour
         }
     }
 
+    // 코인 맵 끄기
     IEnumerator EndCoin(float time)
     {
         yield return new WaitForSeconds(time);

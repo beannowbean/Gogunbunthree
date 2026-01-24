@@ -205,6 +205,14 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: heliCoinObstacles3.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: heliCoinObstacles4.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
       propertyPath: 'magnetObstacles.Array.data[0]'
       value: 
       objectReference: {fileID: 1853532972408782514, guid: 5a22e61fac296f54a9be6176db385f31, type: 3}
@@ -685,6 +693,74 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6877269332224938191, guid: e46ca503ebaabd5449a52b36bd53959c, type: 3}
     - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: be44330daf6c10343bcd36ff437929b4, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 6b5aba24221991a4886cdad106f9e126, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: ceacd6181a223eb4cab7b649b7ac15ca, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: dc486a752079a8b4cbd541ee11400e65, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 26b6dc5a070ea8b44bf331e238474fb2, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 60a7010383d477b40afda0b28d359790, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 4b4ac214d0f518940a9e0b0921512b4a, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 698ee9d323a1fe94bbe8a0087b48bab1, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: f5baad697287fd346bc5b21a643945a8, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 78dc0acd7c8b7af459e03db5d0e5bd40, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: d7a009a670f22d742b7bd3aae469bfec, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 5141a4e67c884aa41870f0b5434b8aa5, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 02713997ea534b4408b8050016c02e21, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 3a2d6840e7194a648b05d6b7bc3c7b02, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[7]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 07ba3ae3f3b7c484ab263dd05bde327d, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[8]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 022bff2351ccaf24da119359146fd5a0, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[9]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: bd1fcb528b043704f89da4671af43d30, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
       propertyPath: 'tutorialObstacles.Array.data[10]'
       value: 
       objectReference: {fileID: 1297974728418574874, guid: b73e3cbf42d4cfb4b9e5129f7f1759bf, type: 3}
@@ -696,6 +772,34 @@ PrefabInstance:
       propertyPath: 'tutorialObstacles.Array.data[12]'
       value: 
       objectReference: {fileID: 1297974728418574874, guid: b73e3cbf42d4cfb4b9e5129f7f1759bf, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: f76be61e7daff5b4e89987f83371fbbd, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[11]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 0f2b56a67ea8b6b4db45b41b9d46ab0c, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[12]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 4caeab22ca042cf4497c5c48cf7b554f, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[13]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 37a86750d8649934ba58e61e32627d43, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[14]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 852a21881c5856841a379058666ab70c, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[15]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 28dc2d596963b8a44b6c59a0b677bf6d, type: 3}
+    - target: {fileID: 1763080039607987915, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[16]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 9793499b6f32dfe45ad1295cb60a7c0d, type: 3}
     - target: {fileID: 7825081258285643905, guid: eb40708e021d0414caccc5ac95e47074, type: 3}
       propertyPath: m_Name
       value: ObjectPooler
@@ -1623,6 +1727,110 @@ PrefabInstance:
       propertyPath: 'tiles.Array.data[7]'
       value: 
       objectReference: {fileID: 846105780076953572}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: heliCoinObstacles3.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: heliCoinObstacles4.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: be44330daf6c10343bcd36ff437929b4, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 6b5aba24221991a4886cdad106f9e126, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: ceacd6181a223eb4cab7b649b7ac15ca, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: dc486a752079a8b4cbd541ee11400e65, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 26b6dc5a070ea8b44bf331e238474fb2, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 60a7010383d477b40afda0b28d359790, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles3.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 4b4ac214d0f518940a9e0b0921512b4a, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 698ee9d323a1fe94bbe8a0087b48bab1, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: f5baad697287fd346bc5b21a643945a8, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 78dc0acd7c8b7af459e03db5d0e5bd40, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: d7a009a670f22d742b7bd3aae469bfec, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[4]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 5141a4e67c884aa41870f0b5434b8aa5, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 02713997ea534b4408b8050016c02e21, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 3a2d6840e7194a648b05d6b7bc3c7b02, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[7]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 07ba3ae3f3b7c484ab263dd05bde327d, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[8]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 022bff2351ccaf24da119359146fd5a0, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[9]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: bd1fcb528b043704f89da4671af43d30, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[10]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: f76be61e7daff5b4e89987f83371fbbd, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[11]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 0f2b56a67ea8b6b4db45b41b9d46ab0c, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[12]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 4caeab22ca042cf4497c5c48cf7b554f, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[13]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 37a86750d8649934ba58e61e32627d43, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[14]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 852a21881c5856841a379058666ab70c, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[15]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 28dc2d596963b8a44b6c59a0b677bf6d, type: 3}
+    - target: {fileID: 3860260265161029833, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
+      propertyPath: 'heliCoinObstacles4.Array.data[16]'
+      value: 
+      objectReference: {fileID: 2600367174308168890, guid: 9793499b6f32dfe45ad1295cb60a7c0d, type: 3}
     - target: {fileID: 4445198637535649730, guid: 0436a6a3745bc1f48b767405253cfcbb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
