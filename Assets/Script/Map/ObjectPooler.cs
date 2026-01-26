@@ -24,7 +24,8 @@ public class ObjectPooler : MonoBehaviour
     public List<GameObject> starObstacles;  // 별 아이템 배열
     public List<GameObject> heliObstacles;  // 헬기 아이템 배열
     public List<GameObject> magnetObstacles; // 자석 아이템 배열
-    public List<GameObject> heliCoinObstacles;  // 코인 패턴 배열
+    public List<GameObject> heliCoinObstacles4;  // 4 코인 패턴 배열
+    public List<GameObject> heliCoinObstacles3;  // 3 코인 패턴 배열
     
     // 내부 변수
     Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>(); // 프리팹-오브젝트 큐 딕셔너리
@@ -47,7 +48,8 @@ public class ObjectPooler : MonoBehaviour
         InitializePool(starObstacles);
         InitializePool(heliObstacles);
         InitializePool(magnetObstacles);
-        InitializePool(heliCoinObstacles);
+        InitializePool(heliCoinObstacles4);
+        InitializePool(heliCoinObstacles3);
     }
 
     // 프리팹 리스트를 받아서 딕셔너리에 초기화
