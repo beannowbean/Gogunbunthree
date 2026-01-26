@@ -23,24 +23,6 @@ public class CustomizeUI : MonoBehaviour
     {
         Debug.Log($"ShowSkinList called: {type} on {gameObject.name}");
 
-        // 안전성 검사
-        if (Customize.Instance == null)
-        {
-            Debug.LogError("Customize.Instance is null — ensure Customize script exists in scene and Awake ran.");
-            return;
-        }
-
-        if (skinListContent == null)
-        {
-            Debug.LogError("skinListContent is not assigned on CustomizeUI.");
-            return;
-        }
-        if (skinButtonPrefab == null)
-        {
-            Debug.LogError($"skinButtonPrefab is not assigned on CustomizeUI (GameObject: {gameObject.name}).");
-            return;
-        }
-
         // 기존 버튼 삭제 (단, skinButtonPrefab이 Content의 자식으로 할당된 경우 해당 오브젝트는 파괴하지 않고 비활성화하여
         // 참조가 끊어지는 문제를 방지합니다.)
         int removed = 0;
@@ -66,6 +48,8 @@ public class CustomizeUI : MonoBehaviour
         List<Material> materialList = null;
         List<Sprite> spriteList = null;
         System.Action<int> onClick = null;
+
+        Debug.Log($"ShowSkinList called for type='{type}'");
 
         if (type == "Player") {
             textureList = Customize.Instance.playerSkins;
@@ -98,6 +82,10 @@ public class CustomizeUI : MonoBehaviour
                 Customize.Instance.EquipBagSkinNumber(idx);
             };
         }
+        else
+        {
+            Debug.LogWarning($"ShowSkinList: Unknown type '{type}' requested.");
+        }
 
         int spriteCount = spriteList != null ? spriteList.Count : 0;
         int texCount = textureList != null ? textureList.Count : 0;
@@ -123,35 +111,44 @@ public class CustomizeUI : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
+            // name the instantiated button for easier identification in hierarchy during debugging
+            btnObj.name = $"{type}_SkinButton_{i}";
+
             var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
             var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            // if Image is not on root, try to find in children (common prefab layout)
+            if (img == null)
+            {
+                img = btnObj.GetComponentInChildren<UnityEngine.UI.Image>();
+                if (img != null) Debug.Log($"Found Image component in child of instantiated button {btnObj.name}.");
+            }
 
-            if (btn == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Button component is missing on prefab at index {i}.");
-            if (img == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Image component is missing on prefab at index {i}.");
+            if (btn == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Button component is missing on prefab at index {i} (name={btnObj.name}).");
+            if (img == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Image component is missing on prefab at index {i} (name={btnObj.name}).");
 
             // Ensure instantiated GameObject and components are active/enabled so UI shows up even if prefab had them disabled
             if (btnObj != null && !btnObj.activeSelf)
             {
                 btnObj.SetActive(true);
-                Debug.Log($"Activated instantiated button GameObject at index {i}.");
+                Debug.Log($"Activated instantiated button GameObject at index {i} (name={btnObj.name}).");
             }
             if (img != null && !img.enabled)
             {
                 img.enabled = true;
-                Debug.Log($"Enabled Image component on button {i}.");
+                Debug.Log($"Enabled Image component on button {btnObj.name}.");
             }
             if (btn != null)
             {
                 if (!btn.enabled)
                 {
                     btn.enabled = true;
-                    Debug.Log($"Enabled Button component on button {i}.");
+                    Debug.Log($"Enabled Button component on button {btnObj.name}.");
                 }
                 btn.interactable = true;
                 if (btn.targetGraphic == null && img != null)
                 {
                     btn.targetGraphic = img;
-                    Debug.Log($"Assigned Image as Button.targetGraphic for button {i}.");
+                    Debug.Log($"Assigned Image as Button.targetGraphic for button {btnObj.name}.");
                 }
             }
 
@@ -174,6 +171,7 @@ public class CustomizeUI : MonoBehaviour
                 else
                 {
                     used = "texture (not Texture2D)";
+                    Debug.LogWarning($"ShowSkinList: texture at index {i} for type '{type}' is not a Texture2D — cannot create sprite. Please assign an icon Sprite.");
                 }
             }
             else if (materialList != null && i < materialList.Count && materialList[i] != null)
@@ -187,6 +185,7 @@ public class CustomizeUI : MonoBehaviour
                 else
                 {
                     used = "material (no Texture2D)";
+                    Debug.LogWarning($"ShowSkinList: material.mainTexture at index {i} for type '{type}' is not a Texture2D — cannot create sprite. Please assign an icon Sprite.");
                 }
             }
 
@@ -210,8 +209,16 @@ public class CustomizeUI : MonoBehaviour
     // 버튼 클릭 이벤트에 연결
     // 버튼 클릭 이벤트에 연결 (Player, Helicopter, Hook)
     public void OnPlayerButtonClicked() => ShowSkinList("Player");
-    public void OnHelicopterButtonClicked() => ShowSkinList("Helicopter");
-    public void OnHookButtonClicked() => ShowSkinList("Hook");
+    public void OnHelicopterButtonClicked()
+    {
+        Debug.Log($"OnHelicopterButtonClicked called. helicopterSkins: {Customize.Instance?.helicopterSkins?.Count ?? 0}, helicopterSkinIcons: {Customize.Instance?.helicopterSkinIcons?.Count ?? 0}");
+        ShowSkinList("Helicopter");
+    }
+    public void OnHookButtonClicked()
+    {
+        Debug.Log($"OnHookButtonClicked called. hookSkins: {Customize.Instance?.hookSkins?.Count ?? 0}, hookSkinIcons: {Customize.Instance?.hookSkinIcons?.Count ?? 0}");
+        ShowSkinList("Hook");
+    }
 
     // 비니, 옷, 가방 버튼 클릭 시 스킨 목록 표시
     public void OnBeanieButtonClicked() => ShowSkinList("Beanie");
@@ -238,6 +245,9 @@ public class CustomizeUI : MonoBehaviour
     private int originalBeanieSkinIndex = -1;
     private bool originalBagEquipped = false;
     private int originalBagSkinIndex = -1;
+
+    // Tracks which buttons were auto-wired to avoid duplicate listeners
+    private HashSet<int> autoWiredButtonIds = new HashSet<int>();
 
     // Preview behavior (spawn, offsets, physics, and input) is handled by separate components:
     // - CustomizePreviewController
@@ -274,8 +284,57 @@ public class CustomizeUI : MonoBehaviour
 
     private void InitializeButtons()
     {
+        Debug.Log("CustomizeUI: InitializeButtons running");
         if (cancelButton != null) cancelButton.onClick.AddListener(OnCancelClicked);
         if (applyButton != null) applyButton.onClick.AddListener(OnApplyClicked);
+
+        // Auto-wire common tab buttons (Player, Helicopter, Hook, Beanie, Bag) if present under this UI hierarchy.
+        var childButtons = GetComponentsInChildren<Button>(true);
+        bool anyAutoWired = false;
+        foreach (var b in childButtons)
+        {
+            if (b == null) continue;
+            int id = b.GetInstanceID();
+            string n = b.gameObject.name.ToLowerInvariant();
+
+            if (autoWiredButtonIds.Contains(id)) continue; // already wired by previous run
+
+            if (n.Contains("helicopter"))
+            {
+                b.onClick.AddListener(() => OnHelicopterButtonClicked());
+                autoWiredButtonIds.Add(id);
+                anyAutoWired = true;
+                continue;
+            }
+            if (n.Contains("hook"))
+            {
+                b.onClick.AddListener(() => OnHookButtonClicked());
+                autoWiredButtonIds.Add(id);
+                anyAutoWired = true;
+                continue;
+            }
+            if (n.Contains("beanie"))
+            {
+                b.onClick.AddListener(() => OnBeanieButtonClicked());
+                autoWiredButtonIds.Add(id);
+                anyAutoWired = true;
+                continue;
+            }
+            if (n.Contains("bag") || n.Contains("backpack") || n.Contains("backpack"))
+            {
+                b.onClick.AddListener(() => OnBagButtonClicked());
+                autoWiredButtonIds.Add(id);
+                anyAutoWired = true;
+                continue;
+            }
+            if (n.Contains("player") || n.Contains("cloth") || n.Contains("clothes"))
+            {
+                b.onClick.AddListener(() => OnPlayerButtonClicked());
+                autoWiredButtonIds.Add(id);
+                anyAutoWired = true;
+                continue;
+            }
+        }
     }
 
     private void OnDestroy()
