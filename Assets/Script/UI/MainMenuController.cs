@@ -28,6 +28,9 @@ public class MainMenuController : MonoBehaviour
         // 아이콘 상태 업데이트
         UpdateMusicIconUI();
         UpdateSFXIconUI();
+
+        // 저장된 커스터마이즈 자동 적용
+        ApplySavedCustomize();
     }
 
     // 백그라운드에서 InGame 씬 프리로드
@@ -213,6 +216,73 @@ public class MainMenuController : MonoBehaviour
             {
                 if (icon != null) icon.SetActive(!isSoundOn);
             }
+        }
+    }
+
+    // 저장된 커스터마이즈 정보가 있으면 적용합니다.
+    private void ApplySavedCustomize()
+    {
+        if (Customize.Instance == null) return;
+
+        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", -1);
+        int ropeIndex = PlayerPrefs.GetInt("SelectedRopeSkinIndex", -1);
+        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", -1);
+        int heliIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", -1);
+        bool beanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
+        int beanieSkinIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", -1);
+        bool bagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
+        int bagSkinIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", -1);
+
+        // Customize 시스템에 반영 (메인 메뉴나 미리보기에서 즉시 반영)
+        if (playerIndex >= 0) Customize.Instance.EquipPlayerSkinNumber(playerIndex);
+        if (ropeIndex >= 0) Customize.Instance.EquipRopeSkinNumber(ropeIndex);
+        if (hookIndex >= 0) Customize.Instance.EquipHookSkinNumber(hookIndex);
+        if (heliIndex >= 0) Customize.Instance.EquipHelicopterSkinNumber(heliIndex);
+
+        if (beanieEquipped)
+        {
+            Customize.Instance.EquipBeanie();
+            if (beanieSkinIndex >= 0) Customize.Instance.ChangeBeanieSkinNumber(beanieSkinIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBeanie();
+        }
+
+        if (bagEquipped)
+        {
+            Customize.Instance.EquipBag();
+            if (bagSkinIndex >= 0) Customize.Instance.EquipBagSkinNumber(bagSkinIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBag();
+        }
+
+        // Hook/Helicopter static 필드에도 적용하여 이후 생성되는 오브젝트가 바로 반영되도록 함
+        if (ropeIndex >= 0 && ropeIndex < Customize.Instance.ropeSkins.Count)
+            Hook.currentSkin = Customize.Instance.ropeSkins[ropeIndex];
+
+        if (hookIndex >= 0 && hookIndex < Customize.Instance.hookSkins.Count)
+            Hook.currentSkin = Customize.Instance.hookSkins[hookIndex];
+
+        if (heliIndex >= 0 && heliIndex < Customize.Instance.helicopterSkins.Count)
+            Helicopter.currentSkin = Customize.Instance.helicopterSkins[heliIndex];
+
+        // Player 인스턴스(메인 메뉴에 미리보기 등이 있으면)에 바로 적용
+        if (Player.Instance != null)
+        {
+            if (playerIndex >= 0 && playerIndex < Customize.Instance.playerSkins.Count)
+                Player.Instance.ChangeSkinTexture(Customize.Instance.playerSkins[playerIndex]);
+
+            if (ropeIndex >= 0 && ropeIndex < Customize.Instance.ropeSkins.Count)
+                Player.Instance.ChangeRopeMaterial(Customize.Instance.ropeSkins[ropeIndex]);
+
+            if (beanieEquipped && beanieSkinIndex >= 0 && beanieSkinIndex < Customize.Instance.beanieSkins.Count)
+                Player.Instance.ChangeBeanieSkin(Customize.Instance.beanieSkins[beanieSkinIndex]);
+
+            if (bagEquipped && bagSkinIndex >= 0 && bagSkinIndex < Customize.Instance.bagSkins.Count)
+                Player.Instance.ChangeBagSkin(Customize.Instance.bagSkins[bagSkinIndex]);
         }
     }
 }

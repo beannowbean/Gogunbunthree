@@ -22,10 +22,10 @@ public class Customize : MonoBehaviour
     }
 
     [Header("PlayerSkin")]
-    // assets/Customize/sweater에 있는 이미지들을 리스트로 다 대입
-    // 인스펙터에서 해줘야 됨
-    // [추가] 스킨 등록 
+    // 실제 적용되는 텍스처 리스트
     public List<Texture> playerSkins = new List<Texture>();
+    // UI에 표시할 아이콘(Sprite) 리스트 (인덱스 매칭)
+    public List<Sprite> playerSkinIcons = new List<Sprite>();
 
     // [각 스킨마다 개별 호출] 이 함수로 번호 호출해서 착용시키도록
     public void EquipPlayerSkinNumber(int index)
@@ -42,8 +42,8 @@ public class Customize : MonoBehaviour
 
 
     [Header("PlayerRope")]
-    // [추가] 로프 머터리얼 등록
     public List<Material> ropeSkins = new List<Material>();
+    public List<Sprite> ropeSkinIcons = new List<Sprite>();
 
     // [각 로프 머터리얼마다 개별 호출] 이 함수로 번호 호출해서 색깔 바꾸도록
     public void EquipRopeSkinNumber(int index)
@@ -60,8 +60,8 @@ public class Customize : MonoBehaviour
 
 
     [Header("PlayerHook")]
-    // [추가] 갈고리 머터리얼 등록
     public List<Material> hookSkins = new List<Material>();
+    public List<Sprite> hookSkinIcons = new List<Sprite>();
 
     // [각 로프 머터리얼마다 개별 호출] 이 함수로 번호 호출해서 색깔 바꾸도록
     public void EquipHookSkinNumber(int index)
@@ -69,6 +69,8 @@ public class Customize : MonoBehaviour
         if (index >= 0 && index < hookSkins.Count)
         {
             Hook.currentSkin = hookSkins[index];
+            // 즉시 씬의 Hook 오브젝트에 적용
+            Hook.ApplyCurrentSkinToAll();
         }
     }
 
@@ -79,12 +81,15 @@ public class Customize : MonoBehaviour
 
     [Header("Helicopter")]
     public List<Texture> helicopterSkins = new List<Texture>();
+    public List<Sprite> helicopterSkinIcons = new List<Sprite>();
 
     public void EquipHelicopterSkinNumber(int index)
     {
         if (index >= 0 && index < helicopterSkins.Count)
         {
             Helicopter.currentSkin = helicopterSkins[index];
+            // 즉시 씬의 Helicopter 오브젝트에 적용
+            Helicopter.ApplyCurrentSkinToAll();
         }
     }
 
@@ -95,6 +100,7 @@ public class Customize : MonoBehaviour
     [Header("beanie")]
     public GameObject beaniePrefab; 
     public List<Texture> beanieSkins = new List<Texture>();
+    public List<Sprite> beanieSkinIcons = new List<Sprite>();
 
     public void EquipBeanie()
     {
@@ -127,6 +133,7 @@ public class Customize : MonoBehaviour
     [Header("bag")]
     public GameObject bagPrefab;
     public List<Texture> bagSkins = new List<Texture>();
+    public List<Sprite> bagSkinIcons = new List<Sprite>();
 
     public void EquipBag()
     {
