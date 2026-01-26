@@ -2706,15 +2706,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: level_3Score
-      value: 5000
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: level_4Score
-      value: 10000
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: level_5Score
-      value: 20000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 8552762364362967832, guid: ab35d4371045b1445b8f522d6896bb4c, type: 3}
       propertyPath: magnetCooltime
