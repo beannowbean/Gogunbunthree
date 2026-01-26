@@ -17,7 +17,6 @@ public class CarMove : MonoBehaviour
     {
         // 참조 설정
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();   // carSpeed 참조용
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>(); // 게임오버 참조용
 
         // 초기 차 속도
         currentCarSpeed = tileGenerate.carSpeed;
@@ -29,8 +28,18 @@ public class CarMove : MonoBehaviour
         currentCarSpeed = Mathf.Lerp(currentCarSpeed, tileGenerate.carSpeed, Time.deltaTime / changeTime);
         transform.position += new Vector3(0, 0, -currentCarSpeed * Time.deltaTime);
 
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<Player>();
+            }
+            return;
+        }
+
         // 게임오버 시 가로등 고정
-        if(player.isGameOver == true && freezeStreetLight == false)
+        if (player.isGameOver == true && freezeStreetLight == false)
         {
             // 가로등 찾아 저장 후 부모 해제하여 고정
             GameObject[] streetLights = GameObject.FindGameObjectsWithTag("StreetLight");

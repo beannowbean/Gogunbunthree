@@ -836,7 +836,6 @@ public class Player : MonoBehaviour
         if (playerRenderer != null && newTexture != null)
         {
             Material[] mats = playerRenderer.materials;
-            playerRenderer.material.mainTexture = newTexture;
 
             if (mats.Length > targetMaterialIndex)
             {

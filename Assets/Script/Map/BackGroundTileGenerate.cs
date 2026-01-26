@@ -16,9 +16,6 @@ public class BackGroundTileGenerate : MonoBehaviour // 플레이어 뒤 박스 �
     
     void Start()
     {
-        // 참조 설정
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
@@ -27,10 +24,25 @@ public class BackGroundTileGenerate : MonoBehaviour // 플레이어 뒤 박스 �
         MakeStartBuilding();
     }
 
+    private void LateUpdate()
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<Player>();
+            }
+            return;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        if (player == null) return;
+
         // 게임 오버 시 작동 중지
-        if(player.isGameOver == true) return;
+        if (player.isGameOver == true) return;
 
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "BackgroundTile")

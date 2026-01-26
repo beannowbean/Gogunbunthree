@@ -22,12 +22,9 @@ public class Customize : MonoBehaviour
     }
 
     [Header("PlayerSkin")]
-    // assets/Customize/sweater에 있는 이미지들을 리스트로 다 대입
-    // 인스펙터에서 해줘야 됨
-    // [추가] 스킨 등록 
+
     public List<Texture> playerSkins = new List<Texture>();
 
-    // [각 스킨마다 개별 호출] 이 함수로 번호 호출해서 착용시키도록
     public void EquipPlayerSkinNumber(int index)
     {
         if (index >= 0 && index < playerSkins.Count)
@@ -87,6 +84,10 @@ public class Customize : MonoBehaviour
             Helicopter.currentSkin = helicopterSkins[index];
         }
     }
+
+
+
+
 
     /*
      */
