@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 45b4c223dd7b14ddc878c6b8b7e2fea7
+guid: ac46f6252009449adaad1c2c3af71bc3
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,64 +110,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TUTORIALButton_0
+      name: BackgroundCharacterImage_0
       rect:
         serializedVersion: 2
-        x: 276
-        y: 606
-        width: 180
-        height: 132
+        x: 315
+        y: 283
+        width: 429
+        height: 635
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4ab735a299d02475db7fc1e06955661f
-      internalID: -158154286
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TUTORIALButton_1
-      rect:
-        serializedVersion: 2
-        x: 246
-        y: 624
-        width: 6
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fc6b34c7de5974376a42ad29676239c2
-      internalID: -937968250
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TUTORIALButton_2
-      rect:
-        serializedVersion: 2
-        x: 88
-        y: 501
-        width: 180
-        height: 36
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 25dd33a33e8754ebcb9a77d9ef29942f
-      internalID: -198852341
+      spriteID: 852878f13b6f6422c8db32169eb408d4
+      internalID: -255916786
       vertices: []
       indices: 
       edges: []
@@ -175,7 +133,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: fb85e98e8a37a4f97b639420523b82b2
+    spriteID: 876c230dbaad64c9e8246d8f2386b638
     internalID: 0
     vertices: []
     indices: 
@@ -183,9 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      TUTORIALButton_0: -158154286
-      TUTORIALButton_1: -937968250
-      TUTORIALButton_2: -198852341
+      BackgroundCharacterImage_0: -255916786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
