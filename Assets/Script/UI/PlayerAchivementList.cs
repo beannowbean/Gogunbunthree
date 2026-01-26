@@ -8,6 +8,8 @@ public class PlayerAchivementList : MonoBehaviour
 
     private List<AchievementDefinition> achievementDefinitions = new List<AchievementDefinition>();
 
+    private HashSet<string> sessionUnlockedIds = new HashSet<string>();
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -281,6 +283,13 @@ public class PlayerAchivementList : MonoBehaviour
     // 업적을 달성했는지 처리하는 함수
     private void UnlockAchievement(string achievementId, string title)
     {
+        if (sessionUnlockedIds.Contains(achievementId))
+        {
+            return; // 이미 처리된 업적이면 무시
+        }
+
+        sessionUnlockedIds.Add(achievementId);
+
         if (AchievementManager.Instance != null)
         {
             AchievementManager.Instance.UnlockAchievement(achievementId);

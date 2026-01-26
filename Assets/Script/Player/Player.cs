@@ -100,6 +100,7 @@ public class Player : MonoBehaviour
     private int carHitCount = 0;    // [12. Wrecker] star 아이템을 먹은 동안 차를 날린 개수 확인 변수
     public int starCount = 0;  // [13. Superstar] star 아이템 먹은 개수 확인 변수 (star.cs에서)
     public Material invincibleMaterial;
+    private GameObject lastHitCar = null;
 
     // coin effect 관련 변수 
     public GameObject coinEffectPrefab;
@@ -210,7 +211,7 @@ public class Player : MonoBehaviour
         // [17. SkyWalker] 밟은 물체가 tile인지 확인. tile을 밟거나 헬리콥터에 탔다면 초기화
         bool isOnTile = false;
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.2f, Vector3.down, out hit, 0.5f))
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit,1.5f, groundLayer))
         {
             // 밟은 물체의 태그가 "Tile"인지 확인
             if (hit.collider.CompareTag("Tile"))
@@ -232,6 +233,7 @@ public class Player : MonoBehaviour
                 {
                     PlayerAchivementList.Instance.SkyWalker();
                 }
+                skyWalkerTimer = 0.0f;
             }
         }
 
@@ -384,6 +386,7 @@ public class Player : MonoBehaviour
 
     public void ChangeLane(int direction)
     {
+        hasPlayerMoved = true;
         int targetLane = currentLane + direction;
         if (targetLane >= 1 && targetLane <= 3) currentLane = targetLane;
         SFXManager.Instance.Play("Move");
@@ -391,6 +394,7 @@ public class Player : MonoBehaviour
 
     public void Jump()
     {
+        hasPlayerMoved = true;
         // [15. Icarus] 점프하기 직전에 Racast를 쏴서 태그가 car라면 isjumpingFromVan은 true
         RaycastHit hit;
         if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit, 1.5f))
@@ -443,6 +447,7 @@ public class Player : MonoBehaviour
 
     public void hookShoot()
     {
+        hasPlayerMoved = true;
         if (isDroppingHeli) return;  // 헬기에서 내려오는 동안에는 갈고리 발사 금지 
 
         if (currentHook != null) return;
@@ -521,6 +526,7 @@ public class Player : MonoBehaviour
 
     void ReleaseHook()
     {
+        if (isHelicopter) return;
         // 안보이는 코루틴 종료
         if (visualDelayCoroutine != null) StopCoroutine(visualDelayCoroutine);
 
@@ -668,6 +674,7 @@ public class Player : MonoBehaviour
 
     public void QuickDive() // 참조 가능하게 수정
     {
+        hasPlayerMoved = true;
         SFXManager.Instance.Play("Move");   // 퀵다이브 시 효과음 재생
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
 
@@ -942,13 +949,46 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("Car"))
         {
+            
             if (isInvincible)
             {
+                // 중복 충돌 판정 버그 수정
+                Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
+
+                Rigidbody carRootRb = other.GetComponentInParent<Rigidbody>();
+
+                GameObject currentCar = null;
+
+                if (carRootRb != null)
+                {
+                    // 부모에 Rigidbody가 있으면 그게 진짜 차!
+                    currentCar = carRootRb.gameObject;
+                }
+                else
+                {
+                    // 혹시 Rigidbody가 없다면 그냥 부딪힌 놈을 차로 인식
+                    currentCar = other.gameObject;
+                }
+
+                // 2. 방금 부딪힌 그 차인가?
+                if (currentCar == lastHitCar)
+                {
+                    return; // "아까(0.01초전) 바퀴 칠 때 감지된 그 차네. 무시."
+                }
+
+                // 3. 새로운 차라면 기억!
+                lastHitCar = currentCar;
+
                 hitCar = true;  // [11. Gentleman] 무적인 상태로 차에 부딪쳤다면 true
 
                 carHitCount++;  // [12. Wrecker] 차에 부딪힌 카운트 추가
 
-                // [12. Wrecker] 차를 20대 이상 날렸다면 업적 달
+                if (carRootRb != null && carRootRb.useGravity == true)
+                {
+                    return;
+                }
+
+                // [12. Wrecker] 차를 20대 이상 날렸다면 업적 달성
                 if (carHitCount >= 20)
                 {
                     if (PlayerAchivementList.Instance != null)
@@ -957,14 +997,7 @@ public class Player : MonoBehaviour
                     }
                 }
 
-                // 중복 충돌 판정 버그 수정
-                Rigidbody carRb = other.gameObject.GetComponent<Rigidbody>();
-
-                // 만약 차가 날아가고있다면 리턴
-                if (carRb != null && carRb.useGravity == true)
-                {
-                    return;
-                }
+                Debug.Log("CarCrash!");
 
                 // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
                 SFXManager.Instance.Play("CarBounceOff");
@@ -972,20 +1005,20 @@ public class Player : MonoBehaviour
                 // 차 날리기 점수 추가
                 ScoreManager.Instance.AddCarKnockScore();
 
-                if (carRb != null)
+                if (carRootRb != null)
                 {
-                    carRb.isKinematic = false;
-                    carRb.useGravity = true;
+                    carRootRb.isKinematic = false;
+                    carRootRb.useGravity = true;
 
                     // 차 여러방향으로 날아가도록 설정
                     float randomX = Random.Range(-2.0f, 2.0f);
                     float randomY = Random.Range(1.0f, 2.0f);
                     Vector3 flyDirection = transform.forward * 3.0f + (transform.right * randomX) + (Vector3.up * randomY);
                     float finalForce = carImpactForce * 1.5f;
-                    carRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
-                    carRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
+                    carRootRb.AddForce(flyDirection * finalForce, ForceMode.VelocityChange);
+                    carRootRb.AddTorque(Random.insideUnitSphere * finalForce, ForceMode.VelocityChange);
                 }
-                StartCoroutine(DeActiveAfterSeconds(other.gameObject, 2.0f));
+                StartCoroutine(DeActiveAfterSeconds(currentCar, 2.0f));
 
             }
             // 헬리콥터에서 내릴 때 차와 부딪히는 경우
@@ -998,7 +1031,7 @@ public class Player : MonoBehaviour
             {
                 if (isGameOver) return;
 
-                // [3. Hit-And-Run] 치여서 죽은게 깜빡이 차라면 업적 달
+                // [3. Hit-And-Run] 치여서 죽은게 깜빡이 차라면 업적 달성
                 if (other.gameObject.name.Contains("MoveCar"))
                 {
                     if (PlayerAchivementList.Instance != null)
