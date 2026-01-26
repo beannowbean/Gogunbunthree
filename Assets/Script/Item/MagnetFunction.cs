@@ -3,7 +3,7 @@ using UnityEngine;
 public class MagneticItem : MonoBehaviour
 {
     [Header("자석 설정")]
-    public float pullSpeed = 40.0f;
+    public float pullSpeed = 70.0f;
     public float magnetRange = 7.0f;
     public float collectDistance = 0.5f; 
 
@@ -26,6 +26,13 @@ public class MagneticItem : MonoBehaviour
             Vector3 targetPos = Player.Instance.transform.position + Vector3.up * 1.0f;
 
             float distance = Vector3.Distance(transform.position, targetPos);
+
+            // [수정] 헬리콥터 타고 올라갈 때 5보다 높아지면 그만 따라가기
+            if (Mathf.Abs(transform.position.y - targetPos.y) > 5.0f)
+            {
+                isFollowing = false; 
+                return;
+            }
 
             // 범위 안에 있거나, 이미 끌려오고 있는 중이라면
             if (distance < magnetRange || isFollowing)
