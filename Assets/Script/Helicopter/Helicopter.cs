@@ -90,6 +90,26 @@ public class Helicopter : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Apply the static Helicopter.currentSkin to this instance.
+    /// </summary>
+    public void ApplyCurrentSkinToThis()
+    {
+        if (currentSkin != null) ApplySkin(currentSkin);
+    }
+
+    /// <summary>
+    /// Apply the static Helicopter.currentSkin to all Helicopter instances.
+    /// </summary>
+    public static void ApplyCurrentSkinToAll()
+    {
+        Helicopter[] helis = FindObjectsOfType<Helicopter>();
+        foreach (var h in helis)
+        {
+            h.ApplyCurrentSkinToThis();
+        }
+    }
+
     IEnumerator MoveRoutine()
     {
         // [1단계] 하강 (Sky -> Target)
