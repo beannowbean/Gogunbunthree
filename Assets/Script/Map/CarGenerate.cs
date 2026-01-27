@@ -354,6 +354,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         if(score >= level_5Score) {  // 레벨5 (속도 40 -> CarTileDesigner에서 변경)
             if(currentDifficulty != Difficulty.Level5)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level5;
                 dayNightCycle.NightToDay();
             }
@@ -361,6 +362,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_4Score) {   // 레벨4 (속도 30)
             if(currentDifficulty != Difficulty.Level4)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level4;
                 dayNightCycle.DayToNight();
             }
@@ -368,6 +370,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_3Score) {   // 레벨3 (속도 25)
             if(currentDifficulty != Difficulty.Level3)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level3;
                 dayNightCycle.NightToDay();
             }
@@ -375,6 +378,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_2Score) {   // 레벨2 (속도 20)
             if(currentDifficulty != Difficulty.Level2)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level2;
                 dayNightCycle.DayToNight();
             }
