@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 759b9f952c4591e4e96801d253f9f332
+guid: 15282dc4021d747e38247eb4afe5c47a
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,19 +94,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
     buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -123,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_qarviuqarviuqarv (1)_0
+      name: BackgroundImage_0
       rect:
         serializedVersion: 2
-        x: 138
-        y: 570
-        width: 786
-        height: 353
+        x: 0
+        y: 0
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,29 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7858e8ab0dc1b443b920d4be7b8077d8
-      internalID: 299756211
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Gemini_Generated_Image_qarviuqarviuqarv (1)_1
-      rect:
-        serializedVersion: 2
-        x: 564
-        y: 912
-        width: 12
-        height: 12
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: efca98e3bc6c5450c9a57f522ff53126
-      internalID: -454091229
+      spriteID: 8673351ec3a0c40629410b6fbc09239b
+      internalID: -1535789259
       vertices: []
       indices: 
       edges: []
@@ -167,7 +133,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: c129d93521b7a4e1ea28f558e2f2a42a
     internalID: 0
     vertices: []
     indices: 
@@ -175,8 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Gemini_Generated_Image_qarviuqarviuqarv (1)_0: 299756211
-      Gemini_Generated_Image_qarviuqarviuqarv (1)_1: -454091229
+      BackgroundImage_0: -1535789259
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

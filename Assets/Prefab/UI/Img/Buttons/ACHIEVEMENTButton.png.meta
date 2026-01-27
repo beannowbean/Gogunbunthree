@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 759b9f952c4591e4e96801d253f9f332
+guid: 8ebd4f6261b5d4717ad46280bf986625
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,19 +94,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
     buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -123,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_qarviuqarviuqarv (1)_0
+      name: ACHIEVEMENTButton_0
       rect:
         serializedVersion: 2
-        x: 138
-        y: 570
-        width: 786
-        height: 353
+        x: 164
+        y: 498
+        width: 382
+        height: 327
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7858e8ab0dc1b443b920d4be7b8077d8
-      internalID: 299756211
+      spriteID: 07aeda215e137425aba7e5be51e5db4f
+      internalID: -2128870662
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gemini_Generated_Image_qarviuqarviuqarv (1)_1
+      name: ACHIEVEMENTButton_1
       rect:
         serializedVersion: 2
-        x: 564
-        y: 912
-        width: 12
-        height: 12
+        x: 459
+        y: 803
+        width: 45
+        height: 46
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: efca98e3bc6c5450c9a57f522ff53126
-      internalID: -454091229
+      spriteID: 62b364eac0d9b4caabcaf02b53034b49
+      internalID: 485892085
       vertices: []
       indices: 
       edges: []
@@ -167,7 +154,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: fdc0d84b53fee4f79b54457ecd4a0b7a
     internalID: 0
     vertices: []
     indices: 
@@ -175,8 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Gemini_Generated_Image_qarviuqarviuqarv (1)_0: 299756211
-      Gemini_Generated_Image_qarviuqarviuqarv (1)_1: -454091229
+      ACHIEVEMENTButton_0: -2128870662
+      ACHIEVEMENTButton_1: 485892085
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
