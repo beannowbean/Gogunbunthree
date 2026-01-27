@@ -279,10 +279,23 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                     isCurrentCoin = true;
                 }
             }
-        } while(nextObstacle == lastObstacle    // 다음 장애물과 중복 X
-            || CountObstacles(obstacles[nextObstacle]) >= 2 // 전체 맵에서 중복 맵 2개 이하
-            || isLastHardObstacle && isObstacle && nextObstacle >= hardDifficulty   // 어려운 4개의 난이도 맵 중복 X
-            || isLastCoin && isCurrentCoin);    // 코인 맵 중복 X
+
+            if(safety < 50)
+            {
+                if(nextObstacle == lastObstacle    // 다음 장애물과 중복 X
+                || CountObstacles(obstacles[nextObstacle]) >= 2 // 전체 맵에서 중복 맵 2개 이하
+                || isLastHardObstacle && isObstacle && nextObstacle >= hardDifficulty   // 어려운 4개의 난이도 맵 중복 X
+                || isLastCoin && isCurrentCoin)    // 코인 맵 중복 X
+                continue;
+            }
+            else
+            {
+                if(isLastHardObstacle && isObstacle && nextObstacle >= hardDifficulty   // 어려운 4개의 난이도 맵 중복 X
+                || isLastCoin && isCurrentCoin) // 코인 맵 중복 X
+                continue;
+            }
+            break;
+        } while(true);
 
         if(isObstacle == true)  // 장애물 배열일 경우 상태 업데이트
         {

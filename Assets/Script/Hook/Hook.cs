@@ -57,6 +57,33 @@ public class Hook : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Apply current static skin to this Hook instance (updates its renderers).
+    /// </summary>
+    public void ApplyCurrentSkinToThis()
+    {
+        if (currentSkin == null) return;
+        ApplySkin(GetComponent<Renderer>());
+        Transform fireTransform = transform.Find("Fire");
+        if (fireTransform != null)
+        {
+            Renderer fr = fireTransform.GetComponent<Renderer>();
+            if (fr != null) ApplySkin(fr);
+        }
+    }
+
+    /// <summary>
+    /// Apply current static skin to all Hook instances in the scene.
+    /// </summary>
+    public static void ApplyCurrentSkinToAll()
+    {
+        Hook[] hooks = FindObjectsOfType<Hook>();
+        foreach (var h in hooks)
+        {
+            h.ApplyCurrentSkinToThis();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
 

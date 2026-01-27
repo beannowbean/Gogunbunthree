@@ -22,6 +22,15 @@ public class Player : MonoBehaviour
     private Texture currentBeanieSkinTexture;
     private Texture currentBagSkinTexture;
 
+    // Static selection values (set by MainMenuController when applying saved customize)
+    public static Texture selectedPlayerSkinTexture = null;
+    public static Texture selectedBeanieSkinTexture = null;
+    public static Texture selectedBagSkinTexture = null;
+    public static bool selectedBeanieEquippedStatic = false;
+    public static bool selectedBagEquippedStatic = false;
+    public static GameObject selectedBeaniePrefab = null;
+    public static GameObject selectedBagPrefab = null;
+
     // 기본 오프셋
     public Vector3 hatPositionOffset;
     public Vector3 hatRotationOffset;
@@ -182,6 +191,32 @@ public class Player : MonoBehaviour
         gameStartTime = Time.time;
 
         StartCoroutine(CarSound());
+
+        // Apply selections carried over from MainMenu (static fields)
+        if (selectedPlayerSkinTexture != null)
+        {
+            ChangeSkinTexture(selectedPlayerSkinTexture);
+        }
+
+        if (selectedBeanieEquippedStatic)
+        {
+            if (selectedBeaniePrefab != null) EquipBeanie(selectedBeaniePrefab);
+            if (selectedBeanieSkinTexture != null) ChangeBeanieSkin(selectedBeanieSkinTexture);
+        }
+        else
+        {
+            UnequipBeanie();
+        }
+
+        if (selectedBagEquippedStatic)
+        {
+            if (selectedBagPrefab != null) EquipBag(selectedBagPrefab);
+            if (selectedBagSkinTexture != null) ChangeBagSkin(selectedBagSkinTexture);
+        }
+        else
+        {
+            UnequipBag();
+        }
     }
 
     void Update()
@@ -873,6 +908,36 @@ public class Player : MonoBehaviour
         {
             ApplyTexture(currentBag, newTexture);
         }
+    }
+
+    // 상태 검사 및 현재 적용된 스킨 반환용 public 접근자 추가
+    public bool IsBeanieEquipped()
+    {
+        return currentBeanie != null;
+    }
+
+    public bool IsBagEquipped()
+    {
+        return currentBag != null;
+    }
+
+    public Texture GetCurrentPlayerSkinTexture()
+    {
+        if (playerRenderer == null) return null;
+        Material[] mats = playerRenderer.materials;
+        if (mats != null && mats.Length > targetMaterialIndex && mats[targetMaterialIndex] != null)
+            return mats[targetMaterialIndex].mainTexture;
+        return playerRenderer.material != null ? playerRenderer.material.mainTexture : null;
+    }
+
+    public Texture GetCurrentBeanieSkinTexture()
+    {
+        return currentBeanieSkinTexture;
+    }
+
+    public Texture GetCurrentBagSkinTexture()
+    {
+        return currentBagSkinTexture;
     }
 
     // 가방과 비니 스킨 텍스쳐 입히는 함수

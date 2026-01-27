@@ -28,6 +28,9 @@ public class MainMenuController : MonoBehaviour
         // 아이콘 상태 업데이트
         UpdateMusicIconUI();
         UpdateSFXIconUI();
+
+        // 저장된 커스터마이즈 자동 적용
+        ApplySavedCustomize();
     }
 
     // 백그라운드에서 InGame 씬 프리로드
@@ -214,5 +217,170 @@ public class MainMenuController : MonoBehaviour
                 if (icon != null) icon.SetActive(!isSoundOn);
             }
         }
+    }
+
+    // 저장된 커스터마이즈 정보가 있으면 적용합니다.
+    private void ApplySavedCustomize()
+    {
+        if (Customize.Instance == null) return;
+
+        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", -1);
+        int ropeIndex = PlayerPrefs.GetInt("SelectedRopeSkinIndex", -1);
+        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", -1);
+        int heliIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", -1);
+        bool beanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
+        int beanieSkinIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", -1);
+        bool bagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
+        int bagSkinIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", -1);
+
+        // Customize 시스템에 반영 (메인 메뉴나 미리보기에서 즉시 반영)
+        Debug.Log($"ApplySavedCustomize loaded: playerIndex={playerIndex}, ropeIndex={ropeIndex}, hookIndex={hookIndex}, heliIndex={heliIndex}, beanieEquipped={beanieEquipped}, beanieSkinIndex={beanieSkinIndex}, bagEquipped={bagEquipped}, bagSkinIndex={bagSkinIndex}");
+
+        if (playerIndex >= 0)
+        {
+            if (playerIndex < Customize.Instance.playerSkins.Count)
+            {
+                Customize.Instance.EquipPlayerSkinNumber(playerIndex);
+                Debug.Log($"Applied Player skin index {playerIndex}");
+            }
+            else Debug.LogWarning($"Player skin index {playerIndex} out of range (0..{Customize.Instance.playerSkins.Count - 1})");
+        }
+
+        if (ropeIndex >= 0)
+        {
+            if (ropeIndex < Customize.Instance.ropeSkins.Count)
+            {
+                Customize.Instance.EquipRopeSkinNumber(ropeIndex);
+                Debug.Log($"Applied Rope skin index {ropeIndex}");
+            }
+            else Debug.LogWarning($"Rope skin index {ropeIndex} out of range (0..{Customize.Instance.ropeSkins.Count - 1})");
+        }
+
+        if (hookIndex >= 0)
+        {
+            if (hookIndex < Customize.Instance.hookSkins.Count)
+            {
+                Customize.Instance.EquipHookSkinNumber(hookIndex);
+                Debug.Log($"Applied Hook skin index {hookIndex}");
+            }
+            else Debug.LogWarning($"Hook skin index {hookIndex} out of range (0..{Customize.Instance.hookSkins.Count - 1})");
+        }
+
+        if (heliIndex >= 0)
+        {
+            if (heliIndex < Customize.Instance.helicopterSkins.Count)
+            {
+                Customize.Instance.EquipHelicopterSkinNumber(heliIndex);
+                Debug.Log($"Applied Helicopter skin index {heliIndex}");
+            }
+            else Debug.LogWarning($"Helicopter skin index {heliIndex} out of range (0..{Customize.Instance.helicopterSkins.Count - 1})");
+        }
+
+        if (beanieEquipped)
+        {
+            Customize.Instance.EquipBeanie();
+            Debug.Log("Equipped Beanie");
+            if (beanieSkinIndex >= 0)
+            {
+                if (beanieSkinIndex < Customize.Instance.beanieSkins.Count)
+                {
+                    Customize.Instance.ChangeBeanieSkinNumber(beanieSkinIndex);
+                    Debug.Log($"Applied Beanie skin index {beanieSkinIndex}");
+                }
+                else Debug.LogWarning($"Beanie skin index {beanieSkinIndex} out of range (0..{Customize.Instance.beanieSkins.Count - 1})");
+            }
+        }
+        else
+        {
+            Customize.Instance.UnequipBeanie();
+            Debug.Log("Unequipped Beanie");
+        }
+
+        if (bagEquipped)
+        {
+            Customize.Instance.EquipBag();
+            Debug.Log("Equipped Bag");
+            if (bagSkinIndex >= 0)
+            {
+                if (bagSkinIndex < Customize.Instance.bagSkins.Count)
+                {
+                    Customize.Instance.EquipBagSkinNumber(bagSkinIndex);
+                    Debug.Log($"Applied Bag skin index {bagSkinIndex}");
+                }
+                else Debug.LogWarning($"Bag skin index {bagSkinIndex} out of range (0..{Customize.Instance.bagSkins.Count - 1})");
+            }
+        }
+        else
+        {
+            Customize.Instance.UnequipBag();
+            Debug.Log("Unequipped Bag");
+        }
+
+        // Hook/Helicopter static 필드에도 적용하여 이후 생성되는 오브젝트가 바로 반영되도록 함
+        if (ropeIndex >= 0 && ropeIndex < Customize.Instance.ropeSkins.Count)
+        {
+            Hook.currentSkin = Customize.Instance.ropeSkins[ropeIndex];
+            Debug.Log($"Set Hook.currentSkin from rope index {ropeIndex}");
+        }
+
+        if (hookIndex >= 0 && hookIndex < Customize.Instance.hookSkins.Count)
+        {
+            Hook.currentSkin = Customize.Instance.hookSkins[hookIndex];
+            Debug.Log($"Set Hook.currentSkin from hook index {hookIndex}");
+        }
+
+        if (heliIndex >= 0 && heliIndex < Customize.Instance.helicopterSkins.Count)
+        {
+            Helicopter.currentSkin = Customize.Instance.helicopterSkins[heliIndex];
+            Debug.Log($"Set Helicopter.currentSkin from helicopter index {heliIndex}");
+        }
+
+        // Player 인스턴스(메인 메뉴에 미리보기 등이 있으면)에 바로 적용
+        if (Player.Instance != null)
+        {
+            if (playerIndex >= 0 && playerIndex < Customize.Instance.playerSkins.Count)
+            {
+                Player.Instance.ChangeSkinTexture(Customize.Instance.playerSkins[playerIndex]);
+                Debug.Log($"Player.Instance: applied player skin index {playerIndex}");
+            }
+
+            if (ropeIndex >= 0 && ropeIndex < Customize.Instance.ropeSkins.Count)
+            {
+                Player.Instance.ChangeRopeMaterial(Customize.Instance.ropeSkins[ropeIndex]);
+                Debug.Log($"Player.Instance: applied rope material index {ropeIndex}");
+            }
+
+            if (beanieEquipped && beanieSkinIndex >= 0 && beanieSkinIndex < Customize.Instance.beanieSkins.Count)
+            {
+                Player.Instance.ChangeBeanieSkin(Customize.Instance.beanieSkins[beanieSkinIndex]);
+                Debug.Log($"Player.Instance: applied beanie skin index {beanieSkinIndex}");
+            }
+
+            if (bagEquipped && bagSkinIndex >= 0 && bagSkinIndex < Customize.Instance.bagSkins.Count)
+            {
+                Player.Instance.ChangeBagSkin(Customize.Instance.bagSkins[bagSkinIndex]);
+                Debug.Log($"Player.Instance: applied bag skin index {bagSkinIndex}");
+            }
+        }
+
+        // Store selections into Player static fields so the in-game Player (created later) can apply them on Start()
+        if (playerIndex >= 0 && playerIndex < Customize.Instance.playerSkins.Count)
+            Player.selectedPlayerSkinTexture = Customize.Instance.playerSkins[playerIndex];
+        else
+            Player.selectedPlayerSkinTexture = null;
+
+        Player.selectedBeanieEquippedStatic = beanieEquipped;
+        if (beanieSkinIndex >= 0 && beanieSkinIndex < Customize.Instance.beanieSkins.Count)
+            Player.selectedBeanieSkinTexture = Customize.Instance.beanieSkins[beanieSkinIndex];
+        else
+            Player.selectedBeanieSkinTexture = null;
+        Player.selectedBeaniePrefab = Customize.Instance.beaniePrefab;
+
+        Player.selectedBagEquippedStatic = bagEquipped;
+        if (bagSkinIndex >= 0 && bagSkinIndex < Customize.Instance.bagSkins.Count)
+            Player.selectedBagSkinTexture = Customize.Instance.bagSkins[bagSkinIndex];
+        else
+            Player.selectedBagSkinTexture = null;
+        Player.selectedBagPrefab = Customize.Instance.bagPrefab;
     }
 }
