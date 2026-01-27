@@ -58,12 +58,16 @@ public class UIController : MonoBehaviour
     {
         Instance = this;
         
+        // 첫 플레이 확인용 (0이면 처음, 1이면 튜토리얼 해봄)
+        bool firstTutorial = PlayerPrefs.GetInt("FirstTutorial", 0) == 1;
+
         // 씬이 로드될 때마다 static 변수들을 적절히 초기화
         // isRestarting이 false이면 게임을 처음 시작하는 것이므로 tutorialSkip도 false
-        if (!isRestarting)
+        if(tutorialSkip == true)
         {
-            tutorialSkip = false;
+            tutorialSkip = firstTutorial;
         }
+        isRestarting = tutorialSkip;
     }
 
     void Start()
@@ -73,11 +77,6 @@ public class UIController : MonoBehaviour
         confirmationPanel.SetActive(false);
         gameOverRoot.SetActive(false);
         countdownText.gameObject.SetActive(false);
-
-        if (!isRestarting)
-        {
-            tutorialSkip = false;
-        }
         
         // 게임 시작
         inGameUIRoot.SetActive(true);
@@ -224,8 +223,6 @@ public class UIController : MonoBehaviour
         gameOverRoot.SetActive(false);
         
         Time.timeScale = 1f;
-        tutorialSkip = false;
-        isRestarting = false;
         
         // 메인 메뉴로 이동
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
@@ -421,5 +418,13 @@ public class UIController : MonoBehaviour
                 if (icon != null) icon.SetActive(!isSoundOn);
             }
         }
+    }
+
+    // tutorial 완료 Prefs 저장
+    public void firstTutorialComplete()
+    {
+        PlayerPrefs.SetInt("FirstTutorial", 1);
+        PlayerPrefs.Save();
+        tutorialSkip = true;
     }
 }

@@ -109,8 +109,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 // 튜토리얼이 끝났는데 차가 부족하면 일반 차 사용
                 else
                 {
-                    UIController.tutorialSkip = true;
-                    obstacles = GetDifficultyArray();
+                    obstacles = level_1Obstacles;
                     nextObstacle = ChooseObstacle(obstacles, true);
                 }
             }
@@ -183,8 +182,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             // 튜토리얼이 끝났는데 차가 부족하면 일반 차 사용
             else
             {
-                UIController.tutorialSkip = true;
-                obstacles = GetDifficultyArray();
+                obstacles = level_1Obstacles;
                 nextObstacle = ChooseObstacle(obstacles, true);
             }
         }

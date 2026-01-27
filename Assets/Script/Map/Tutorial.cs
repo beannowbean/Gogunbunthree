@@ -17,6 +17,7 @@ public class Tutorial : MonoBehaviour
     float minSwipeDistance = 50.0f; // 스와이프 속도 감지
     int tutorialStage = 0;  // 튜토리얼 단계
     bool inputUsed = false; // 입력 사용 여부
+    bool isSwitch = false;  // isControl 막았는지 확인용
 
     void Start() 
     {
@@ -26,22 +27,18 @@ public class Tutorial : MonoBehaviour
             tutorialObject[i].SetActive(false);
         }
 
-        // 튜토리얼 배치가 끝나면 tutorialSkip이 true가 되므로 바로 종료되는 것 방지
-        if(isPaused == false) return;
-
         // 튜토리얼 스킵 시 플레이어 조작 가능
         if(UIController.tutorialSkip == true) {
-            player.isControl = true;
             isTutorialEnd = true;
-        }
-        else
-        {
-            player.isControl = false;
+            isSwitch = true;
         }
     }
 
     void Update()
     {
+        // 튜토리얼 했을 경우 리턴
+        if(isTutorialEnd == true && UIController.tutorialSkip == true) return;
+
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -53,6 +50,11 @@ public class Tutorial : MonoBehaviour
             {
                 return; 
             }
+        }
+
+        // 참조 이후 isControl 막기
+        if(isTutorialEnd == false && isSwitch == false) {
+            player.isControl = false;
         }
 
         // 입력 대기 중이면 무시
@@ -230,14 +232,15 @@ public class Tutorial : MonoBehaviour
     IEnumerator TutorialEndDelay()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-
+            
+        UIController.Instance.firstTutorialComplete();
+        isSwitch = true;
         if(Player.Instance != null)
             Player.Instance.isControl = true;
-            
-        UIController.tutorialSkip = true;
 
         // 튜토리얼 종료 플래그 설정
         yield return new WaitForSecondsRealtime(3f);
+        UIController.tutorialSkip = true;
         isTutorialEnd = true;
     }
 }
