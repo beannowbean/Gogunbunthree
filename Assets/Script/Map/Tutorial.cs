@@ -20,9 +20,6 @@ public class Tutorial : MonoBehaviour
 
     void Start() 
     {
-        // 참조 설정
-        player = Player.Instance;
-
         // 모든 튜토리얼 오브젝트 비활성화
         for(int i = 0; i < tutorialObject.Length; i++)
         {
@@ -37,12 +34,29 @@ public class Tutorial : MonoBehaviour
             player.isControl = true;
             isTutorialEnd = true;
         }
+        else
+        {
+            player.isControl = false;
+        }
     }
 
     void Update()
-    {        
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<Player>();
+            }
+            else
+            {
+                return; 
+            }
+        }
+
         // 입력 대기 중이면 무시
-        if(inputUsed == true) return;
+        if (inputUsed == true) return;
 
         // 모바일 스와이프 확인
         bool swipeUp = false;

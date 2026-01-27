@@ -16,9 +16,7 @@ public class TileGenerate : MonoBehaviour
 
     void Start()
     {
-        // 참조 설정
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-
+        
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
@@ -29,8 +27,18 @@ public class TileGenerate : MonoBehaviour
 
     void Update()
     {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<Player>();
+            }
+            return;
+        }
+
         // 게임 오버 시 타일 멈춤
-        if(player.isGameOver == true)
+        if (player.isGameOver == true)
         {
             tileSpeed = 0;
         }
@@ -44,8 +52,10 @@ public class TileGenerate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (player == null) return;
+
         // 게임 오버 시 타일 이동 멈춤
-        if(player.isGameOver == true) return;
+        if (player.isGameOver == true) return;
 
         // Tile Designer에 Tile이 닿으면 (Tile이 플레이어 지나가면)
         if(other.gameObject.tag == "Tile")

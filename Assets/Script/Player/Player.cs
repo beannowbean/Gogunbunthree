@@ -713,31 +713,33 @@ public class Player : MonoBehaviour
         SFXManager.Instance.Play("Move");   // 퀵다이브 시 효과음 재생
         rb.velocity = new Vector3(rb.velocity.x, -diveSpeed, rb.velocity.z);
 
-        // [6. Bunny] 5초 안에 3번 퀵다이브를 하였는지 체크
-        float currentTime = Time.time;
-        quickDiveTime.Add(currentTime);
-
-        // [6. Bunny] 5초가 지나면 리스트에서 삭제
-        for (int i = quickDiveTime.Count - 1; i >= 0; i--)
+        if (isControl)
         {
-            if (quickDiveTime[i] < currentTime - 5.0f)
-            {
-                quickDiveTime.RemoveAt(i);
-            }
-        }
+            // [6. Bunny] 3초 안에 5번 퀵다이브를 하였는지 체크
+            float currentTime = Time.time;
+            quickDiveTime.Add(currentTime);
 
-        // [6. Bunny] 리스트에 3개 이상 존재한다면 업적 달성
-        if (quickDiveTime.Count >= 3)
-        {
-            if (PlayerAchivementList.Instance != null)
+            // [6. Bunny] 3초가 지나면 리스트에서 삭제
+            for (int i = quickDiveTime.Count - 1; i >= 0; i--)
             {
-                PlayerAchivementList.Instance.Bunny();
+                if (quickDiveTime[i] < currentTime - 3.0f)
+                {
+                    quickDiveTime.RemoveAt(i);
+                }
             }
 
-            // 중복 해제
-            quickDiveTime.Clear(); 
-        }
+            // [6. Bunny] 리스트에 3개 이상 존재한다면 업적 달성
+            if (quickDiveTime.Count >= 5)
+            {
+                if (PlayerAchivementList.Instance != null)
+                {
+                    PlayerAchivementList.Instance.Bunny();
+                }
 
+                // 중복 해제
+                quickDiveTime.Clear();
+            }
+        }
     }
 
     void CheckGround()
@@ -871,7 +873,6 @@ public class Player : MonoBehaviour
         if (playerRenderer != null && newTexture != null)
         {
             Material[] mats = playerRenderer.materials;
-            playerRenderer.material.mainTexture = newTexture;
 
             if (mats.Length > targetMaterialIndex)
             {

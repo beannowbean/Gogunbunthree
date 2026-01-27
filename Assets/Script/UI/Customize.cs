@@ -27,7 +27,6 @@ public class Customize : MonoBehaviour
     // UI에 표시할 아이콘(Sprite) 리스트 (인덱스 매칭)
     public List<Sprite> playerSkinIcons = new List<Sprite>();
 
-    // [각 스킨마다 개별 호출] 이 함수로 번호 호출해서 착용시키도록
     public void EquipPlayerSkinNumber(int index)
     {
         if (index >= 0 && index < playerSkins.Count)
@@ -92,6 +91,10 @@ public class Customize : MonoBehaviour
             Helicopter.ApplyCurrentSkinToAll();
         }
     }
+
+
+
+
 
     /*
      */

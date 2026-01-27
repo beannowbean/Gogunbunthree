@@ -23,8 +23,6 @@ public class PlayerAchivementList : MonoBehaviour
     {
         // 업적 데이터를 AchievementManager에 등록
         RegisterAchievementsToManager();
-        
-        // Newbie는 Start 버튼 클릭 시 달성되므로 여기서 호출하지 않음
     }
 
     // Update is called once per frame
@@ -43,23 +41,24 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Newbie",                                  // PlayerPrefs 키
             title = "Newbie",                                       // 업적 이름
-            description = "",                                       // 업적 설명
-            icon = null,                                            // 업적 보상 아이콘: 보상 이미지
+            description = "튜토리얼 첫 플레이",                                       // 업적 설명
+            //icon = PlayerSkin_1,                                            // 업적 보상 아이콘: 보상 이미지
             conditionType = AchievementConditionType.Custom,        // 조건타입: 점수, 코인 등등
             targetValue = 1,                                        // 달성조건: e.g. 갯수
             rewardType = RewardType.PlayerSkin,                     // 보상타입: 스킨, 코인 등등
-            rewardIndex = 0                                         // e.g. Customize.playerSkins[0]을 보상으로 설정
+            rewardIndex = 1                                         // e.g. Customize.playerSkins[0]을 보상으로 설정
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Dumb",
             title = "Dumb",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "게임 시작 10초 안에 죽기",
+            //icon = PlayerSkin_12,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 10,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 12
         });
 
         // 난이도 2짜리 업적
@@ -67,33 +66,36 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_HitAndRun",
             title = "Hit And Run",
-            description = "",
-            icon = null,
+            description = "움직이는 차량에 치이기",
+            //icon = PlayerSkin_3,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 3
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_TreasureHunter",
             title = "Treasure Hunter",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "자석 아이템으로 코인 30개 이상 획득",
+            //icon = PlayerSkin_8,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 30,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 8
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Eagle",
             title = "Eagle",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "헬리콥터에 탄 상태로 코인 30개 이상 획득",
+            //icon = PlayerSkin_9,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 30,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 9
         });
 
         // 난이도 3짜리 업적
@@ -101,33 +103,36 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Bunny",
             title = "Bunny",
-            description = "",
-            icon = null,
+            description = "3초 동안 퀵다이브 5번 하기",
+            //icon = PlayerSkin_4,
             conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            targetValue = 5,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 4
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Bruh",
             title = "Bruh",
-            description = "",
-            icon = null,
+            description = "아이템을 먹은 상태로 죽기",
+            //icon = PlayerSkin_6,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 6
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Acrophobia",
             title = "Acrophobia",
-            description = "",
-            icon = null,
+            description = "헬리콥터 아이템을 먹고도 타지 않기",
+            //icon = PlayerSkin_7,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 7
         });
 
         // 난이도 4짜리 업적
@@ -135,44 +140,48 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_TopGun",
             title = "Top Gun",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "한 판에 헬리콥터 3번 이상 탑승",
+            //icon = PlayerSkin_1,
+            conditionType = AchievementConditionType.CollectItems,
+            targetValue = 3,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 1
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_HeliVIP",
             title = "Heli VIP",
-            description = "",
-            icon = null,
+            description = "아이템을 먹은 상태로 헬리콥터에 탑승",
+            //icon = PlayerSkin_5,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 5
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Gentleman",
             title = "Gentleman",
-            description = "",
-            icon = null,
+            description = "스타 아이템을 먹은 상태로 자동차를 한 대도 날리지 않기",
+            //icon = BagSkin_0,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.BagSkin,
+            rewardIndex = 0
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Wrecker",
             title = "Wrecker",
-            description = "",
-            icon = null,
+            description = "스타 아이템을 먹은 상태로 자동차 20대 이상 날리기",
+            //icon = BeanieSkin_0,
             conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            targetValue = 20,
+            rewardType = RewardType.BeanieSkin,
+            rewardIndex = 0
         });
 
         // 난이도 5짜리 업적
@@ -180,44 +189,48 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Superstar",
             title = "Superstar",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "한 판에 스타 5개 이상 획득",
+            //icon = PlayerSkin_10,
+            conditionType = AchievementConditionType.CollectItems,
+            targetValue = 5,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 10
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Iceman",
             title = "Iceman",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "게임 시작 후 움직이지 않고 6초 이상 버티기",
+            //icon = PlayerSkin_11,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 6,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 11
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Icarus",
             title = "Icarus",
-            description = "",
-            icon = null,
+            description = "밴 위에서 점프한 후 갈고리 날리기",
+            //icon = BagSkin_1,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
-            rewardType = RewardType.None
+            rewardType = RewardType.BagSkin,
+            rewardIndex = 1
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Hustler",
             title = "Hustler",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "한 판에 점수 15000점 이상 달성",
+            //icon = BeanieSkin_1,
+            conditionType = AchievementConditionType.Score,
+            targetValue = 15000,
+            rewardType = RewardType.BeanieSkin,
+            rewardIndex = 1
         });
 
         // 난이도 6짜리 업적
@@ -225,22 +238,24 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_SkyWalker",
             title = "Sky Walker",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "바닥에 닿지 않고 10초간 진행",
+            //icon = HookSkin_1,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 10,
+            rewardType = RewardType.HookSkin,
+            rewardIndex = 1
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Pennyless",
             title = "Pennyless",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "한 판에 코인을 하나도 먹지 않고 7000점 이상 달성",
+            //icon = HelicopterSkin_1,
+            conditionType = AchievementConditionType.Score,
+            targetValue = 7000,
+            rewardType = RewardType.HelicopterSkin,
+            rewardIndex = 1
         });
 
         // 난이도 7짜리 업적
@@ -248,22 +263,24 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Billionaire",
             title = "Billionaire",
-            description = "",
-            icon = null,
-            conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            description = "한 판에 코인 200개 이상 획득",
+            //icon = HookSkin_2,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 200,
+            rewardType = RewardType.HookSkin,
+            rewardIndex = 2
         });
 
         achievementDefinitions.Add(new AchievementDefinition
         {
             id = "Achieve_Rapunzel",
             title = "Rapunzel",
-            description = "",
-            icon = null,
+            description = "갈고리로 35m 이상 이동하기",
+            //icon = HelicopterSkin_2,
             conditionType = AchievementConditionType.Custom,
-            targetValue = 1,
-            rewardType = RewardType.None
+            targetValue = 35,
+            rewardType = RewardType.HelicopterSkin,
+            rewardIndex = 2
         });
     }
     

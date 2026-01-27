@@ -29,6 +29,19 @@ public class CameraMove : MonoBehaviour // 디자이너 -> 충돌 감지 콜라�
 
     void LateUpdate()
     {
+        if (target == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                target = player.transform;
+            }
+            else
+            {
+                return;
+            }
+        }
+
         // 목표 위치 = 플레이어 위치 + 오프셋
         Vector3 targetPos = target.position + offset;
         float smoothX = Mathf.Lerp(transform.position.x, targetPos.x, Time.deltaTime * followSpeed);
