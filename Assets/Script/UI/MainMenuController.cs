@@ -6,6 +6,7 @@ using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
+    public GameObject Settings;
     public GameObject[] musicOnIcons;
     public GameObject[] musicOffIcons;
     public GameObject[] sfxOnIcons;
@@ -121,12 +122,41 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
     }
 
+    // Settings 버튼
+    public void OpenSettings()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        Settings.SetActive(true);
+    }
+
+    // Settings 버튼
+    public void CloseSettings()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        Settings.SetActive(false);
+    }
+
+
+
     // --- Audio Control Methods ---
 
     public void DecreaseMusicVolume()
     {
         if (BGMManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             BGMManager.Instance.DecreaseVolume();
             UpdateMusicIconUI();
         }
@@ -136,15 +166,17 @@ public class MainMenuController : MonoBehaviour
     {
         if (BGMManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             BGMManager.Instance.IncreaseVolume();
             UpdateMusicIconUI();
         }
     }
 
     public void DecreaseSFXVolume()
-    {
+    { 
         if (SFXManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             SFXManager.Instance.DecreaseVolume();
             UpdateSFXIconUI();
         }
@@ -154,6 +186,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (SFXManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             SFXManager.Instance.IncreaseVolume();
             UpdateSFXIconUI();
         }
@@ -163,6 +196,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (BGMManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             BGMManager.Instance.ToggleMute();
             UpdateMusicIconUI();
         }
@@ -172,6 +206,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (SFXManager.Instance != null)
         {
+            SFXManager.Instance.Play("Button");
             SFXManager.Instance.ToggleMute();
             UpdateSFXIconUI();
         }
