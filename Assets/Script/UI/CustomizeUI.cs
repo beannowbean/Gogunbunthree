@@ -21,10 +21,6 @@ public class CustomizeUI : MonoBehaviour
     // 프리뷰 타입별 스킨 리스트 동적 생성
     public void ShowSkinList(string type)
     {
-        
-
-        // 기존 버튼 삭제 (단, skinButtonPrefab이 Content의 자식으로 할당된 경우 해당 오브젝트는 파괴하지 않고 비활성화하여
-        // 참조가 끊어지는 문제를 방지합니다.)
         int removed = 0;
         for (int i = skinListContent.childCount - 1; i >= 0; i--)
         {
@@ -43,127 +39,63 @@ public class CustomizeUI : MonoBehaviour
         }
         
 
-        List<Texture> textureList = null;
-        List<Material> materialList = null;
+
         List<Sprite> spriteList = null;
         System.Action<int> onClick = null;
 
         if (type == "Player") {
-            textureList = Customize.Instance.playerSkins;
-            spriteList = Customize.Instance.playerSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedPlayerSkinIcons();
             onClick = (idx) => Customize.Instance.EquipPlayerSkinNumber(idx);
         }
         else if (type == "Helicopter") {
-            textureList = Customize.Instance.helicopterSkins;
-            spriteList = Customize.Instance.helicopterSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedHelicopterSkinIcons();
             onClick = (idx) => Customize.Instance.EquipHelicopterSkinNumber(idx);
         }
         else if (type == "Hook") {
-            materialList = Customize.Instance.hookSkins;
-            spriteList = Customize.Instance.hookSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedHookSkinIcons();
             onClick = (idx) => Customize.Instance.EquipHookSkinNumber(idx);
         }
         else if (type == "Beanie") {
-            textureList = Customize.Instance.beanieSkins;
-            spriteList = Customize.Instance.beanieSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedBeanieSkinIcons();
             onClick = (idx) => {
                 Customize.Instance.EquipBeanie();
                 Customize.Instance.ChangeBeanieSkinNumber(idx);
             };
         }
         else if (type == "Bag") {
-            textureList = Customize.Instance.bagSkins;
-            spriteList = Customize.Instance.bagSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedBagSkinIcons();
             onClick = (idx) => {
                 Customize.Instance.EquipBag();
                 Customize.Instance.EquipBagSkinNumber(idx);
             };
         }
 
-        int spriteCount = spriteList != null ? spriteList.Count : 0;
-        int texCount = textureList != null ? textureList.Count : 0;
-        int matCount = materialList != null ? materialList.Count : 0;
-
-        // 안전하게 버튼 개수 결정 (아이콘, 텍스처, 머티리얼 중 가장 많은 개수)
-        int count = 0;
-        if (spriteList != null && spriteList.Count > 0)
-            count = spriteList.Count;
-        if (textureList != null && textureList.Count > count)
-            count = textureList.Count;
-        if (materialList != null && materialList.Count > count)
-            count = materialList.Count;
-
-        if (count == 0)
-        {
-            return;
-        }
-
+        int count = spriteList != null ? spriteList.Count : 0;
         int created = 0;
         for (int i = 0; i < count; i++)
         {
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
-            // name the instantiated button for easier identification in hierarchy during debugging
             btnObj.name = $"{type}_SkinButton_{i}";
 
             var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
             var img = btnObj.GetComponent<UnityEngine.UI.Image>();
 
-
-            // Ensure instantiated GameObject and components are active/enabled so UI shows up even if prefab had them disabled
             if (btnObj != null && !btnObj.activeSelf)
-            {
                 btnObj.SetActive(true);
-            }
             if (img != null && !img.enabled)
-            {
                 img.enabled = true;
-            }
             if (btn != null)
             {
-                if (!btn.enabled)
-                {
-                    btn.enabled = true;
-                }
+                if (!btn.enabled) btn.enabled = true;
                 btn.interactable = true;
                 if (btn.targetGraphic == null && img != null)
-                {
                     btn.targetGraphic = img;
-                }
             }
 
-            string used = "none";
-
-            // 아이콘 리스트 우선 적용
+            // 해금된 아이콘만 표시
             if (spriteList != null && i < spriteList.Count && spriteList[i] != null)
             {
                 img.sprite = spriteList[i];
-                used = "sprite";
-            }
-            else if (textureList != null && i < textureList.Count && textureList[i] != null)
-            {
-                Texture2D tex2D = textureList[i] as Texture2D;
-                if (tex2D != null)
-                {
-                    img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0.5f, 0.5f));
-                    used = "texture";
-                }
-                else
-                {
-                    used = "texture (not Texture2D)";
-                }
-            }
-            else if (materialList != null && i < materialList.Count && materialList[i] != null)
-            {
-                Texture2D tex2D = materialList[i].mainTexture as Texture2D;
-                if (tex2D != null)
-                {
-                    img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0.5f, 0.5f));
-                    used = "material.mainTexture";
-                }
-                else
-                {
-                    used = "material (no Texture2D)";
-                }
             }
 
             int idx = i;

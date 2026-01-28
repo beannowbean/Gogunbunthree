@@ -47,8 +47,38 @@ public class AchievementItem : MonoBehaviour
             descriptionText.gameObject.SetActive(true);
         }
 
-        if (iconImage != null && data.icon != null)
-            iconImage.sprite = data.icon;
+        // 아이콘 설정: 보상 종류와 인덱스에 따라 Customize의 아이콘 사용
+        if (iconImage != null)
+        {
+            Sprite iconSprite = null;
+            // 보상 타입에 따라 아이콘 리스트 선택
+            switch (data.rewardType)
+            {
+                case RewardType.PlayerSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.playerSkinIcons.Count)
+                        iconSprite = Customize.Instance.playerSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.BagSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.bagSkinIcons.Count)
+                        iconSprite = Customize.Instance.bagSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.BeanieSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.beanieSkinIcons.Count)
+                        iconSprite = Customize.Instance.beanieSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.HookSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.hookSkinIcons.Count)
+                        iconSprite = Customize.Instance.hookSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.HelicopterSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.helicopterSkinIcons.Count)
+                        iconSprite = Customize.Instance.helicopterSkinIcons[data.rewardIndex];
+                    break;
+                // 필요시 추가 스킨 타입 처리
+            }
+            
+            iconImage.sprite = iconSprite;
+        }
 
         // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)

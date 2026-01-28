@@ -13,6 +13,66 @@ using System.Collections.Generic;
 
 public class Customize : MonoBehaviour
 {
+    // 해금된 플레이어 스킨 아이콘 리스트 반환
+    public List<Sprite> GetUnlockedPlayerSkinIcons()
+    {
+        List<Sprite> unlocked = new List<Sprite>();
+        for (int i = 0; i < playerSkinIcons.Count; i++)
+        {
+            if (IsPlayerSkinUnlocked(i))
+                unlocked.Add(playerSkinIcons[i]);
+        }
+        return unlocked;
+    }
+
+    // 해금된 훅 스킨 아이콘 리스트 반환
+    public List<Sprite> GetUnlockedHookSkinIcons()
+    {
+        List<Sprite> unlocked = new List<Sprite>();
+        for (int i = 0; i < hookSkinIcons.Count; i++)
+        {
+            if (IsHookSkinUnlocked(i))
+                unlocked.Add(hookSkinIcons[i]);
+        }
+        return unlocked;
+    }
+
+    // 해금된 비니 스킨 아이콘 리스트 반환
+    public List<Sprite> GetUnlockedBeanieSkinIcons()
+    {
+        List<Sprite> unlocked = new List<Sprite>();
+        for (int i = 0; i < beanieSkinIcons.Count; i++)
+        {
+            if (IsBeanieSkinUnlocked(i))
+                unlocked.Add(beanieSkinIcons[i]);
+        }
+        return unlocked;
+    }
+
+    // 해금된 가방 스킨 아이콘 리스트 반환
+    public List<Sprite> GetUnlockedBagSkinIcons()
+    {
+        List<Sprite> unlocked = new List<Sprite>();
+        for (int i = 0; i < bagSkinIcons.Count; i++)
+        {
+            if (IsBagSkinUnlocked(i))
+                unlocked.Add(bagSkinIcons[i]);
+        }
+        return unlocked;
+    }
+
+    // 해금된 헬리콥터 스킨 아이콘 리스트 반환
+    public List<Sprite> GetUnlockedHelicopterSkinIcons()
+    {
+        List<Sprite> unlocked = new List<Sprite>();
+        for (int i = 0; i < helicopterSkinIcons.Count; i++)
+        {
+            if (IsHelicopterSkinUnlocked(i))
+                unlocked.Add(helicopterSkinIcons[i]);
+        }
+        return unlocked;
+    }
+
     public static Customize Instance { get; private set; }
 
     private void Awake()
@@ -173,13 +233,43 @@ public class Customize : MonoBehaviour
         }
     }
 
-    public void UnlockRopeSkinByIndex(int index)
+    public void UnlockBeanieSkinByIndex(int index)
     {
-        if (index >= 0 && index < ropeSkins.Count)
+        if (index >= 0 && index < beanieSkins.Count)
         {
-            PlayerPrefs.SetInt($"RopeSkin_{index}_Unlocked", 1);
+            PlayerPrefs.SetInt($"BeanieSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Rope skin index {index} unlocked");
+            Debug.Log($"[Customize] Beanie skin index {index} unlocked");
+        }
+    }
+
+    public void UnlockBagSkinByIndex(int index)
+    {
+        if (index >= 0 && index < bagSkins.Count)
+        {
+            PlayerPrefs.SetInt($"BagSkin_{index}_Unlocked", 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[Customize] Bag skin index {index} unlocked");
+        }
+    }
+
+    public void UnlockHelicopterSkinByIndex(int index)
+    {
+        if (index >= 0 && index < helicopterSkins.Count)
+        {
+            PlayerPrefs.SetInt($"HelicopterSkin_{index}_Unlocked", 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[Customize] Helicopter skin index {index} unlocked");
+        }
+    }
+
+    public void UnlockHookSkinByIndex(int index)
+    {
+        if (index >= 0 && index < hookSkins.Count)
+        {
+            PlayerPrefs.SetInt($"HookSkin_{index}_Unlocked", 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[Customize] Hook skin index {index} unlocked");
         }
     }
 
@@ -188,8 +278,23 @@ public class Customize : MonoBehaviour
         return PlayerPrefs.GetInt($"PlayerSkin_{index}_Unlocked", 0) == 1;
     }
 
-    public bool IsRopeSkinUnlocked(int index)
+    public bool IsBeanieSkinUnlocked(int index)
     {
-        return PlayerPrefs.GetInt($"RopeSkin_{index}_Unlocked", 0) == 1;
+        return PlayerPrefs.GetInt($"BeanieSkin_{index}_Unlocked", 0) == 1;
+    }
+
+    public bool IsBagSkinUnlocked(int index)
+    {
+        return PlayerPrefs.GetInt($"BagSkin_{index}_Unlocked", 0) == 1;
+    }
+
+    public bool IsHelicopterSkinUnlocked(int index)
+    {
+        return PlayerPrefs.GetInt($"HelicopterSkin_{index}_Unlocked", 0) == 1;
+    }
+
+    public bool IsHookSkinUnlocked(int index)
+    {
+        return PlayerPrefs.GetInt($"HookSkin_{index}_Unlocked", 0) == 1;
     }
 } 
