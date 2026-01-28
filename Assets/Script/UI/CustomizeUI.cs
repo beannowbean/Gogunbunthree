@@ -177,13 +177,60 @@ public class CustomizeUI : MonoBehaviour
 
     // 버튼 클릭 이벤트에 연결
     // 버튼 클릭 이벤트에 연결 (Player, Helicopter, Hook)
-    public void OnPlayerButtonClicked() => ShowSkinList("Player");
+    public void OnPlayerButtonClicked()
+    {
+        // 프리뷰 오브젝트 명시적 활성화(물리 안정화 보장)
+        if (previewController != null) previewController.SetActivePreview(previewController.previewPlayer);
+        if (playerOptionsPanel != null) playerOptionsPanel.SetActive(true);
+
+        // 비니, 가방, 옷 모두 이전에 적용됐던 스킨으로 프리뷰 업데이트
+        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", 0);
+        var playerSkins = Customize.Instance.playerSkins;
+
+        bool beanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
+        int beanieIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", 0);
+
+        bool bagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
+        int bagIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", 0);
+
+        Customize.Instance.EquipPlayerSkinNumber(playerIndex);
+
+        if (beanieEquipped)
+        {
+            Customize.Instance.EquipBeanie();
+            Customize.Instance.ChangeBeanieSkinNumber(beanieIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBeanie();
+        }
+
+        if (bagEquipped)
+        {
+            Customize.Instance.EquipBag();
+            Customize.Instance.EquipBagSkinNumber(bagIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBag();
+        }
+
+        ShowSkinList("Player");
+    }
     public void OnHelicopterButtonClicked()
     {
+        int helicopterIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", 0);
+        var helicopterSkins = Customize.Instance.helicopterSkins;
+        Customize.Instance.EquipHelicopterSkinNumber(helicopterIndex);
+
         ShowSkinList("Helicopter");
     }
     public void OnHookButtonClicked()
     {
+        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", 0);
+        var hookSkins = Customize.Instance.hookSkins;
+        Customize.Instance.EquipHookSkinNumber(hookIndex);
+        
         ShowSkinList("Hook");
     }
 
@@ -230,27 +277,10 @@ public class CustomizeUI : MonoBehaviour
     private void OnEnable()
     {
         CaptureOriginalState();
-
-        // 기본 프리뷰를 Player로 설정 (버튼으로 변경 가능)
-        if (previewController != null && previewController.previewPlayer != null)
-        {
-            previewController.SetActivePreview(previewController.previewPlayer);
-            // ensure input handler references
-            if (previewInputHandler != null)
-            {
-                previewInputHandler.previewController = previewController;
-            }
-
-            // subscribe to active preview changes so UI updates automatically
-            previewController.OnActivePreviewChanged += UpdatePreviewUI;
-
-            // show player options panel if assigned
-            if (playerOptionsPanel != null) playerOptionsPanel.SetActive(true);
-        }
-
-        // 초기화면은 Player 스킨 목록 표시
-        ShowSkinList("Player");
+        // Player 버튼 클릭과 동일하게 동작 (프리뷰, 스킨, UI 모두 적용)
+        OnPlayerButtonClicked();
     }
+    
 
     private void InitializeButtons()
     {
@@ -259,7 +289,6 @@ public class CustomizeUI : MonoBehaviour
 
         // Auto-wire common tab buttons (Player, Helicopter, Hook, Beanie, Bag) if present under this UI hierarchy.
         var childButtons = GetComponentsInChildren<Button>(true);
-        bool anyAutoWired = false;
         foreach (var b in childButtons)
         {
             if (b == null) continue;
@@ -272,35 +301,30 @@ public class CustomizeUI : MonoBehaviour
             {
                 b.onClick.AddListener(() => OnHelicopterButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("hook"))
             {
                 b.onClick.AddListener(() => OnHookButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("beanie"))
             {
                 b.onClick.AddListener(() => OnBeanieButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("bag") || n.Contains("backpack") || n.Contains("backpack"))
             {
                 b.onClick.AddListener(() => OnBagButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("player") || n.Contains("cloth") || n.Contains("clothes"))
             {
                 b.onClick.AddListener(() => OnPlayerButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
         }
@@ -478,10 +502,9 @@ public class CustomizeUI : MonoBehaviour
         PlayerPrefs.SetInt("SelectedBagEquipped", bagEquipped ? 1 : 0);
         PlayerPrefs.SetInt("SelectedBagSkinIndex", bagSkinIndex);
         PlayerPrefs.Save();
-
-        Debug.Log($"Apply Selected Indices: Player={playerIndex}, Rope={ropeIndex}, Hook={hookIndex}, Helicopter={heliIndex}, BeanieEquipped={beanieEquipped}, BeanieSkin={beanieSkinIndex}, BagEquipped={bagEquipped}, BagSkin={bagSkinIndex}");
-
-        SceneManager.LoadScene("MainMenu");
+        
+        // Apply 버튼 눌러도 MainMenu 이동 안 함
+        // SceneManager.LoadScene("MainMenu");
     }
 
     // Update preview-specific UI (e.g., show player option buttons only when player preview is active)
