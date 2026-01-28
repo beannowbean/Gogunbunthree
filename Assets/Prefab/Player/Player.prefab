@@ -999,10 +999,10 @@ MonoBehaviour:
   backBone: {fileID: 3667031660878146508}
   hatPositionOffset: {x: 0, y: 0, z: 0}
   hatRotationOffset: {x: 0, y: 0, z: 0}
-  bagPositionOffset: {x: 0, y: 0, z: 0}
-  bagRotationOffset: {x: 0, y: 0, z: 0}
+  bagPositionOffset: {x: 0.469, y: 0.012, z: 0}
+  bagRotationOffset: {x: -90, y: 90, z: 0}
   playerRenderer: {fileID: 558457316708465754}
-  targetMaterialIndex: 1
+  targetMaterialIndex: 0
   moveSpeed: 0
   laneDistance: 1.5
   crossSpeed: 10
