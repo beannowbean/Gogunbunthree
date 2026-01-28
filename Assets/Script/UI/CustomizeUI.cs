@@ -247,6 +247,9 @@ public class CustomizeUI : MonoBehaviour
             // show player options panel if assigned
             if (playerOptionsPanel != null) playerOptionsPanel.SetActive(true);
         }
+
+        // 초기화면은 Player 스킨 목록 표시
+        ShowSkinList("Player");
     }
 
     private void InitializeButtons()
