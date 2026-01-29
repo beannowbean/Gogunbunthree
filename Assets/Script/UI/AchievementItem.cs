@@ -23,6 +23,17 @@ public class AchievementItem : MonoBehaviour
 
     public void Initialize(AchievementData data, bool isUnlocked, System.Action<string, bool> callback)
     {
+        // 아이콘 클릭으로도 보상 수령 가능하게 버튼 리스너 연결
+        if (iconImage != null)
+        {
+            var iconBtn = iconImage.GetComponent<Button>();
+            if (iconBtn != null)
+            {
+                iconBtn.onClick.RemoveAllListeners();
+                iconBtn.onClick.AddListener(OnClaimRewardClicked);
+            }
+        }
+        
         achievementId = data.id;
         currentData = data;
 
@@ -47,8 +58,38 @@ public class AchievementItem : MonoBehaviour
             descriptionText.gameObject.SetActive(true);
         }
 
-        if (iconImage != null && data.icon != null)
-            iconImage.sprite = data.icon;
+        // 아이콘 설정: 보상 종류와 인덱스에 따라 Customize의 아이콘 사용
+        if (iconImage != null)
+        {
+            Sprite iconSprite = null;
+            // 보상 타입에 따라 아이콘 리스트 선택
+            switch (data.rewardType)
+            {
+                case RewardType.PlayerSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.playerSkinIcons.Count)
+                        iconSprite = Customize.Instance.playerSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.BagSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.bagSkinIcons.Count)
+                        iconSprite = Customize.Instance.bagSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.BeanieSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.beanieSkinIcons.Count)
+                        iconSprite = Customize.Instance.beanieSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.HookSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.hookSkinIcons.Count)
+                        iconSprite = Customize.Instance.hookSkinIcons[data.rewardIndex];
+                    break;
+                case RewardType.HelicopterSkin:
+                    if (Customize.Instance != null && data.rewardIndex >= 0 && data.rewardIndex < Customize.Instance.helicopterSkinIcons.Count)
+                        iconSprite = Customize.Instance.helicopterSkinIcons[data.rewardIndex];
+                    break;
+                // 필요시 추가 스킨 타입 처리
+            }
+
+            iconImage.sprite = iconSprite;
+        }
 
         // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)
@@ -115,10 +156,8 @@ public class AchievementItem : MonoBehaviour
         // 상태 로그(완료 여부, 보상 수령 여부, 보상 타입)
         bool isUnlocked = AchievementManager.Instance.IsAchievementUnlocked(currentData.id);
         bool isRewardClaimed = AchievementManager.Instance.IsRewardClaimed(currentData.id);
-        Debug.Log($"[AchievementItem] State before claim - IsCompleted: {currentData.IsCompleted}, IsUnlocked(PlayerPrefs): {isUnlocked}, IsRewardClaimed: {isRewardClaimed}, RewardType: {currentData.rewardType}, RewardIndex: {currentData.rewardIndex}");
 
         bool success = AchievementManager.Instance.ClaimReward(currentData.id);
-        Debug.Log($"[AchievementItem] ClaimReward returned: {success} for '{currentData.id}'");
 
         if (success)
         {
@@ -129,13 +168,6 @@ public class AchievementItem : MonoBehaviour
             {
                 SFXManager.Instance.Play("Button");
             }
-        }
-        else
-        {
-            // 실패 시 원인 추가 검사 로그
-            isRewardClaimed = AchievementManager.Instance.IsRewardClaimed(currentData.id);
-            isUnlocked = AchievementManager.Instance.IsAchievementUnlocked(currentData.id);
-            Debug.LogWarning($"[AchievementItem] Claim failed - IsCompleted: {currentData.IsCompleted}, IsUnlocked(PlayerPrefs): {isUnlocked}, IsRewardClaimed: {isRewardClaimed}, RewardType: {currentData.rewardType}, RewardIndex: {currentData.rewardIndex}");
         }
     }
     

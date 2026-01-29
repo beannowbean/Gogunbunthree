@@ -33,11 +33,8 @@ public enum AchievementConditionType
 
 public enum RewardType
 {
-    None,          // 보상 없음
     PlayerSkin,    // 플레이어 스킨
-    RopeSkin,
-    HookSkin,      // 로프 스킨
-    CustomItem,    // 커스텀 아이템
+    HookSkin,      // 훅 스킨
     BagSkin,       // 가방 스킨
     BeanieSkin,    // 비니 스킨
     HelicopterSkin // 헬리콥터 스킨

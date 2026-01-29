@@ -1657,6 +1657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9032019281971851206}
   - component: {fileID: 2838578101405950426}
+  - component: {fileID: 5856591584808804507}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: Untagged
@@ -1699,6 +1700,81 @@ MonoBehaviour:
   - {fileID: 5865125014077479154}
   sfxOffIcons:
   - {fileID: 2117798637620681805}
+--- !u!114 &5856591584808804507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3973426825520770126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9567c579db9704a9fb5dc92d3a8ae36d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerSkins:
+  - {fileID: 2800000, guid: 0a00ddb7f07744919a6671e2e5ae05ac, type: 3}
+  - {fileID: 2800000, guid: 656e47359428c4444a30900c97881654, type: 3}
+  - {fileID: 2800000, guid: 4a015e6efecdb48429817bb7825e4f78, type: 3}
+  - {fileID: 2800000, guid: 6b451bb29f81040f9add623c25066c48, type: 3}
+  - {fileID: 2800000, guid: 327580cd4b5f44d22aa24770dfe22049, type: 3}
+  - {fileID: 2800000, guid: e9d54e3855e4946af87f94c1ab8e0720, type: 3}
+  - {fileID: 2800000, guid: efde21ffa5e9b4d3e8d0fbe878d92ae5, type: 3}
+  - {fileID: 2800000, guid: 305f6058779bd4fe49c37742688bb5d8, type: 3}
+  - {fileID: 2800000, guid: fbcf56cacb9f84a64a0a9f323d5794b5, type: 3}
+  - {fileID: 2800000, guid: 04dff13e4d4fe4e93b536df1b7773dca, type: 3}
+  - {fileID: 2800000, guid: da81b70ee1d7c4fdbb5c35369f26e468, type: 3}
+  - {fileID: 2800000, guid: e6d3d5caa421d47fc84114f940e87eb7, type: 3}
+  - {fileID: 2800000, guid: 62ee0c9615e75402fa861533e368717a, type: 3}
+  playerSkinIcons:
+  - {fileID: 21300000, guid: a5999f5efadc84be4afb112bc48bd277, type: 3}
+  - {fileID: 21300000, guid: ac8fb4bf23e254a78aebb6f9fd1b465b, type: 3}
+  - {fileID: 21300000, guid: d91dcf46a4b104e4fa23a6c09d34227b, type: 3}
+  - {fileID: 21300000, guid: c84682b6f9f32444bb27c51105d4aebe, type: 3}
+  - {fileID: 21300000, guid: 416d547599f7b4e26b127088c9fea6d8, type: 3}
+  - {fileID: 21300000, guid: a94dde7694c7a4997ae4d5f5de119b93, type: 3}
+  - {fileID: 21300000, guid: 7158f0c20d7c9437b9f58efa0a4da5c8, type: 3}
+  - {fileID: 21300000, guid: 489369c2623c94ff7bd0874d4cfa576a, type: 3}
+  - {fileID: 21300000, guid: 6fd762a27d987410cbb92a52b1c45adb, type: 3}
+  - {fileID: 21300000, guid: b2e26535c36b54c7daae51533bfd519a, type: 3}
+  - {fileID: 21300000, guid: f699f2b3bc7f04e9ca7c07a9738d24de, type: 3}
+  - {fileID: 21300000, guid: 425de478764074d20885827bb64a1df2, type: 3}
+  - {fileID: 21300000, guid: bfb71e0c7166c4b8da53158896dbfba5, type: 3}
+  ropeSkins:
+  - {fileID: 2100000, guid: 26c92f50939b44575ad59dc5573fdeb0, type: 2}
+  - {fileID: 2100000, guid: 9f5288f8d78984773b1cf9d27d7153dd, type: 2}
+  - {fileID: 2100000, guid: 65570be45f8ef4c4193ff8532362fbc4, type: 2}
+  ropeSkinIcons: []
+  hookSkins:
+  - {fileID: 2100000, guid: bcfa591c214d84a068b639e53ed8b672, type: 2}
+  - {fileID: 2100000, guid: c7288b8a9928d4a30af3efd8b49dd7d0, type: 2}
+  - {fileID: 2100000, guid: 31882b762f04b4d38adbbfa02b1a50a5, type: 2}
+  hookSkinIcons:
+  - {fileID: 21300000, guid: d7d3a439efc32436c836f38bd422b84e, type: 3}
+  - {fileID: 21300000, guid: 52f05706789e54367824b1f228355364, type: 3}
+  - {fileID: 21300000, guid: 20f4f4782ca8143a98040488ebd9313c, type: 3}
+  helicopterSkins:
+  - {fileID: 2800000, guid: 033a09ecea67c4e7a939d2d353fda358, type: 3}
+  - {fileID: 2800000, guid: 7e61e81543109496f827ef89761922e3, type: 3}
+  - {fileID: 2800000, guid: b86feb606e8b34dd5ba80be696821291, type: 3}
+  helicopterSkinIcons:
+  - {fileID: 21300000, guid: 39abba6d1d576404289ace36ed62ce0e, type: 3}
+  - {fileID: 21300000, guid: b865d95eae7174e9fa85b081e830154b, type: 3}
+  - {fileID: 21300000, guid: 52d40bc1975f64394b5ca2eec90d73ab, type: 3}
+  beaniePrefab: {fileID: 8498555904459781634, guid: cfe6d8b65e88b4839bd318bd1529a057, type: 3}
+  beanieSkins:
+  - {fileID: 2800000, guid: ad96d02f850164253abf23f171d811d7, type: 3}
+  - {fileID: 2800000, guid: 82b97387ef35e49d480c9416dfd1291b, type: 3}
+  beanieSkinIcons:
+  - {fileID: 21300000, guid: b67477d666c874588b0351a7390a5073, type: 3}
+  - {fileID: 21300000, guid: 336f8c3912cf34e2f9a79f852b27afad, type: 3}
+  bagPrefab: {fileID: 5690102803012019471, guid: 147952a65aad544b683239500586f46f, type: 3}
+  bagSkins:
+  - {fileID: 2800000, guid: 28b3478dcbc93478a8cd70622c9b1b0e, type: 3}
+  - {fileID: 2800000, guid: 180deacaf10d749bab8b9a8decb632ef, type: 3}
+  bagSkinIcons:
+  - {fileID: 21300000, guid: bb0ba558f203942e1b681816ee87ec32, type: 3}
+  - {fileID: 21300000, guid: c35134811392f4e8ab1705137396b038, type: 3}
 --- !u!1 &4104529612350347335
 GameObject:
   m_ObjectHideFlags: 0

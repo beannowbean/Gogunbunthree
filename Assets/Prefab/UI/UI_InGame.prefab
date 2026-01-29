@@ -4062,6 +4062,7 @@ MonoBehaviour:
   inGameCoinText: {fileID: 4242267917249098284}
   bestScoreText: {fileID: 8844959245761769098}
   bonusScoreText: {fileID: 3868418084001937040}
+  tutorial: {fileID: 0}
 --- !u!1 &4038436957189902869
 GameObject:
   m_ObjectHideFlags: 0

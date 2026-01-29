@@ -10,22 +10,34 @@ using System;
 /// - 물리 안정화(Freeze/Sleep) 및 원복
 /// - 활성 프리뷰 변경 시 이벤트 발생
 /// </summary>
+/// <summary>
+/// 커스터마이즈 탭에서 미리보기 오브젝트(플레이어, 헬기, 훅 등)를 관리하는 컨트롤러
+/// - 프리뷰 오브젝트 활성/비활성, 위치/오프셋 정렬, 물리 안정화, 원복 등 담당
+/// </summary>
 public class CustomizePreviewController : MonoBehaviour
 {
     [Header("Preview Objects")]
+    /// <summary>프리뷰용 플레이어 오브젝트</summary>
     public GameObject previewPlayer;
+    /// <summary>프리뷰용 헬리콥터 오브젝트</summary>
     public GameObject previewHelicopter;
+    /// <summary>프리뷰용 훅 오브젝트</summary>
     public GameObject previewHook;
 
     // ...existing code...
 
     // Events
+    /// <summary>
+    /// 활성화된 프리뷰 오브젝트가 변경될 때 발생하는 이벤트
+    /// </summary>
     public event Action<GameObject> OnActivePreviewChanged;
 
     // Internal state
+    /// <summary>현재 활성화된 프리뷰 오브젝트</summary>
     private GameObject activePreview = null;
 
     // Physics caches
+    /// <summary>Rigidbody의 원래 상태를 저장하는 내부 클래스</summary>
     private class RigidbodyState
     {
         public bool wasKinematic;
@@ -35,12 +47,18 @@ public class CustomizePreviewController : MonoBehaviour
         public Vector3 angularVelocity;
     }
 
+    /// <summary>Rigidbody별 원래 상태 캐시</summary>
     private Dictionary<Rigidbody, RigidbodyState> cachedRigidbodies = new Dictionary<Rigidbody, RigidbodyState>();
+    /// <summary>Collider별 원래 isTrigger 값 캐시</summary>
     private Dictionary<Collider, bool> cachedColliders = new Dictionary<Collider, bool>();
+    /// <summary>비활성화된 컴포넌트 목록(원복용)</summary>
     private Dictionary<GameObject, List<MonoBehaviour>> disabledComponents = new Dictionary<GameObject, List<MonoBehaviour>>();
+    /// <summary>프리뷰 오브젝트의 원래 트랜스폼 상태</summary>
     private Dictionary<GameObject, PreviewTransformState> previewTransformStates = new Dictionary<GameObject, PreviewTransformState>();
+    /// <summary>물리 안정화 강제 코루틴 핸들러</summary>
     private Dictionary<GameObject, Coroutine> enforceCoroutines = new Dictionary<GameObject, Coroutine>();
 
+    /// <summary>트랜스폼 상태 저장용 내부 클래스</summary>
     private class PreviewTransformState
     {
         public Transform parent;
@@ -49,8 +67,12 @@ public class CustomizePreviewController : MonoBehaviour
         public Vector3 localScale;
     }
 
+    /// <summary>현재 활성화된 프리뷰 오브젝트 반환</summary>
     public GameObject ActivePreview => activePreview;
 
+    /// <summary>
+    /// 전달받은 오브젝트만 활성화, 나머지는 비활성화 및 물리 원복
+    /// </summary>
     public void SetActivePreview(GameObject active)
     {
         // Deactivate others
@@ -89,12 +111,18 @@ public class CustomizePreviewController : MonoBehaviour
         OnActivePreviewChanged?.Invoke(activePreview);
     }
 
+    /// <summary>
+    /// 현재 활성 프리뷰의 로컬 회전값을 초기화(정면)
+    /// </summary>
     public void ResetPreviewRotation()
     {
         if (activePreview != null)
             activePreview.transform.localRotation = Quaternion.identity;
     }
 
+    /// <summary>
+    /// 프리뷰 오브젝트의 움직임/물리/AI 컴포넌트 비활성화 및 Rigidbody, Collider 안정화
+    /// </summary>
     private void MakePreviewPhysicsStable(GameObject go)
     {
         if (go == null) return;
@@ -156,6 +184,9 @@ public class CustomizePreviewController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 프리뷰가 활성화된 동안 물리 상태를 계속 강제로 유지하는 코루틴
+    /// </summary>
     private IEnumerator EnforceStableWhileActive(GameObject go)
     {
         while (go != null && activePreview == go && go.activeInHierarchy)
@@ -182,11 +213,17 @@ public class CustomizePreviewController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// (확장 가능) 프리뷰 오브젝트별 오프셋 반환 (현재 미사용)
+    /// </summary>
     private Vector3 GetPreviewOffsetFor(GameObject go)
     {
         return Vector3.zero;
     }
 
+    /// <summary>
+    /// 프리뷰 오브젝트의 물리/트랜스폼/컴포넌트 상태를 원래대로 복구
+    /// </summary>
     private void RestorePhysicsState(GameObject go)
     {
         if (go == null) return;
@@ -248,6 +285,9 @@ public class CustomizePreviewController : MonoBehaviour
         OnActivePreviewChanged?.Invoke(activePreview);
     }
 
+    /// <summary>
+    /// 모든 프리뷰 오브젝트의 상태를 원래대로 복구 (UI 닫을 때 등)
+    /// </summary>
     public void RestoreAllModifiedPreviews()
     {
         // Hide preview

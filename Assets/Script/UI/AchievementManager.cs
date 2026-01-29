@@ -236,64 +236,49 @@ public class AchievementManager : MonoBehaviour
     {
         switch (achievement.rewardType)
         {
-            case RewardType.None:
-                return false;
-                
             case RewardType.PlayerSkin:
                 {
                     int index = achievement.rewardIndex;
                     Debug.Log($"플레이어 스킨 해금: index {index}");
-                    if (Customize.Instance != null)
-                    {
-                        Customize.Instance.UnlockPlayerSkinByIndex(index);
-                    }
-                    // 호환성: 인덱스 기반 키로 저장
-                    PlayerPrefs.SetInt($"PlayerSkin_{index}_Unlocked", 1);
-                    PlayerPrefs.Save();
+                    Customize.Instance.UnlockPlayerSkinByIndex(index);
                     return true;
                 }
-                
-            case RewardType.RopeSkin:
+            
+            case RewardType.BeanieSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"로프 스킨 해금: index {index}");
-                    if (Customize.Instance != null)
-                    {
-                        Customize.Instance.UnlockRopeSkinByIndex(index);
-                    }
-                    PlayerPrefs.SetInt($"RopeSkin_{index}_Unlocked", 1);
-                    PlayerPrefs.Save();
+                    Debug.Log($"비니 스킨 해금: index {index}");
+                    Customize.Instance.UnlockBeanieSkinByIndex(index);
+                    return true;
+                }
+
+            case RewardType.BagSkin:
+                {
+                    int index = achievement.rewardIndex;
+                    Debug.Log($"가방 스킨 해금: index {index}");
+                    Customize.Instance.UnlockBagSkinByIndex(index);
+                    return true;
+                }
+
+            case RewardType.HelicopterSkin:
+                {
+                    int index = achievement.rewardIndex;
+                    Debug.Log($"헬리콥터 스킨 해금: index {index}");
+                    Customize.Instance.UnlockHelicopterSkinByIndex(index);
                     return true;
                 }
                 
-            case RewardType.CustomItem:
-                // TODO: 커스텀 아이템 지급
-                Debug.Log($"커스텀 아이템 지급: index {achievement.rewardIndex}");
-                return true;
+            case RewardType.HookSkin:
+                {
+                    int index = achievement.rewardIndex;
+                    Debug.Log($"후크 스킨 해금: index {index}");
+                    Customize.Instance.UnlockHookSkinByIndex(index);
+                    return true;
+                }
                 
             default:
                 return false;
         }
-    }
-    
-    /// <summary>
-    /// 플레이어 스킨 해금 (차후 구현)
-    /// </summary>
-    private void UnlockPlayerSkin(string skinId)
-    {
-        // TODO: Customize 시스템과 연동
-        PlayerPrefs.SetInt($"PlayerSkin_{skinId}_Unlocked", 1);
-        PlayerPrefs.Save();
-    }
-    
-    /// <summary>
-    /// 로프 스킨 해금 (차후 구현)
-    /// </summary>
-    private void UnlockRopeSkin(string skinId)
-    {
-        // TODO: Customize 시스템과 연동
-        PlayerPrefs.SetInt($"RopeSkin_{skinId}_Unlocked", 1);
-        PlayerPrefs.Save();
     }
 
     /// <summary>

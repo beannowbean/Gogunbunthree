@@ -21,10 +21,6 @@ public class CustomizeUI : MonoBehaviour
     // 프리뷰 타입별 스킨 리스트 동적 생성
     public void ShowSkinList(string type)
     {
-        Debug.Log($"ShowSkinList called: {type} on {gameObject.name}");
-
-        // 기존 버튼 삭제 (단, skinButtonPrefab이 Content의 자식으로 할당된 경우 해당 오브젝트는 파괴하지 않고 비활성화하여
-        // 참조가 끊어지는 문제를 방지합니다.)
         int removed = 0;
         for (int i = skinListContent.childCount - 1; i >= 0; i--)
         {
@@ -35,158 +31,71 @@ public class CustomizeUI : MonoBehaviour
                 if (child.gameObject.activeSelf)
                 {
                     child.gameObject.SetActive(false);
-                    Debug.Log($"Preserved and deactivated skinButtonPrefab in content at index {i}.");
                 }
                 continue;
             }
             Destroy(child.gameObject);
             removed++;
         }
-        Debug.Log($"Cleared existing {removed} children of skinListContent (preserved prefab if present).");
+        
 
-        List<Texture> textureList = null;
-        List<Material> materialList = null;
+
         List<Sprite> spriteList = null;
         System.Action<int> onClick = null;
 
-        Debug.Log($"ShowSkinList called for type='{type}'");
-
         if (type == "Player") {
-            textureList = Customize.Instance.playerSkins;
-            spriteList = Customize.Instance.playerSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedPlayerSkinIcons();
             onClick = (idx) => Customize.Instance.EquipPlayerSkinNumber(idx);
         }
         else if (type == "Helicopter") {
-            textureList = Customize.Instance.helicopterSkins;
-            spriteList = Customize.Instance.helicopterSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedHelicopterSkinIcons();
             onClick = (idx) => Customize.Instance.EquipHelicopterSkinNumber(idx);
         }
         else if (type == "Hook") {
-            materialList = Customize.Instance.hookSkins;
-            spriteList = Customize.Instance.hookSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedHookSkinIcons();
             onClick = (idx) => Customize.Instance.EquipHookSkinNumber(idx);
         }
         else if (type == "Beanie") {
-            textureList = Customize.Instance.beanieSkins;
-            spriteList = Customize.Instance.beanieSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedBeanieSkinIcons();
             onClick = (idx) => {
                 Customize.Instance.EquipBeanie();
                 Customize.Instance.ChangeBeanieSkinNumber(idx);
             };
         }
         else if (type == "Bag") {
-            textureList = Customize.Instance.bagSkins;
-            spriteList = Customize.Instance.bagSkinIcons;
+            spriteList = Customize.Instance.GetUnlockedBagSkinIcons();
             onClick = (idx) => {
                 Customize.Instance.EquipBag();
                 Customize.Instance.EquipBagSkinNumber(idx);
             };
         }
-        else
-        {
-            Debug.LogWarning($"ShowSkinList: Unknown type '{type}' requested.");
-        }
 
-        int spriteCount = spriteList != null ? spriteList.Count : 0;
-        int texCount = textureList != null ? textureList.Count : 0;
-        int matCount = materialList != null ? materialList.Count : 0;
-        Debug.Log($"Data counts — Sprites: {spriteCount}, Textures: {texCount}, Materials: {matCount}");
-
-        // 안전하게 버튼 개수 결정 (아이콘, 텍스처, 머티리얼 중 가장 많은 개수)
-        int count = 0;
-        if (spriteList != null && spriteList.Count > 0)
-            count = spriteList.Count;
-        if (textureList != null && textureList.Count > count)
-            count = textureList.Count;
-        if (materialList != null && materialList.Count > count)
-            count = materialList.Count;
-
-        if (count == 0)
-        {
-            Debug.LogWarning($"No items found for type '{type}' — nothing to display.");
-            return;
-        }
-
+        int count = spriteList != null ? spriteList.Count : 0;
         int created = 0;
         for (int i = 0; i < count; i++)
         {
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
-            // name the instantiated button for easier identification in hierarchy during debugging
             btnObj.name = $"{type}_SkinButton_{i}";
 
             var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
             var img = btnObj.GetComponent<UnityEngine.UI.Image>();
-            // if Image is not on root, try to find in children (common prefab layout)
-            if (img == null)
-            {
-                img = btnObj.GetComponentInChildren<UnityEngine.UI.Image>();
-                if (img != null) Debug.Log($"Found Image component in child of instantiated button {btnObj.name}.");
-            }
 
-            if (btn == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Button component is missing on prefab at index {i} (name={btnObj.name}).");
-            if (img == null) Debug.LogWarning($"Instantiated skinButtonPrefab but Image component is missing on prefab at index {i} (name={btnObj.name}).");
-
-            // Ensure instantiated GameObject and components are active/enabled so UI shows up even if prefab had them disabled
             if (btnObj != null && !btnObj.activeSelf)
-            {
                 btnObj.SetActive(true);
-                Debug.Log($"Activated instantiated button GameObject at index {i} (name={btnObj.name}).");
-            }
             if (img != null && !img.enabled)
-            {
                 img.enabled = true;
-                Debug.Log($"Enabled Image component on button {btnObj.name}.");
-            }
             if (btn != null)
             {
-                if (!btn.enabled)
-                {
-                    btn.enabled = true;
-                    Debug.Log($"Enabled Button component on button {btnObj.name}.");
-                }
+                if (!btn.enabled) btn.enabled = true;
                 btn.interactable = true;
                 if (btn.targetGraphic == null && img != null)
-                {
                     btn.targetGraphic = img;
-                    Debug.Log($"Assigned Image as Button.targetGraphic for button {btnObj.name}.");
-                }
             }
 
-            string used = "none";
-
-            // 아이콘 리스트 우선 적용
+            // 해금된 아이콘만 표시
             if (spriteList != null && i < spriteList.Count && spriteList[i] != null)
             {
                 img.sprite = spriteList[i];
-                used = "sprite";
-            }
-            else if (textureList != null && i < textureList.Count && textureList[i] != null)
-            {
-                Texture2D tex2D = textureList[i] as Texture2D;
-                if (tex2D != null)
-                {
-                    img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0.5f, 0.5f));
-                    used = "texture";
-                }
-                else
-                {
-                    used = "texture (not Texture2D)";
-                    Debug.LogWarning($"ShowSkinList: texture at index {i} for type '{type}' is not a Texture2D — cannot create sprite. Please assign an icon Sprite.");
-                }
-            }
-            else if (materialList != null && i < materialList.Count && materialList[i] != null)
-            {
-                Texture2D tex2D = materialList[i].mainTexture as Texture2D;
-                if (tex2D != null)
-                {
-                    img.sprite = Sprite.Create(tex2D, new Rect(0, 0, tex2D.width, tex2D.height), new Vector2(0.5f, 0.5f));
-                    used = "material.mainTexture";
-                }
-                else
-                {
-                    used = "material (no Texture2D)";
-                    Debug.LogWarning($"ShowSkinList: material.mainTexture at index {i} for type '{type}' is not a Texture2D — cannot create sprite. Please assign an icon Sprite.");
-                }
             }
 
             int idx = i;
@@ -194,29 +103,66 @@ public class CustomizeUI : MonoBehaviour
             {
                 btn.onClick.AddListener(() => onClick(idx));
             }
-            else
-            {
-                Debug.LogWarning($"No onClick assigned for type '{type}' at index {i}.");
-            }
-
-            Debug.Log($"Created button {i} for type '{type}' - used: {used}");
             created++;
         }
-
-        Debug.Log($"ShowSkinList complete: created {created} buttons for type '{type}'.");
     }
 
     // 버튼 클릭 이벤트에 연결
     // 버튼 클릭 이벤트에 연결 (Player, Helicopter, Hook)
-    public void OnPlayerButtonClicked() => ShowSkinList("Player");
+    public void OnPlayerButtonClicked()
+    {
+        // 프리뷰 오브젝트 명시적 활성화(물리 안정화 보장)
+        if (previewController != null) previewController.SetActivePreview(previewController.previewPlayer);
+        if (playerOptionsPanel != null) playerOptionsPanel.SetActive(true);
+
+        // 비니, 가방, 옷 모두 이전에 적용됐던 스킨으로 프리뷰 업데이트
+        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", 0);
+        var playerSkins = Customize.Instance.playerSkins;
+
+        bool beanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
+        int beanieIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", 0);
+
+        bool bagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
+        int bagIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", 0);
+
+        Customize.Instance.EquipPlayerSkinNumber(playerIndex);
+
+        if (beanieEquipped)
+        {
+            Customize.Instance.EquipBeanie();
+            Customize.Instance.ChangeBeanieSkinNumber(beanieIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBeanie();
+        }
+
+        if (bagEquipped)
+        {
+            Customize.Instance.EquipBag();
+            Customize.Instance.EquipBagSkinNumber(bagIndex);
+        }
+        else
+        {
+            Customize.Instance.UnequipBag();
+        }
+
+        ShowSkinList("Player");
+    }
     public void OnHelicopterButtonClicked()
     {
-        Debug.Log($"OnHelicopterButtonClicked called. helicopterSkins: {Customize.Instance?.helicopterSkins?.Count ?? 0}, helicopterSkinIcons: {Customize.Instance?.helicopterSkinIcons?.Count ?? 0}");
+        int helicopterIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", 0);
+        var helicopterSkins = Customize.Instance.helicopterSkins;
+        Customize.Instance.EquipHelicopterSkinNumber(helicopterIndex);
+
         ShowSkinList("Helicopter");
     }
     public void OnHookButtonClicked()
     {
-        Debug.Log($"OnHookButtonClicked called. hookSkins: {Customize.Instance?.hookSkins?.Count ?? 0}, hookSkinIcons: {Customize.Instance?.hookSkinIcons?.Count ?? 0}");
+        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", 0);
+        var hookSkins = Customize.Instance.hookSkins;
+        Customize.Instance.EquipHookSkinNumber(hookIndex);
+        
         ShowSkinList("Hook");
     }
 
@@ -263,34 +209,18 @@ public class CustomizeUI : MonoBehaviour
     private void OnEnable()
     {
         CaptureOriginalState();
-
-        // 기본 프리뷰를 Player로 설정 (버튼으로 변경 가능)
-        if (previewController != null && previewController.previewPlayer != null)
-        {
-            previewController.SetActivePreview(previewController.previewPlayer);
-            // ensure input handler references
-            if (previewInputHandler != null)
-            {
-                previewInputHandler.previewController = previewController;
-            }
-
-            // subscribe to active preview changes so UI updates automatically
-            previewController.OnActivePreviewChanged += UpdatePreviewUI;
-
-            // show player options panel if assigned
-            if (playerOptionsPanel != null) playerOptionsPanel.SetActive(true);
-        }
+        // Player 버튼 클릭과 동일하게 동작 (프리뷰, 스킨, UI 모두 적용)
+        OnPlayerButtonClicked();
     }
+    
 
     private void InitializeButtons()
     {
-        Debug.Log("CustomizeUI: InitializeButtons running");
         if (cancelButton != null) cancelButton.onClick.AddListener(OnCancelClicked);
         if (applyButton != null) applyButton.onClick.AddListener(OnApplyClicked);
 
         // Auto-wire common tab buttons (Player, Helicopter, Hook, Beanie, Bag) if present under this UI hierarchy.
         var childButtons = GetComponentsInChildren<Button>(true);
-        bool anyAutoWired = false;
         foreach (var b in childButtons)
         {
             if (b == null) continue;
@@ -303,35 +233,30 @@ public class CustomizeUI : MonoBehaviour
             {
                 b.onClick.AddListener(() => OnHelicopterButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("hook"))
             {
                 b.onClick.AddListener(() => OnHookButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("beanie"))
             {
                 b.onClick.AddListener(() => OnBeanieButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("bag") || n.Contains("backpack") || n.Contains("backpack"))
             {
                 b.onClick.AddListener(() => OnBagButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
             if (n.Contains("player") || n.Contains("cloth") || n.Contains("clothes"))
             {
                 b.onClick.AddListener(() => OnPlayerButtonClicked());
                 autoWiredButtonIds.Add(id);
-                anyAutoWired = true;
                 continue;
             }
         }
@@ -509,8 +434,9 @@ public class CustomizeUI : MonoBehaviour
         PlayerPrefs.SetInt("SelectedBagEquipped", bagEquipped ? 1 : 0);
         PlayerPrefs.SetInt("SelectedBagSkinIndex", bagSkinIndex);
         PlayerPrefs.Save();
-
-        SceneManager.LoadScene("MainMenu");
+        
+        // Apply 버튼 눌러도 MainMenu 이동 안 함
+        // SceneManager.LoadScene("MainMenu");
     }
 
     // Update preview-specific UI (e.g., show player option buttons only when player preview is active)
@@ -583,11 +509,6 @@ public class CustomizeUI : MonoBehaviour
         if (previewController != null) previewController.SetActivePreview(previewController.previewHook);
         if (playerOptionsPanel != null) playerOptionsPanel.SetActive(false);
     }
-
-    // Preview lifecycle implementation moved to `CustomizePreviewController`.
-    // The per-preview methods (SetActivePreview, MakePreviewPhysicsStable, EnforceStableWhileActive,
-    // RestorePhysicsState, RestoreAllModifiedPreviews, etc.) have been moved to the new controller to
-    // keep `CustomizeUI` focused on UI responsibilities. Use `previewController` to manage previews.
 
     /// <summary>
     /// 버튼 활성화 설정
