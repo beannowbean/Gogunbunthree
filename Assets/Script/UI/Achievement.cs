@@ -37,12 +37,6 @@ public class Achievement : MonoBehaviour
 
     private void PopulateAchievementList()
     {
-        if (AchievementManager.Instance == null)
-        {
-            Debug.LogError("[Achievement] AchievementManager가 없습니다!");
-            return;
-        }
-
         // 기존 아이템 제거
         foreach (Transform child in scrollViewContent)
         {
