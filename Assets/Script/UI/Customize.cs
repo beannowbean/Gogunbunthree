@@ -123,7 +123,7 @@ public class Customize : MonoBehaviour
     public List<Sprite> hookSkinIcons = new List<Sprite>();
 
     // [각 로프 머터리얼마다 개별 호출] 이 함수로 번호 호출해서 색깔 바꾸도록
-    public void EquipHookSkinNumber(int index)
+    public void EquipHookHeadSkinNumber(int index)
     {
         if (index >= 0 && index < hookSkins.Count)
         {
@@ -131,6 +131,14 @@ public class Customize : MonoBehaviour
             // 즉시 씬의 Hook 오브젝트에 적용
             Hook.ApplyCurrentSkinToAll();
         }
+    }
+
+    // 훅과 로프 둘 다 동시에 바꾸기
+    public void EquipHookSkinNumber(int index)
+    {
+
+        EquipHookHeadSkinNumber(index);
+        EquipRopeSkinNumber(index);
     }
 
 
