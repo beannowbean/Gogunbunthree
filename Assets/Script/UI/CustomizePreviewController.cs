@@ -105,11 +105,27 @@ public class CustomizePreviewController : MonoBehaviour
             }
             Coroutine c = StartCoroutine(EnforceStableWhileActive(active));
             enforceCoroutines[active] = c;
+
+            // Idle 애니메이션만 재생
+            if (active == previewPlayer)
+                SetPlayerAnimation();
         }
 
         activePreview = active;
         OnActivePreviewChanged?.Invoke(activePreview);
     }
+    /// <summary>
+    /// 프리뷰 플레이어의 Idle 애니메이션을 재생
+    /// </summary>
+    private void SetPlayerAnimation()
+    {
+        if (previewPlayer == null) return;
+        var animator = previewPlayer.GetComponentInChildren<Animator>(true);
+        if (animator == null) return;
+
+        animator.Play("idle");
+    }
+
 
     /// <summary>
     /// 현재 활성 프리뷰의 로컬 회전값을 초기화(정면)
