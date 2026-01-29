@@ -34,7 +34,7 @@ Transform:
   - {fileID: 6598143440673758936}
   - {fileID: 2575587958379328770}
   - {fileID: 4405653925975991178}
-  - {fileID: 7402902621237609153}
+  - {fileID: 7411546227173706174}
   - {fileID: 5529358831218728986}
   - {fileID: 1595079924261158911}
   - {fileID: 8390056987344350691}
@@ -236,6 +236,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4861114246159346931, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861114246159346931, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.88
+      objectReference: {fileID: 0}
     - target: {fileID: 5213633153555840310, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
       propertyPath: m_Name
       value: Magnet
@@ -245,9 +253,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
---- !u!4 &7402902621237609153 stripped
+--- !u!4 &7411546227173706174 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 4832744027077306252, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4861114246159346931, guid: d70844535e65b4eefadd92fdf061b503, type: 3}
   m_PrefabInstance: {fileID: 2714896107975501133}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3983558491888960208
