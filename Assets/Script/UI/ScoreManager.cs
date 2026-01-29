@@ -45,6 +45,8 @@ public class ScoreManager : MonoBehaviour
     [Header("Tutorial Reference")]
     public Tutorial tutorial; // 튜토리얼 스크립트 참조
 
+    public int heliSuccessCount = 0;   // 헬기 후크 성공 횟수
+
     void Awake()
     {
         Instance = this;

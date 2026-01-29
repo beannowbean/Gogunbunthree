@@ -23,7 +23,8 @@ public class MagneticItem : MonoBehaviour
         // 게임오버면 아이템 끄기
         if (Player.Instance.isGameOver)
         {
-            gameObject.SetActive(false);
+            if(CompareTag("Coin")){}    // 코인이면 비활성화 X
+            else gameObject.SetActive(false);
             return;
         }
 
