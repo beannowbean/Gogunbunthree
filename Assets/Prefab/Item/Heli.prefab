@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 7918048317575250974}
   - component: {fileID: 1789140460132744053}
   - component: {fileID: 2290746402265647379}
+  - component: {fileID: 7398598205088923680}
   m_Layer: 0
   m_Name: AH64
   m_TagString: Untagged
@@ -133,7 +134,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateSpeed: 300
-  itemPartsRenderers: []
+  itemPartsRenderers:
+  - {fileID: 2768635188046684898}
+  - {fileID: 2923049545710631821}
   helicopterPrefab: {fileID: 5158458192742715028}
   heliEffectPrefab: {fileID: 1429954232896169633, guid: 94b1ba276f67a49f39de2f097ffdcc9b, type: 3}
   heliAuroraEffectPrefab: {fileID: 5137123306192418792, guid: ee1c95175b994425da8c7ddd6544d328, type: 3}
@@ -152,6 +155,27 @@ MonoBehaviour:
   pullSpeed: 70
   magnetRange: 7
   collectDistance: 0.5
+--- !u!65 &7398598205088923680
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1156248412080517517}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8, y: 10, z: 8}
+  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!1 &5158458192742715028
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,7 +185,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5559614180685418375}
-  - component: {fileID: 8306748062235250690}
   m_Layer: 0
   m_Name: Heli
   m_TagString: Untagged
@@ -186,27 +209,6 @@ Transform:
   - {fileID: 7918048317575250974}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &8306748062235250690
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5158458192742715028}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 8, y: 10, z: 8}
-  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!1 &9166405950102362063
 GameObject:
   m_ObjectHideFlags: 0
