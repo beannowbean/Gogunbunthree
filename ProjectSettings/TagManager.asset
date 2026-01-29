@@ -19,6 +19,7 @@ TagManager:
   - TutorialDetector
   - HeliCoinTile
   - HeliCoinGenerator
+  - TouchIcon
   layers:
   - Default
   - TransparentFX

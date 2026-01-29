@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;   // List 라이브러리 사용
+using UnityEngine.UI;   // Image 클래스 사용
 
 public class Helicopter : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class Helicopter : MonoBehaviour
     public static Texture currentSkin;
     
     private Transform playerTransform; // 플레이어 위치 참조
-
+    private GameObject heliTouchIcon;   // InGameUI의 헬기 터치 도움 UI
     private float targetHeight = 4.0f; // 내려올 높이
     private float startSkyHeight = 8.0f;   // 시작 높이
     private float coinMapHeight = 15.0f;    // Coin Map 높이
@@ -54,6 +55,9 @@ public class Helicopter : MonoBehaviour
         }
         playerTransform = playerObj.transform;
 
+        // 헬기 터치 도움 UI 찾기 (태그 이용)
+        heliTouchIcon = GameObject.FindGameObjectWithTag("TouchIcon");
+        
         // 2. 초기 위치 설정 (하늘 위, 플레이어 기준 오프셋)
         currentHeight = startSkyHeight;
         transform.position = new Vector3(0, currentHeight, playerTransform.position.z + zOffset);
@@ -72,6 +76,8 @@ public class Helicopter : MonoBehaviour
     {
         isHookedHelicopter = true;
         CoinMapGenerate();
+        HeliTouchIconDeactive();
+        ScoreManager.Instance.heliSuccessCount++;
     }
 
     // 스킨을 변경하는 함수
@@ -126,6 +132,7 @@ public class Helicopter : MonoBehaviour
         float timer = 0f;
         while (timer < stayDuration && isHookedHelicopter == false)
         {
+            HeliTouchIconActive();
             timer += Time.deltaTime;
             yield return null;
         }
@@ -145,6 +152,7 @@ public class Helicopter : MonoBehaviour
             }
 
             heliCollider.enabled = false;
+            HeliTouchIconDeactive();
         }
         
         while (Mathf.Abs(currentHeight - coinMapHeight) > 0.1f)
@@ -203,5 +211,28 @@ public class Helicopter : MonoBehaviour
 
         // 코인 맵 생성
         heliCoinGenerate.StartCoinMap(tileGenerate.carSpeed, reachTime, coinMapDuration);
+    }
+
+    // 헬기 터치 보조 UI 생성
+    void HeliTouchIconActive()
+    {
+        // 헬기 성공 횟수 2번 이상이면 더 이상 X
+        if(ScoreManager.Instance.heliSuccessCount >= 2) return;
+        
+        // Image 컴포넌트 가져와 깜빡이기
+        Image heliTouchImage = heliTouchIcon.GetComponent<Image>();
+        Color c = heliTouchImage.color;
+        c.a = Mathf.PingPong(Time.time * 2.5f, 1.0f);
+        heliTouchImage.color = c;
+    }
+
+    // 헬기 터치 보조 UI 종료
+    void HeliTouchIconDeactive()
+    {
+        // Image 컴포넌트 가져와 투명도 복구
+        Image heliTouchImage = heliTouchIcon.GetComponent<Image>();
+        Color c = heliTouchImage.color;
+        c.a = 0.0f;
+        heliTouchImage.color = c;
     }
 }
