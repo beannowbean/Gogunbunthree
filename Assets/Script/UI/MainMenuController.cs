@@ -60,6 +60,42 @@ public class MainMenuController : MonoBehaviour
     {
         if (isLoadingScene) return;
 
+        UIController.tutorialSkip = true;
+        UIController.isRestarting = false;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+        
+        // Start 버튼 클릭 시 Newbie 업적 달성
+        if (PlayerAchivementList.Instance != null)
+        {
+            PlayerAchivementList.Instance.Newbie();
+        }
+        
+        isLoadingScene = true;
+        
+        // 프리로드된 씬이 있으면 즉시 활성화
+        if (preloadedScene != null && preloadedScene.progress >= 0.9f)
+        {
+            preloadedScene.allowSceneActivation = true;
+        }
+        else
+        {
+            // 프리로드가 안 된 경우 직접 로드
+            SceneManager.LoadScene("InGame", LoadSceneMode.Single);
+        }
+    }
+
+    // 튜토리얼 버튼
+    public void StartTutorial()
+    {
+        if (isLoadingScene) return;
+
+        UIController.tutorialSkip = false;
+        UIController.isRestarting = false;
+
         if (SFXManager.Instance != null)
         {
             SFXManager.Instance.Play("Button");

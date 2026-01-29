@@ -8,6 +8,13 @@ public class MagneticItem : MonoBehaviour
     public float collectDistance = 0.5f; 
 
     private bool isFollowing = false; 
+    private Vector3 virtualWorldPos;    // 순간이동에 영향 안받는 가상 좌표
+
+    // 오브젝트 풀링 재사용 초기화 용도
+    void OnEnable()
+    {
+        isFollowing = false;
+    }
 
     void Update()
     {
@@ -25,7 +32,8 @@ public class MagneticItem : MonoBehaviour
         {
             Vector3 targetPos = Player.Instance.transform.position + Vector3.up * 1.0f;
 
-            float distance = Vector3.Distance(transform.position, targetPos);
+            // 따라가는 중이면 가상좌표 기준으로 변경
+            float distance = isFollowing ? Vector3.Distance(virtualWorldPos, targetPos) : Vector3.Distance(transform.position, targetPos);
 
             // [수정] 헬리콥터 타고 올라갈 때 5보다 높아지면 그만 따라가기
             if (Mathf.Abs(transform.position.y - targetPos.y) > 5.0f)
@@ -37,8 +45,12 @@ public class MagneticItem : MonoBehaviour
             // 범위 안에 있거나, 이미 끌려오고 있는 중이라면
             if (distance < magnetRange || isFollowing)
             {
-                isFollowing = true; 
-
+                // 따라가기 시작하는 순간, 현재 실제 위치 가상 좌표에 보관
+                if (!isFollowing)
+                {
+                    isFollowing = true;
+                    virtualWorldPos = transform.position;
+                }
                 // 거리가 가까우면 강제로 위치를 일치시킴
                 if (distance <= collectDistance)
                 {
@@ -46,8 +58,11 @@ public class MagneticItem : MonoBehaviour
                     return; 
                 }
 
+                // 매 프레임 위치 계산
+                virtualWorldPos = Vector3.MoveTowards(virtualWorldPos, targetPos, pullSpeed * Time.deltaTime);
+
                 // 플레이어 쪽으로 이동
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, pullSpeed * Time.deltaTime);
+                transform.position = virtualWorldPos;
             }
         }
         else

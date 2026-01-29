@@ -5,11 +5,10 @@ using UnityEngine;
 /// </summary>
 public class HeadLight : MonoBehaviour
 {
-    public float maxIntensity = 2.5f;      // 밤일 때 라이트 밝기
-
     // 내부 변수
     Light headLight;             // 헤드라이트 라이트 컴포넌트
     DayNightCycle dayNightCycle;   // 낮밤 전환 스크립트 참조
+    float maxIntensity = 9f;      // 밤일 때 라이트 밝기
     float changeSpeed = 0.1f;        // 밝기 변화 속도 (인스펙터가 복잡해 여기서 변경 / 낮을수록 천천히 켜짐)
 
     void Start()

@@ -29,6 +29,7 @@ public class ObjectPooler : MonoBehaviour
     
     // 내부 변수
     Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>(); // 프리팹-오브젝트 큐 딕셔너리
+    HashSet<List<GameObject>> loadingList = new HashSet<List<GameObject>>();    // 로딩중인 풀 확인 딕셔너리
 
     private void Awake()
     {
@@ -39,10 +40,6 @@ public class ObjectPooler : MonoBehaviour
         InitializePool(backgroundBuildings);
 
         InitializePool(level_1Obstacles);
-        InitializePool(level_2Obstacles);
-        InitializePool(level_3Obstacles);
-        InitializePool(level_4Obstacles);
-        InitializePool(level_5Obstacles);
         InitializePool(tutorialObstacles);
 
         InitializePool(starObstacles);
@@ -74,11 +71,65 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
+    // 프리팹 리스트를 받아서 딕셔너리에 초기화 (점진적 생성)
+    public IEnumerator InitializePoolGradually(List<GameObject> prefabList)
+    {
+        if(prefabList == null || loadingList.Contains(prefabList)) yield break;
+
+        loadingList.Add(prefabList);    // 로딩 할 리스트에 추가
+
+        // 각 프리팹마다 오브젝트 풀 생성
+        foreach (GameObject prefab in prefabList)
+        {
+            // 이미 딕셔너리에 있거나 null이면 건너뜀
+            if (prefab == null || poolDictionary.ContainsKey(prefab)) continue;
+
+            Queue<GameObject> objectPool = new Queue<GameObject>();
+
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject obj = Instantiate(prefab);
+                obj.AddComponent<PoolMember>().myPrefab = prefab;   // 풀 멤버 컴포넌트 추가 (어떤 프리팹에서 왔는지 추적용)
+                obj.SetActive(false);
+                objectPool.Enqueue(obj);
+
+                yield return null;
+            }
+            poolDictionary.Add(prefab, objectPool);
+        }
+        loadingList.Remove(prefabList);
+    }
+
+    // 지나간 난이도 삭제 함수
+    public IEnumerator DestoryPool(List<GameObject> prefabList)
+    {
+        foreach (GameObject prefab in prefabList)
+        {
+            if (poolDictionary.ContainsKey(prefab))
+            {
+                Queue<GameObject> queue = poolDictionary[prefab];
+                while (queue.Count > 0)
+                {
+                    GameObject obj = queue.Dequeue();
+                    if (obj != null) Destroy(obj); 
+                    yield return null;
+                }
+                poolDictionary.Remove(prefab);
+            }
+        }
+    }
+
     // 오브젝트 풀에서 꺼내는 함수
     public GameObject GetPool(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
     {
         // 이미 딕셔너리에 있거나 null이면 null 반환
         if (prefab == null && !poolDictionary.ContainsKey(prefab)) return null;
+
+        // 아직 생성되지 않은 프리팹이면 즉시 생성
+        if (!poolDictionary.ContainsKey(prefab))
+        {
+            poolDictionary.Add(prefab, new Queue<GameObject>());
+        }
 
         // 큐에서 꺼냈는데 혹시 파괴된 오브젝트라면 다시 꺼내도록 루프
         GameObject obj = null;

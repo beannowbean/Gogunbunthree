@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -52,6 +53,8 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
     GameObject[] currentObstacles = new GameObject[8];  // 현재 차 프리펩 갯수 확인
     bool isLastHardObstacle = false;    // 마지막 장애물 어려운지 확인
     bool isLastCoin = false;    // 마지막 장애물 코인인지 확인
+    bool isL0Destoryed, isL1Destoryed, isL2Destoryed, isL3Destoryed, isL4Destoryed; // 오브젝트 풀 삭제 확인용
+    bool isL2Loaded, isL3Loaded, isL4Loaded, isL5Loaded;    // 오브젝트 풀 생성 확인용
 
     void Start()
     {
@@ -76,6 +79,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         // 점수 가져와 난이도 변경 감지
         score = ScoreManager.Instance.GetCurrentScore();
         DifficultyDetection();
+        PoolOptimize();
     }
     
     private void OnTriggerEnter(Collider other)
@@ -109,8 +113,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
                 // 튜토리얼이 끝났는데 차가 부족하면 일반 차 사용
                 else
                 {
-                    UIController.tutorialSkip = true;
-                    obstacles = GetDifficultyArray();
+                    obstacles = level_1Obstacles;
                     nextObstacle = ChooseObstacle(obstacles, true);
                 }
             }
@@ -183,8 +186,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             // 튜토리얼이 끝났는데 차가 부족하면 일반 차 사용
             else
             {
-                UIController.tutorialSkip = true;
-                obstacles = GetDifficultyArray();
+                obstacles = level_1Obstacles;
                 nextObstacle = ChooseObstacle(obstacles, true);
             }
         }
@@ -352,6 +354,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         if(score >= level_5Score) {  // 레벨5 (속도 40 -> CarTileDesigner에서 변경)
             if(currentDifficulty != Difficulty.Level5)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level5;
                 dayNightCycle.NightToDay();
             }
@@ -359,6 +362,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_4Score) {   // 레벨4 (속도 30)
             if(currentDifficulty != Difficulty.Level4)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level4;
                 dayNightCycle.DayToNight();
             }
@@ -366,6 +370,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_3Score) {   // 레벨3 (속도 25)
             if(currentDifficulty != Difficulty.Level3)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level3;
                 dayNightCycle.NightToDay();
             }
@@ -373,9 +378,50 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
         else if(score >= level_2Score) {   // 레벨2 (속도 20)
             if(currentDifficulty != Difficulty.Level2)
             {
+                SpeedUpEffect.Instance.StartSpeedUpEffect();
                 currentDifficulty = Difficulty.Level2;
                 dayNightCycle.DayToNight();
             }
+        }
+    }
+
+    private void PoolOptimize()
+    {
+        if(score >= level_5Score + 500 && isL4Destoryed == false) {  // 레벨5 500점 후 레벨 4 파괴
+            isL4Destoryed = true;
+            StartCoroutine(ObjectPooler.Instance.DestoryPool(level_4Obstacles.ToList()));
+        }
+        else if(score >= level_5Score - 500 && isL5Loaded == false) {  // 레벨5 500점 전 레벨 5 생성
+            isL5Loaded = true;
+            StartCoroutine(ObjectPooler.Instance.InitializePoolGradually(level_5Obstacles.ToList()));
+        }
+        else if(score >= level_4Score + 500 && isL3Destoryed == false) {  // 레벨4 500점 후 레벨 3 파괴
+            isL3Destoryed = true;
+            StartCoroutine(ObjectPooler.Instance.DestoryPool(level_3Obstacles.ToList()));
+        }
+        else if(score >= level_4Score - 500 && isL4Loaded == false) {  // 레벨4 500점 전 레벨 4 생성
+            isL4Loaded = true;
+            StartCoroutine(ObjectPooler.Instance.InitializePoolGradually(level_4Obstacles.ToList()));
+        }
+        else if(score >= level_3Score + 500 && isL2Destoryed == false) {  // 레벨3 500점 후 레벨 2 파괴
+            isL2Destoryed = true;
+            StartCoroutine(ObjectPooler.Instance.DestoryPool(level_2Obstacles.ToList()));
+        }
+        else if(score >= level_3Score - 500 && isL3Loaded == false) {  // 레벨3 500점 전 레벨 3 생성
+            isL3Loaded = true;
+            StartCoroutine(ObjectPooler.Instance.InitializePoolGradually(level_3Obstacles.ToList()));
+        }
+        else if(score >= level_2Score + 500 && isL1Destoryed == false) {  // 레벨2 500점 후 레벨 1 파괴
+            isL1Destoryed = true;
+            StartCoroutine(ObjectPooler.Instance.DestoryPool(level_1Obstacles.ToList()));
+        }
+        else if(score >= level_2Score - 500 && isL2Loaded == false) {  // 레벨2 500점 전 레벨 2 생성
+            isL2Loaded = true;
+            StartCoroutine(ObjectPooler.Instance.InitializePoolGradually(level_2Obstacles.ToList()));
+        }
+        else if(score >= 500 && isL0Destoryed == false) {  // 레벨1 500점 후 튜토리얼 파괴
+            isL0Destoryed = true;
+            StartCoroutine(ObjectPooler.Instance.DestoryPool(tutorialObstacles.ToList()));
         }
     }
 }

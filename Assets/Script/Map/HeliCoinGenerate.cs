@@ -26,15 +26,21 @@ public class HeliCoinGenerate : MonoBehaviour
 
     void Awake()
     {
-        // 참조 설정
-        player = GameObject.FindGameObjectWithTag("Player");
-
         // 타일 길이 계산
         BoxCollider tileBox = tiles[0].gameObject.GetComponent<BoxCollider>();
         TileLength = tileBox.size.z * tileBox.transform.localScale.z;
 
         // 시작 시 코인 타일 비활성화
         heliCoinTile.SetActive(false);
+    }
+
+    void Update()
+    {
+        // 참조 설정
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
     }
 
     private void OnTriggerEnter(Collider other)

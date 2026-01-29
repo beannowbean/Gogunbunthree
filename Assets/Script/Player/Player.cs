@@ -1117,7 +1117,7 @@ public class Player : MonoBehaviour
     IEnumerator DeActiveAfterSeconds(GameObject obj, float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        obj.SetActive(false);
+        if(obj != null) obj.SetActive(false);
     }
 
     void OnDrawGizmos()
