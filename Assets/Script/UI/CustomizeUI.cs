@@ -75,7 +75,9 @@ public class CustomizeUI : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
-            btnObj.name = $"{type}_SkinButton_{i}";
+            // 아이콘 파일명에서 숫자 추출
+            string spriteName = spriteList[i]?.name ?? "";
+            btnObj.name = $"{type}_SkinButton_{spriteName}";
 
             var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
             var img = btnObj.GetComponent<UnityEngine.UI.Image>();
@@ -98,10 +100,21 @@ public class CustomizeUI : MonoBehaviour
                 img.sprite = spriteList[i];
             }
 
-            int idx = i;
+            // 파일명에서 숫자 추출 (예: 12_abc → 12)
+            int skinIndex = i;
+            try {
+                var underIdx = spriteName.IndexOf('_');
+                if (underIdx > 0)
+                {
+                    string numPart = spriteName.Substring(0, underIdx);
+                    if (int.TryParse(numPart, out int parsed))
+                        skinIndex = parsed;
+                }
+            } catch { /* fallback: i */ }
+
             if (onClick != null)
             {
-                btn.onClick.AddListener(() => onClick(idx));
+                btn.onClick.AddListener(() => onClick(skinIndex));
             }
             created++;
         }
