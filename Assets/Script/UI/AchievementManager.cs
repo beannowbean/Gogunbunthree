@@ -162,6 +162,7 @@ public class AchievementManager : MonoBehaviour
     {
         var achievement = GetAchievement(achievementId);
         if (achievement == null) return;
+        if (IsAchievementUnlocked(achievementId)) return;
 
         PlayerPrefs.SetInt($"Achievement_{achievementId}", 1);
         PlayerPrefs.Save();

@@ -53,7 +53,13 @@ public class AchievementItem : MonoBehaviour
 
         if (descriptionText != null)
         {
-            descriptionText.text = data.description;
+            // 업적 달성 시에만 description 표시
+            if(AchievementManager.Instance.IsAchievementUnlocked(data.id))
+                descriptionText.text = data.description;
+            else
+                descriptionText.text = "??????";
+
+
             descriptionText.enabled = true;
             descriptionText.gameObject.SetActive(true);
         }
