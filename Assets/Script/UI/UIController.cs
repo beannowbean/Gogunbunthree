@@ -68,6 +68,8 @@ public class UIController : MonoBehaviour
             tutorialSkip = firstTutorial;
         }
         isRestarting = tutorialSkip;
+
+        ScoreManager.Instance.heliSuccessCount = 0;
     }
 
     void Start()
