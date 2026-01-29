@@ -114,8 +114,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3434265423131350251}
   - {fileID: 2131192118278147794}
@@ -137,7 +137,7 @@ MonoBehaviour:
   itemPartsRenderers:
   - {fileID: 2768635188046684898}
   - {fileID: 2923049545710631821}
-  helicopterPrefab: {fileID: 5158458192742715028}
+  helicopterPrefab: {fileID: 3223541147463892719, guid: 3f5563848e2c44d2fb46def6c01dd541, type: 3}
   heliEffectPrefab: {fileID: 1429954232896169633, guid: 94b1ba276f67a49f39de2f097ffdcc9b, type: 3}
   heliAuroraEffectPrefab: {fileID: 5137123306192418792, guid: ee1c95175b994425da8c7ddd6544d328, type: 3}
 --- !u!114 &2290746402265647379
@@ -170,7 +170,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
