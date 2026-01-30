@@ -320,11 +320,11 @@ public class CustomizeUI : MonoBehaviour
     private int FindRopeSkinIndex()
     {
         if (Customize.Instance == null) return -1;
-        var mat = Hook.currentSkin;
-        if (mat == null) return -1;
+        Material currentRopeMat = Player.currentRopeMaterial;
+        if(currentRopeMat == null) return -1;
         for (int i = 0; i < Customize.Instance.ropeSkins.Count; i++)
         {
-            if (Customize.Instance.ropeSkins[i] == mat) return i;
+            if (Customize.Instance.ropeSkins[i] == currentRopeMat) return i;
         }
         return -1;
     }
