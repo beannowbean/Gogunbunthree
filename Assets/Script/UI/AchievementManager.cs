@@ -34,6 +34,24 @@ public class AchievementManager : MonoBehaviour
         {
             ResetAllAchievementProgress();
         }
+
+        // 테스트: U 키로 업적 모두 해제
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            foreach (var achievement in achievements)
+            {
+                achievement.currentValue = 1;
+                PlayerPrefs.SetInt($"Achievement_{achievement.id}_Progress", 1);
+                PlayerPrefs.SetInt($"Achievement_{achievement.id}", 1);
+                PlayerPrefs.SetInt($"Achievement_{achievement.id}_Reward", 1);
+            }
+            PlayerPrefs.Save();
+        
+            Debug.Log("[테스트] 모든 업적 진척도가 완료되었습니다.");
+
+            // UI가 있다면 새로고침
+            RefreshAchievementData();
+        }
     }
     
     /// <summary>
