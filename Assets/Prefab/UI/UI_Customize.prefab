@@ -1567,7 +1567,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: -254.16667}
-  m_SizeDelta: {x: 0, y: 508.33334}
+  m_SizeDelta: {x: 508.33334, y: 508.33334}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &7128053582673896096
 CanvasRenderer:
@@ -3528,6 +3528,7 @@ MonoBehaviour:
   beanieSkinIcons:
   - {fileID: 21300000, guid: b67477d666c874588b0351a7390a5073, type: 3}
   - {fileID: 21300000, guid: 336f8c3912cf34e2f9a79f852b27afad, type: 3}
+  beanieUnequipIcon: {fileID: 21300000, guid: b646b6a4623c9b943b996a8764fdcfa3, type: 3}
   bagPrefab: {fileID: 5690102803012019471, guid: 147952a65aad544b683239500586f46f, type: 3}
   bagSkins:
   - {fileID: 2800000, guid: 28b3478dcbc93478a8cd70622c9b1b0e, type: 3}
@@ -3535,6 +3536,7 @@ MonoBehaviour:
   bagSkinIcons:
   - {fileID: 21300000, guid: bb0ba558f203942e1b681816ee87ec32, type: 3}
   - {fileID: 21300000, guid: c35134811392f4e8ab1705137396b038, type: 3}
+  bagUnequipIcon: {fileID: 21300000, guid: b646b6a4623c9b943b996a8764fdcfa3, type: 3}
 --- !u!1 &7815019974642422446
 GameObject:
   m_ObjectHideFlags: 0
