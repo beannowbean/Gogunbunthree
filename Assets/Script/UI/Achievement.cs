@@ -66,6 +66,12 @@ public class Achievement : MonoBehaviour
                 achievementItems[achievement.id] = itemComponent;
             }
         }
+
+        // 모든 아이템 생성 후, 스크롤뷰의 content 크기 다시 계산
+        if(scrollViewContent != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scrollViewContent.GetComponent<RectTransform>());
+        }
     }
 
     private void OnQuitClicked()

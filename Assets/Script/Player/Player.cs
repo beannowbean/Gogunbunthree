@@ -217,6 +217,7 @@ public class Player : MonoBehaviour
         {
             UnequipBag();
         }
+        Customize.Instance.EquipHookSkinNumber(PlayerPrefs.GetInt("SelectedRopeSkinIndex", 0));
     }
 
     void Update()
@@ -954,11 +955,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public static Material currentRopeMaterial;
     // 갈고리 로프 머터리얼 변경 함수
     public void ChangeRopeMaterial(Material newMaterial)
     {
         if (lineRenderer != null && newMaterial != null)
         {
+            currentRopeMaterial = newMaterial;
             lineRenderer.material = newMaterial;
         }
     }

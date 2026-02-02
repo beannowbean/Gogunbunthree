@@ -41,7 +41,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Newbie",                                  // PlayerPrefs 키
             title = "Newbie",                                       // 업적 이름
-            description = "튜토리얼 첫 플레이",                                       // 업적 설명
+            description = "Welcome aboard!\nComplete your first tutorial",                                       // 업적 설명
             //icon = PlayerSkin_1,                                            // 업적 보상 아이콘: 보상 이미지
             conditionType = AchievementConditionType.Custom,        // 조건타입: 점수, 코인 등등
             targetValue = 1,                                        // 달성조건: e.g. 갯수
@@ -53,7 +53,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Dumb",
             title = "Dumb",
-            description = "게임 시작 10초 안에 죽기",
+            description = "Wait, already?\nDie within the first 10 seconds",
             //icon = PlayerSkin_12,
             conditionType = AchievementConditionType.PlayTime,
             targetValue = 10,
@@ -66,7 +66,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_HitAndRun",
             title = "Hit And Run",
-            description = "움직이는 차량에 치이기",
+            description = "Look both ways!\nGet hit by a moving vehicle",
             //icon = PlayerSkin_3,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -78,7 +78,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_TreasureHunter",
             title = "Treasure Hunter",
-            description = "자석 아이템으로 코인 30개 이상 획득",
+            description = "Magnetic attraction.\nCollect 30 coins using the Magnet",
             //icon = PlayerSkin_8,
             conditionType = AchievementConditionType.CollectCoins,
             targetValue = 30,
@@ -90,7 +90,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Eagle",
             title = "Eagle",
-            description = "헬리콥터에 탄 상태로 코인 30개 이상 획득",
+            description = "Eyes in the sky.\nCollect 30 coins while flying the helicopter",
             //icon = PlayerSkin_9,
             conditionType = AchievementConditionType.CollectCoins,
             targetValue = 30,
@@ -103,7 +103,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Bunny",
             title = "Bunny",
-            description = "3초 동안 퀵다이브 5번 하기",
+            description = "Hop, hop, hop!\nPerform 5 Quick Dives in 3 seconds",
             //icon = PlayerSkin_4,
             conditionType = AchievementConditionType.Custom,
             targetValue = 5,
@@ -115,7 +115,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Bruh",
             title = "Bruh",
-            description = "아이템을 먹은 상태로 죽기",
+            description = "Are you serious?\nDie while an item is active",
             //icon = PlayerSkin_6,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -127,7 +127,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Acrophobia",
             title = "Acrophobia",
-            description = "헬리콥터 아이템을 먹고도 타지 않기",
+            description = "I'll take the stairs.\nPick up the Helicopter but don't ride it",
             //icon = PlayerSkin_7,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -140,7 +140,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_TopGun",
             title = "Top Gun",
-            description = "한 판에 헬리콥터 3번 이상 탑승",
+            description = "Frequent flyer.\nBoard the helicopter 3 times in a single run",
             //icon = PlayerSkin_1,
             conditionType = AchievementConditionType.CollectItems,
             targetValue = 3,
@@ -152,7 +152,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_HeliVIP",
             title = "Heli VIP",
-            description = "아이템을 먹은 상태로 헬리콥터에 탑승",
+            description = "Flying in style.\nBoard the helicopter with an active item",
             //icon = PlayerSkin_5,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -164,7 +164,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Gentleman",
             title = "Gentleman",
-            description = "스타 아이템을 먹은 상태로 자동차를 한 대도 날리지 않기",
+            description = "Peaceful power.\nDon't hit any cars while using the Star",
             //icon = BagSkin_0,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -176,7 +176,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Wrecker",
             title = "Wrecker",
-            description = "스타 아이템을 먹은 상태로 자동차 20대 이상 날리기",
+            description = "Road rage.\nSmash through 20 cars while using the Star",
             //icon = BeanieSkin_0,
             conditionType = AchievementConditionType.Custom,
             targetValue = 20,
@@ -189,7 +189,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Superstar",
             title = "Superstar",
-            description = "한 판에 스타 5개 이상 획득",
+            description = "Star-studded.\nCollect 5 Star items in a single run",
             //icon = PlayerSkin_10,
             conditionType = AchievementConditionType.CollectItems,
             targetValue = 5,
@@ -201,7 +201,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Iceman",
             title = "Iceman",
-            description = "게임 시작 후 움직이지 않고 6초 이상 버티기",
+            description = "Don't blink.\nSurvive for 6 seconds without moving at the start",
             //icon = PlayerSkin_11,
             conditionType = AchievementConditionType.PlayTime,
             targetValue = 6,
@@ -213,7 +213,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Icarus",
             title = "Icarus",
-            description = "밴 위에서 점프한 후 갈고리 날리기",
+            description = "Mid-air maneuver.\nUse your hook after jumping off a car",
             //icon = BagSkin_1,
             conditionType = AchievementConditionType.Custom,
             targetValue = 1,
@@ -225,7 +225,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Hustler",
             title = "Hustler",
-            description = "한 판에 점수 15000점 이상 달성",
+            description = "High Roller.\nReach a score of 15,000 in one run",
             //icon = BeanieSkin_1,
             conditionType = AchievementConditionType.Score,
             targetValue = 15000,
@@ -238,7 +238,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_SkyWalker",
             title = "Sky Walker",
-            description = "바닥에 닿지 않고 10초간 진행",
+            description = "The floor is lava.\nStay airborne for 10 seconds straight",
             //icon = HookSkin_1,
             conditionType = AchievementConditionType.PlayTime,
             targetValue = 10,
@@ -250,7 +250,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Pennyless",
             title = "Pennyless",
-            description = "한 판에 코인을 하나도 먹지 않고 7000점 이상 달성",
+            description = "Who needs money?\nScore 7,000 points without any coins",
             //icon = HelicopterSkin_1,
             conditionType = AchievementConditionType.Score,
             targetValue = 7000,
@@ -263,7 +263,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Billionaire",
             title = "Billionaire",
-            description = "한 판에 코인 200개 이상 획득",
+            description = "Filthy rich.\nCollect 200 coins in a single run",
             //icon = HookSkin_2,
             conditionType = AchievementConditionType.CollectCoins,
             targetValue = 200,
@@ -275,7 +275,7 @@ public class PlayerAchivementList : MonoBehaviour
         {
             id = "Achieve_Rapunzel",
             title = "Rapunzel",
-            description = "갈고리로 35m 이상 이동하기",
+            description = "Long distance call.\nTravel over 35m in a single hook swing",
             //icon = HelicopterSkin_2,
             conditionType = AchievementConditionType.Custom,
             targetValue = 35,
