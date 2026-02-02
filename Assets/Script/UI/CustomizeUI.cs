@@ -70,6 +70,56 @@ public class CustomizeUI : MonoBehaviour
             };
         }
 
+        // 비니나 가방의 경우, "착용 안 함" 아이콘 버튼을 맨 앞에 추가
+        if (type == "Beanie" && Customize.Instance.beanieUnequipIcon != null)
+        {
+            var btnObj = Instantiate(skinButtonPrefab, skinListContent);
+            btnObj.name = "Beanie_UnequipButton";
+            
+            var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
+            var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            
+            if (btnObj != null && !btnObj.activeSelf)
+                btnObj.SetActive(true);
+            if (img != null)
+            {
+                if (!img.enabled) img.enabled = true;
+                img.sprite = Customize.Instance.beanieUnequipIcon;
+            }
+            if (btn != null)
+            {
+                if (!btn.enabled) btn.enabled = true;
+                btn.interactable = true;
+                if (btn.targetGraphic == null && img != null)
+                    btn.targetGraphic = img;
+                btn.onClick.AddListener(() => Customize.Instance.UnequipBeanie());
+            }
+        }
+        else if (type == "Bag" && Customize.Instance.bagUnequipIcon != null)
+        {
+            var btnObj = Instantiate(skinButtonPrefab, skinListContent);
+            btnObj.name = "Bag_UnequipButton";
+            
+            var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
+            var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            
+            if (btnObj != null && !btnObj.activeSelf)
+                btnObj.SetActive(true);
+            if (img != null)
+            {
+                if (!img.enabled) img.enabled = true;
+                img.sprite = Customize.Instance.bagUnequipIcon;
+            }
+            if (btn != null)
+            {
+                if (!btn.enabled) btn.enabled = true;
+                btn.interactable = true;
+                if (btn.targetGraphic == null && img != null)
+                    btn.targetGraphic = img;
+                btn.onClick.AddListener(() => Customize.Instance.UnequipBag());
+            }
+        }
+
         int count = spriteList != null ? spriteList.Count : 0;
         int created = 0;
         for (int i = 0; i < count; i++)

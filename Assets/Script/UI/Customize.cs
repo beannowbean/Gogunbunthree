@@ -172,6 +172,7 @@ public class Customize : MonoBehaviour
     public GameObject beaniePrefab; 
     public List<Texture> beanieSkins = new List<Texture>();
     public List<Sprite> beanieSkinIcons = new List<Sprite>();
+    public Sprite beanieUnequipIcon; // 비니 착용 안 함 아이콘
 
     public void EquipBeanie()
     {
@@ -205,6 +206,7 @@ public class Customize : MonoBehaviour
     public GameObject bagPrefab;
     public List<Texture> bagSkins = new List<Texture>();
     public List<Sprite> bagSkinIcons = new List<Sprite>();
+    public Sprite bagUnequipIcon; // 가방 착용 안 함 아이콘
 
     public void EquipBag()
     {
