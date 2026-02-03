@@ -267,7 +267,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             safety++;
             if(safety > 100)
             {
-                Debug.LogWarning("무한 루프 방지 작동");
+                nextObstacle = 0;
                 break;
             }
             if(isObstacle == false) // 아이템 맵일 경우 코인 맵
