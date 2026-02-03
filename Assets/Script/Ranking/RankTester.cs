@@ -62,10 +62,10 @@ public class RankTester : MonoBehaviour
         }        
 
         // [0번 키] 가상 유저 20명 생성
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            Debug.Log("[테스트] 가상 유저 20명 생성 시작...");
-            RankManager.Instance.CreateFakeRankings();
-        }
+        // if (Input.GetKeyDown(KeyCode.Alpha0))
+        // {
+        //     Debug.Log("[테스트] 가상 유저 20명 생성 시작...");
+        //     RankManager.Instance.CreateFakeRankings();
+        // }
     }
 }

@@ -18,11 +18,11 @@ MonoBehaviour:
   game_version: 1.0.0.0
   sdk_version: 7.0.0
   url: https://api.lootlocker.com/v1
-  adminUrl: https://cmsezmx6.api.lootlocker.com/admin
-  playerUrl: https://cmsezmx6.api.lootlocker.com/player
-  userUrl: https://cmsezmx6.api.lootlocker.com/game
-  webSocketBaseUrl: wss://cmsezmx6.api.lootlocker.com/game
-  baseUrl: https://cmsezmx6.api.lootlocker.com
+  adminUrl: https://api.lootlocker.com/admin
+  playerUrl: https://api.lootlocker.com/player
+  userUrl: https://api.lootlocker.com/game
+  webSocketBaseUrl: wss://api.lootlocker.com/game
+  baseUrl: https://api.lootlocker.com
   clientSideRequestTimeOut: 180
   logLevel: 2
   prettifyJson: 1
