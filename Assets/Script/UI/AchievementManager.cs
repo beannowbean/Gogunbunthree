@@ -26,53 +26,7 @@ public class AchievementManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void Update()
-    {
-        // 테스트: O 키로 업적 진척도 초기화
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            ResetAllAchievementProgress();
-        }
-
-        // 테스트: U 키로 업적 모두 해제
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            foreach (var achievement in achievements)
-            {
-                achievement.currentValue = 1;
-                PlayerPrefs.SetInt($"Achievement_{achievement.id}_Progress", 1);
-                PlayerPrefs.SetInt($"Achievement_{achievement.id}", 1);
-                PlayerPrefs.SetInt($"Achievement_{achievement.id}_Reward", 1);
-            }
-            PlayerPrefs.Save();
-        
-            Debug.Log("[테스트] 모든 업적 진척도가 완료되었습니다.");
-
-            // UI가 있다면 새로고침
-            RefreshAchievementData();
-        }
-    }
     
-    /// <summary>
-    /// 모든 업적 진척도 초기화 (테스트용)
-    /// </summary>
-    private void ResetAllAchievementProgress()
-    {
-        foreach (var achievement in achievements)
-        {
-            achievement.currentValue = 0;
-            PlayerPrefs.SetInt($"Achievement_{achievement.id}_Progress", 0);
-            PlayerPrefs.SetInt($"Achievement_{achievement.id}", 0);
-            PlayerPrefs.SetInt($"Achievement_{achievement.id}_Reward", 0);
-        }
-        PlayerPrefs.Save();
-        
-        Debug.Log("[테스트] 모든 업적 진척도가 초기화되었습니다.");
-        
-        // UI가 있다면 새로고침
-        RefreshAchievementData();
-    }
 
     /// <summary>
     /// 외부에서 업적 등록 (PlayerAchievementList에서 사용)
@@ -184,10 +138,6 @@ public class AchievementManager : MonoBehaviour
 
         PlayerPrefs.SetInt($"Achievement_{achievementId}", 1);
         PlayerPrefs.Save();
-        
-        Debug.Log($"[업적 달성] {achievement.title}!");
-        
-        // TODO: UI 알림 팝업
     }
     
     /// <summary>
@@ -195,46 +145,16 @@ public class AchievementManager : MonoBehaviour
     /// </summary>
     public bool ClaimReward(string achievementId)
     {
-        Debug.Log($"[AchievementManager] ClaimReward called for '{achievementId}'");
 
         var achievement = GetAchievement(achievementId);
-        if (achievement == null)
-        {
-            Debug.LogWarning($"[AchievementManager] ClaimReward failed: achievement '{achievementId}' not found.");
-            return false;
-        }
-
-        Debug.Log($"[AchievementManager] Achievement found: {achievement.title} (Completed: {achievement.IsCompleted}, RewardType: {achievement.rewardType}, RewardIndex: {achievement.rewardIndex})");
-
-        if (!achievement.IsCompleted)
-        {
-            Debug.LogWarning($"[AchievementManager] ClaimReward failed: achievement '{achievementId}' is not completed yet.");
-            return false;
-        }
-        
-        // 이미 수령했는지 확인
-        if (IsRewardClaimed(achievementId))
-        {
-            Debug.LogWarning($"[AchievementManager] ClaimReward failed: reward already claimed for '{achievementId}'.");
-            return false;
-        }
         
         // 보상 지급
-        Debug.Log($"[AchievementManager] Attempting to give reward: {achievement.rewardType} (index: {achievement.rewardIndex})");
         bool success = GiveReward(achievement);
-        Debug.Log($"[AchievementManager] GiveReward returned: {success} for '{achievementId}'");
-        
         if (success)
         {
             // 보상 수령 완료 표시
             PlayerPrefs.SetInt($"Achievement_{achievementId}_Reward", 1);
             PlayerPrefs.Save();
-            
-            Debug.Log($"[AchievementManager] Reward claimed and saved for {achievement.title} - {achievement.rewardType}");
-        }
-        else
-        {
-            Debug.LogWarning($"[AchievementManager] ClaimReward failed: GiveReward returned false for '{achievementId}'.");
         }
         
         return success;
@@ -258,7 +178,6 @@ public class AchievementManager : MonoBehaviour
             case RewardType.PlayerSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"플레이어 스킨 해금: index {index}");
                     Customize.Instance.UnlockPlayerSkinByIndex(index);
                     return true;
                 }
@@ -266,7 +185,6 @@ public class AchievementManager : MonoBehaviour
             case RewardType.BeanieSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"비니 스킨 해금: index {index}");
                     Customize.Instance.UnlockBeanieSkinByIndex(index);
                     return true;
                 }
@@ -274,7 +192,6 @@ public class AchievementManager : MonoBehaviour
             case RewardType.BagSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"가방 스킨 해금: index {index}");
                     Customize.Instance.UnlockBagSkinByIndex(index);
                     return true;
                 }
@@ -282,7 +199,6 @@ public class AchievementManager : MonoBehaviour
             case RewardType.HelicopterSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"헬리콥터 스킨 해금: index {index}");
                     Customize.Instance.UnlockHelicopterSkinByIndex(index);
                     return true;
                 }
@@ -290,7 +206,6 @@ public class AchievementManager : MonoBehaviour
             case RewardType.HookSkin:
                 {
                     int index = achievement.rewardIndex;
-                    Debug.Log($"후크 스킨 해금: index {index}");
                     Customize.Instance.UnlockHookSkinByIndex(index);
                     return true;
                 }

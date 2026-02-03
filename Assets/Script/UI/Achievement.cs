@@ -48,8 +48,6 @@ public class Achievement : MonoBehaviour
         // 업적 아이템 생성
         List<AchievementData> achievements = AchievementManager.Instance.GetAllAchievements();
         
-        Debug.Log($"[Achievement] 업적 {achievements.Count}개 표시 중");
-        
         foreach (var achievement in achievements)
         {
             bool isUnlocked = AchievementManager.Instance.IsAchievementUnlocked(achievement.id);

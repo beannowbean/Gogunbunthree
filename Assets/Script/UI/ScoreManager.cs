@@ -66,21 +66,6 @@ public class ScoreManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // P 키로 최고 점수 초기화
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            ResetBestScore();
-            UpdateScoreDisplay();
-        }
-
-        // I 키로 튜토리얼 초기화
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            PlayerPrefs.SetInt("FirstTutorial", 0);
-            PlayerPrefs.Save();
-            Debug.Log("튜토리얼 여부를 초기화 했습니다.");
-        }
-
         // 게임 오버 상태, 혹은 튜토리얼 미종료 시 점수 갱신 중지
         if (isGameOver || (!tutorial.isTutorialEnd && !UIController.isRestarting)) return;
 
