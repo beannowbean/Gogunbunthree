@@ -309,6 +309,25 @@ public class MainMenuController : MonoBehaviour
         else
             Player.selectedPlayerSkinTexture = null;
 
+        // Hook 스킨 설정
+        if (hookIndex >= 0 && hookIndex < Customize.Instance.hookSkins.Count)
+        {
+            Hook.currentSkin = Customize.Instance.hookSkins[hookIndex];
+            Player.currentRopeMaterial = Customize.Instance.ropeSkins[ropeIndex];
+                
+        }
+        else
+        {
+            Hook.currentSkin = null;
+            Player.currentRopeMaterial = null;
+        }
+
+        // Helicopter 스킨 설정
+        if (heliIndex >= 0 && heliIndex < Customize.Instance.helicopterSkins.Count)
+            Helicopter.currentSkin = Customize.Instance.helicopterSkins[heliIndex];
+        else
+            Helicopter.currentSkin = null;
+
         Player.selectedBeanieEquippedStatic = beanieEquipped;
         if (beanieSkinIndex >= 0 && beanieSkinIndex < Customize.Instance.beanieSkins.Count)
             Player.selectedBeanieSkinTexture = Customize.Instance.beanieSkins[beanieSkinIndex];

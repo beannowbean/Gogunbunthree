@@ -62,6 +62,7 @@ public class CustomizeUI : MonoBehaviour
             onClick = (idx) => {
                 Customize.Instance.EquipHookSkinNumber(idx);
                 PlayerPrefs.SetInt("SelectedHookSkinIndex", idx);
+                PlayerPrefs.SetInt("SelectedRopeSkinIndex", idx);
                 PlayerPrefs.Save();
             };
         }
