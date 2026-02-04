@@ -196,6 +196,13 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             // 일정 확률로 별/헬기 아이템 배열 사용
             bool itemTile = (Time.time >= itemTimer + itemCooltime) && (Random.value < itemRate);   // itemCooltime 지나고, itemRate 확률 시
             bool magnetTile = (Time.time >= magnetTimer + magnetCooltime) && (Random.value < magnetRate); // magnetCooltime 지나고, magnetRate 확률 시
+
+            if(isLastCoin == true)  // 마지막이 코인 맵이면 아이템 맵 X
+            {
+                itemTile = false;
+                magnetTile = false;
+            }
+
             if(itemTile == true)
             {
                 // 아이템 배열 중 별 or 헬기 선택
@@ -267,7 +274,7 @@ public class CarGenerate : MonoBehaviour    // 플레이어 뒤 박스 콜라이
             safety++;
             if(safety > 100)
             {
-                Debug.LogWarning("무한 루프 방지 작동");
+                nextObstacle = 0;
                 break;
             }
             if(isObstacle == false) // 아이템 맵일 경우 코인 맵

@@ -1020,7 +1020,7 @@ MonoBehaviour:
   hookSpeed: 40
   isHooked: 0
   lineRenderer: {fileID: 5989779946320784498}
-  hookAngle: 15
+  hookAngle: 25
   hookPullSpeed: 30
   isHelicopter: 0
   helicopterDistance: 4

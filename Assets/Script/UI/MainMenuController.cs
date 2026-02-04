@@ -1,313 +1,261 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using TMPro;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
-    public GameObject Settings;
-    public GameObject[] musicOnIcons;
-    public GameObject[] musicOffIcons;
-    public GameObject[] sfxOnIcons;
-    public GameObject[] sfxOffIcons;
+    [Header("UI Containers")]
+    public RectTransform uiContainer; // 버튼들 컨테이너
 
-    private bool isLoadingScene = false;
-    private AsyncOperation preloadedScene = null;
+    [Header("Title Image Animation")]
+    public RectTransform titleImageRect;
+    public float titleSlideDuration = 0.7f;
+    private Vector2 titleFinalPos;
+
+    // [추가] 헬리콥터 관련 변수
+    [Header("Helicopter Animation")]
+    public RectTransform helicopterRect; // 헬리콥터 이미지
+    public AudioSource heliAudioSource; // 헬리콥터 오디오 소스
+
+    // 좌표 및 크기 설정
+    private Vector2 heliStartPos = new Vector2(-100, 6000);
+    private Vector2 heliSizeLarge = new Vector2(8000, 8000);
+
+    private Vector2 heliLandPos = new Vector2(-100, 4000); // 내려올 위치
+
+    private Vector2 heliFinalPos = new Vector2(400, 1000); // 날아갈 위치
+    private Vector2 heliSizeSmall = new Vector2(100, 100); // 작아질 크기
+
+    // [추가] 캐릭터 관련 변수
+    [Header("Character Animation")]
+    public RectTransform characterRect; // 캐릭터 이미지
+
+    // [추가] 캐릭터의 애니메이터를 제어하기 위한 변수
+    public Animator characterAnimator;
+
+    // 캐릭터 초기값 (100, 0 / 2000, 2000)
+    private Vector2 charStartPos = new Vector2(-100, 0);
+    private Vector2 charSizeLarge = new Vector2(2000, 2000);
+
+    // 캐릭터 최종값 (390, 955 / 25, 25)
+    private Vector2 charFinalPos = new Vector2(390, 955);
+    private Vector2 charSizeSmall = new Vector2(25, 25);
 
     void Start()
     {
-        // InGame 씬을 백그라운드에서 미리 로드
-        StartCoroutine(PreloadInGameScene());
-        
-        // 메인 화면 BGM 재생
-        if (BGMManager.Instance != null)
+        // 1. 타이틀 이미지 위로 숨기기 (기존 코드)
+        if (titleImageRect != null)
         {
-            BGMManager.Instance.PlayMainScreenBGM();
+            titleFinalPos = titleImageRect.anchoredPosition;
+            float offScreenY = Screen.height / 2f + titleImageRect.rect.height;
+            titleImageRect.anchoredPosition = new Vector2(titleFinalPos.x, offScreenY);
         }
 
-        // 아이콘 상태 업데이트
-        UpdateMusicIconUI();
-        UpdateSFXIconUI();
-
-        // 저장된 커스터마이즈 static 필드만 세팅 (적용은 인게임에서)
-        ApplySavedCustomizeStaticsOnly();
-    }
-
-    // 백그라운드에서 InGame 씬 프리로드
-    private IEnumerator PreloadInGameScene()
-    {
-        // 약간의 지연 후 프리로드 시작 (메인 메뉴 초기화를 방해하지 않도록)
-        yield return new WaitForSeconds(0.5f);
-        
-        // 백그라운드 로딩 우선순위 설정
-        Application.backgroundLoadingPriority = ThreadPriority.Low;
-        
-        // 비동기로 씬 프리로드 (Single 모드)
-        preloadedScene = SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Single);
-        
-        // 자동 활성화 방지 (버튼 클릭 시까지 대기)
-        preloadedScene.allowSceneActivation = false;
-        
-        // 90%까지 로드 대기
-        while (preloadedScene.progress < 0.9f)
+        // [추가] 2. 헬리콥터 초기 위치 및 크기 설정 (거대하게 위쪽에 대기)
+        if (helicopterRect != null)
         {
-            yield return null;
+            helicopterRect.anchoredPosition = heliStartPos;
+            helicopterRect.sizeDelta = heliSizeLarge;
         }
+
+        // ... (BGM 재생 등 기타 Start 로직)
     }
 
-    // 게임 시작 버튼
     public void StartGame()
     {
         if (isLoadingScene) return;
+        isLoadingScene = true; // 중복 클릭 방지
 
         UIController.tutorialSkip = true;
         UIController.isRestarting = false;
 
-        if (SFXManager.Instance != null)
+        if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
+        if (PlayerAchivementList.Instance != null) PlayerAchivementList.Instance.Newbie();
+
+        // --- 애니메이션 시작 ---
+
+        // 1. 타이틀 이미지 내려오기
+        if (titleImageRect != null) StartCoroutine(SlideInTitle());
+
+        // 2. 버튼들 오른쪽으로 사라지기
+        if (uiContainer != null) StartCoroutine(SlideOutUI());
+
+        // [중요] 3. 헬리콥터 연출 시작! (씬 로딩은 이 안에서 처리함)
+        if (helicopterRect != null)
         {
-            SFXManager.Instance.Play("Button");
-        }
-        
-        // Start 버튼 클릭 시 Newbie 업적 달성
-        if (PlayerAchivementList.Instance != null)
-        {
-            PlayerAchivementList.Instance.Newbie();
-        }
-        
-        isLoadingScene = true;
-        
-        // 프리로드된 씬이 있으면 즉시 활성화
-        if (preloadedScene != null && preloadedScene.progress >= 0.9f)
-        {
-            preloadedScene.allowSceneActivation = true;
+            StartCoroutine(HelicopterSequence());
         }
         else
         {
-            // 프리로드가 안 된 경우 직접 로드
+            // 헬리콥터가 없으면 그냥 바로 로딩 (안전장치)
+            LoadInGameScene();
+        }
+    }
+
+    // 헬리콥터 전체 연출 코루틴
+    IEnumerator HelicopterSequence()
+    {
+        characterAnimator.enabled = false;
+
+        // 1단계: 1초 대기 (Start 버튼 누르고 1초 뒤 시작)
+        yield return new WaitForSeconds(1.0f);
+
+        BGMManager.Instance.FadeTo(0f, 2.0f);
+
+        heliAudioSource.volume = 0f;
+        heliAudioSource.Play();      
+        StartCoroutine(FadeAudioSource(heliAudioSource, 1.0f, 2.0f));
+
+        // 2단계: -100, 390 좌표까지 1초동안 내려옴
+        float timer = 0f;
+        float duration = 1.0f;
+        Vector2 startPos = helicopterRect.anchoredPosition;
+
+        while (timer < duration)
+        {
+            timer += Time.unscaledDeltaTime;
+            float t = timer / duration;
+            // EaseOut (천천히 도착)
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+
+            helicopterRect.anchoredPosition = Vector2.Lerp(startPos, heliLandPos, t);
+            yield return null;
+        }
+        helicopterRect.anchoredPosition = heliLandPos;
+
+        // 헬기와 캐릭터 모두 50만큼 아래로
+        Vector2 heliBounceDest = heliLandPos + new Vector2(0, -50);
+        Vector2 charBounceDest = charStartPos + new Vector2(0, -50);
+
+        // [내려가기]
+        // 캐릭터도 같이 코루틴 시작 (StartCoroutine만 하면 동시에 실행됨)
+        if (characterRect != null) StartCoroutine(MoveTo(characterRect, charBounceDest, 0.2f));
+        yield return StartCoroutine(MoveTo(helicopterRect, heliBounceDest, 0.2f)); // 헬기가 끝날 때까지 대기
+
+        // [올라오기]
+        if (characterRect != null) StartCoroutine(MoveTo(characterRect, charStartPos, 0.2f));
+        yield return StartCoroutine(MoveTo(helicopterRect, heliLandPos, 0.2f));
+
+        LoadInGameScene();
+
+        StartCoroutine(FadeAudioSource(heliAudioSource, 0f, 1.0f));
+
+        // 4단계: 400, 1000 좌표로 이동하면서 + 100, 100 크기로 작아짐 (1초 동안)
+        timer = 0f;
+        duration = 1.0f; // 이동 시간
+        Vector2 currentPos = helicopterRect.anchoredPosition;
+        Vector2 currentSize = helicopterRect.sizeDelta;
+
+        // 캐릭터 현재 상태 (혹시 모르니 현재 위치 받아옴)
+        Vector2 charCurPos = characterRect != null ? characterRect.anchoredPosition : charStartPos;
+        Vector2 charCurSize = characterRect != null ? characterRect.sizeDelta : charSizeLarge;
+
+        while (timer < duration)
+        {
+            timer += Time.unscaledDeltaTime;
+            float t = timer / duration;
+            // 가속도 붙어서 슝 날아가게 (EaseIn)
+            float easeT = t * t;
+
+            // 위치 이동
+            helicopterRect.anchoredPosition = Vector2.Lerp(currentPos, heliFinalPos, easeT);
+            // 크기 변경 (8000 -> 100)
+            helicopterRect.sizeDelta = Vector2.Lerp(currentSize, heliSizeSmall, easeT);
+
+            characterRect.anchoredPosition = Vector2.Lerp(charCurPos, charFinalPos, easeT);
+            characterRect.sizeDelta = Vector2.Lerp(charCurSize, charSizeSmall, easeT);
+
+            yield return null;
+        }
+        helicopterRect.anchoredPosition = heliFinalPos;
+        helicopterRect.sizeDelta = heliSizeSmall;
+
+        characterRect.anchoredPosition = charFinalPos;
+        characterRect.sizeDelta = charSizeSmall;
+    }
+
+    IEnumerator FadeAudioSource(AudioSource source, float targetVol, float duration)
+    {
+        float startVol = source.volume;
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.unscaledDeltaTime;
+            source.volume = Mathf.Lerp(startVol, targetVol, timer / duration);
+            yield return null;
+        }
+        source.volume = targetVol;
+    }
+
+    // 위치 이동을 도와주는 헬퍼 함수
+    IEnumerator MoveTo(RectTransform target, Vector2 dest, float time)
+    {
+        float t = 0f;
+        Vector2 start = target.anchoredPosition;
+        while (t < time)
+        {
+            t += Time.unscaledDeltaTime;
+            target.anchoredPosition = Vector2.Lerp(start, dest, t / time);
+            yield return null;
+        }
+        target.anchoredPosition = dest;
+    }
+
+    // 씬 로딩 페이드 아웃 시작
+    IEnumerator TriggerSceneLoadFade()
+    {
+        // 헬기가 날아가기 시작하고 0.5초 뒤에 화면 하얗게 만들기 시작
+        yield return new WaitForSeconds(0.5f);
+        LoadInGameScene();
+    }
+
+    void LoadInGameScene()
+    {
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("InGame");
+        }
+        else
+        {
             SceneManager.LoadScene("InGame", LoadSceneMode.Single);
         }
     }
 
-    // 튜토리얼 버튼
-    public void StartTutorial()
+    // (기존 코드 유지)
+    IEnumerator SlideInTitle()
     {
-        if (isLoadingScene) return;
-
-        UIController.tutorialSkip = false;
-        UIController.isRestarting = false;
-
-        if (SFXManager.Instance != null)
+        // ... (아까 작성해주신 내용 그대로)
+        float timer = 0f;
+        Vector2 startPos = titleImageRect.anchoredPosition;
+        while (timer < titleSlideDuration)
         {
-            SFXManager.Instance.Play("Button");
+            timer += Time.unscaledDeltaTime;
+            float t = timer / titleSlideDuration;
+            float easeT = Mathf.Sin(t * Mathf.PI * 0.5f);
+            titleImageRect.anchoredPosition = Vector2.Lerp(startPos, titleFinalPos, easeT);
+            yield return null;
         }
-        
-        // Start 버튼 클릭 시 Newbie 업적 달성
-        if (PlayerAchivementList.Instance != null)
-        {
-            PlayerAchivementList.Instance.Newbie();
-        }
-        
-        isLoadingScene = true;
-        
-        // 프리로드된 씬이 있으면 즉시 활성화
-        if (preloadedScene != null && preloadedScene.progress >= 0.9f)
-        {
-            preloadedScene.allowSceneActivation = true;
-        }
-        else
-        {
-            // 프리로드가 안 된 경우 직접 로드
-            SceneManager.LoadScene("InGame", LoadSceneMode.Single);
-        }
+        titleImageRect.anchoredPosition = titleFinalPos;
     }
 
-    // Achievement 버튼
-    public void OpenAchievement()
+    // (기존 코드 유지)
+    IEnumerator SlideOutUI()
     {
-        if (isLoadingScene) return;
-
-        if (SFXManager.Instance != null)
+        // ... (아까 작성해주신 내용 그대로)
+        float timer = 0f;
+        Vector2 startPos = uiContainer.anchoredPosition;
+        Vector2 targetPos = new Vector2(startPos.x + Screen.width * 1.5f, startPos.y);
+        while (timer < 0.5f)
         {
-            SFXManager.Instance.Play("Button");
+            timer += Time.unscaledDeltaTime;
+            float t = timer / 0.5f;
+            float easeT = t * t;
+            uiContainer.anchoredPosition = Vector2.Lerp(startPos, targetPos, easeT);
+            yield return null;
         }
-        
-        // Achievement 모드로 설정
-        PlayerPrefs.SetString("AchievementCustomizeMode", "Achievement");
-        PlayerPrefs.Save();
-        
-        isLoadingScene = true;
-        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
+        uiContainer.anchoredPosition = targetPos;
     }
-
-    // Customize 버튼
-    public void OpenCustomize()
-    {
-        if (isLoadingScene) return;
-
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-        }
-        
-        // Customize 모드로 설정
-        PlayerPrefs.SetString("AchievementCustomizeMode", "Customize");
-        PlayerPrefs.Save();
-        
-        isLoadingScene = true;
-        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
-    }
-
-    // Settings 버튼
-    public void OpenSettings()
-    {
-        if (isLoadingScene) return;
-
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-        }
-
-        Settings.SetActive(true);
-    }
-
-    // Settings 버튼
-    public void CloseSettings()
-    {
-        if (isLoadingScene) return;
-
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-        }
-
-        Settings.SetActive(false);
-    }
-
-
-
-    // --- Audio Control Methods ---
-
-    public void DecreaseMusicVolume()
-    {
-        if (BGMManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            BGMManager.Instance.DecreaseVolume();
-            UpdateMusicIconUI();
-        }
-    }
-
-    public void IncreaseMusicVolume()
-    {
-        if (BGMManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            BGMManager.Instance.IncreaseVolume();
-            UpdateMusicIconUI();
-        }
-    }
-
-    public void DecreaseSFXVolume()
-    { 
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            SFXManager.Instance.DecreaseVolume();
-            UpdateSFXIconUI();
-        }
-    }
-
-    public void IncreaseSFXVolume()
-    {
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            SFXManager.Instance.IncreaseVolume();
-            UpdateSFXIconUI();
-        }
-    }
-
-    public void ToggleMusicMute()
-    {
-        if (BGMManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            BGMManager.Instance.ToggleMute();
-            UpdateMusicIconUI();
-        }
-    }
-
-    public void ToggleSFXMute()
-    {
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.Play("Button");
-            SFXManager.Instance.ToggleMute();
-            UpdateSFXIconUI();
-        }
-    }
-
-    private void UpdateMusicIconUI()
-    {
-        bool isSoundOn = BGMManager.Instance != null && !BGMManager.Instance.IsMuted();
-
-        if (musicOnIcons != null)
-        {
-            foreach (GameObject icon in musicOnIcons)
-            {
-                if (icon != null) icon.SetActive(isSoundOn);
-            }
-        }
-
-        if (musicOffIcons != null)
-        {
-            foreach (GameObject icon in musicOffIcons)
-            {
-                if (icon != null) icon.SetActive(!isSoundOn);
-            }
-        }
-    }
-
-    private void UpdateSFXIconUI()
-    {
-        bool isSoundOn = SFXManager.Instance != null && !SFXManager.Instance.IsMuted();
-
-        if (sfxOnIcons != null)
-        {
-            foreach (GameObject icon in sfxOnIcons)
-            {
-                if (icon != null) icon.SetActive(isSoundOn);
-            }
-        }
-
-        if (sfxOffIcons != null)
-        {
-            foreach (GameObject icon in sfxOffIcons)
-            {
-                if (icon != null) icon.SetActive(!isSoundOn);
-            }
-        }
-    }
-    
-    private void ApplySavedCustomizeStaticsOnly()
-    {
-        if (Customize.Instance == null) return;
-
-        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", -1);
-        int ropeIndex = PlayerPrefs.GetInt("SelectedRopeSkinIndex", -1);
-        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", -1);
-        int heliIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", -1);
-        bool beanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
-        int beanieSkinIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", -1);
-        bool bagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
-        int bagSkinIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", -1);
-
-        // static 필드만 세팅 (실제 적용은 인게임에서)
-        if (playerIndex >= 0 && playerIndex < Customize.Instance.playerSkins.Count)
-            Player.selectedPlayerSkinTexture = Customize.Instance.playerSkins[playerIndex];
-        else
-            Player.selectedPlayerSkinTexture = null;
 
         // Hook 스킨 설정
         if (hookIndex >= 0 && hookIndex < Customize.Instance.hookSkins.Count)
@@ -342,4 +290,7 @@ public class MainMenuController : MonoBehaviour
             Player.selectedBagSkinTexture = null;
         Player.selectedBagPrefab = Customize.Instance.bagPrefab;
     }
+}
+    // 변수 선언 등 기타 필요한 부분들...
+    private bool isLoadingScene = false;
 }

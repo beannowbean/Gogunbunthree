@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BGMManager : MonoBehaviour
@@ -17,8 +18,11 @@ public class BGMManager : MonoBehaviour
     private int currentVolumeLevel = 3;
     private int previousVolumeLevel = MAX_VOLUME_LEVEL;
 
-    // 플랫폼별 볼륨 보정 (모바일 기기에서 소리가 더 크게 들리므로 보정)
+    // 플랫폼별 볼륨 보정
     private float platformVolumeMultiplier = 1f;
+
+    // [추가] 페이드 효과가 중복 실행되지 않도록 관리하는 변수
+    private Coroutine currentFadeCoroutine;
 
     void Awake()
     {
@@ -33,21 +37,61 @@ public class BGMManager : MonoBehaviour
             return;
         }
 
-        // AudioSource 컴포넌트 추가
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
         audioSource.playOnAwake = false;
-        
-        // 플랫폼별 볼륨 배율 설정
+
         SetPlatformVolumeMultiplier();
-        
-        // 저장된 볼륨 설정 로드
         LoadVolumeSettings();
-        
+
+        // 시작할 때는 설정된 볼륨으로 적용
         ApplyVolume();
     }
 
-    // 볼륨 레벨 증가
+    // 외부에서 호출: 특정 볼륨으로 부드럽게 조절
+    public void FadeTo(float targetVolume, float duration)
+    {
+        // 기존에 실행 중이던 페이드가 있다면 중지 (꼬임 방지)
+        if (currentFadeCoroutine != null)
+        {
+            StopCoroutine(currentFadeCoroutine);
+        }
+        currentFadeCoroutine = StartCoroutine(FadeRoutine(targetVolume, duration));
+    }
+
+    // 실제 페이드를 수행하는 코루틴
+    private IEnumerator FadeRoutine(float targetVolume, float duration)
+    {
+        float startVolume = audioSource.volume;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.unscaledDeltaTime; // TimeScale이 0이어도 소리는 줄어들게
+            audioSource.volume = Mathf.Lerp(startVolume, targetVolume, timer / duration);
+            yield return null;
+        }
+
+        audioSource.volume = targetVolume;
+        currentFadeCoroutine = null;
+    }
+
+    // 인게임 BGM을 0에서부터 설정된 볼륨까지 서서히 켬 (페이드 인)
+    public void PlayInGameBGMWithFadeIn(float duration)
+    {
+        // 1. 클립 교체 및 재생
+        PlayBGM(inGameBGM);
+
+        // 2. 소리를 일단 0으로 끔
+        audioSource.volume = 0f;
+
+        // 3. 목표 볼륨 계산: 사용자가 설정해둔 볼륨 크기 (0~10단계)를 실수(0.0~1.0)로 변환
+        float targetVolume = (currentVolumeLevel / (float)MAX_VOLUME_LEVEL) * platformVolumeMultiplier;
+
+        // 4. 0 -> 목표 볼륨으로 페이드 인
+        FadeTo(targetVolume, duration);
+    }
+
     public void IncreaseVolume()
     {
         currentVolumeLevel = Mathf.Min(MAX_VOLUME_LEVEL, currentVolumeLevel + 1);
@@ -55,7 +99,6 @@ public class BGMManager : MonoBehaviour
         SaveVolumeSettings();
     }
 
-    // 볼륨 레벨 감소
     public void DecreaseVolume()
     {
         currentVolumeLevel = Mathf.Max(0, currentVolumeLevel - 1);
@@ -63,7 +106,6 @@ public class BGMManager : MonoBehaviour
         SaveVolumeSettings();
     }
 
-    // Mute / Unmute 토글
     public void ToggleMute()
     {
         if (currentVolumeLevel > 0)
@@ -79,56 +121,55 @@ public class BGMManager : MonoBehaviour
         SaveVolumeSettings();
     }
 
-    // 현재 볼륨 레벨 가져오기
     public int GetCurrentVolumeLevel()
     {
         return currentVolumeLevel;
     }
 
-    // 볼륨이 켜져 있는지 확인
     public bool IsMuted()
     {
         return currentVolumeLevel == 0;
     }
 
-    // 실제 오디오 볼륨 적용 (AudioSource에 적용하는 로직)
+    // AudioSource에 현재 설정된 볼륨을 즉시 적용
     private void ApplyVolume()
     {
-        if (audioSource != null)
+        // 페이드 중일 때는 강제로 볼륨을 바꾸면 튀는 소리가 날 수 있으므로,
+        // 페이드 코루틴이 없을 때만 즉시 적용
+        if (audioSource != null && currentFadeCoroutine == null)
         {
             float volume = currentVolumeLevel / (float)MAX_VOLUME_LEVEL;
             audioSource.volume = volume * platformVolumeMultiplier;
         }
     }
 
-    // 메인 화면 BGM 재생
     public void PlayMainScreenBGM()
     {
+        // 메인 BGM은 즉시 원래 볼륨으로 재생
         PlayBGM(mainScreenBGM);
+        ApplyVolume();
     }
 
-    // 인게임 BGM 재생
     public void PlayInGameBGM()
     {
         PlayBGM(inGameBGM);
+        ApplyVolume();
     }
 
-    // 인게임 BGM 재시작 (처음부터)
     public void RestartInGameBGM()
     {
         if (audioSource == null || inGameBGM == null) return;
-        
+
         audioSource.Stop();
         audioSource.clip = inGameBGM;
         audioSource.Play();
+        ApplyVolume();
     }
 
-    // BGM 재생
     private void PlayBGM(AudioClip clip)
     {
         if (audioSource == null || clip == null) return;
 
-        // 같은 클립이 재생 중이면 그대로 유지
         if (audioSource.clip == clip && audioSource.isPlaying)
         {
             return;
@@ -138,7 +179,6 @@ public class BGMManager : MonoBehaviour
         audioSource.Play();
     }
 
-    // BGM 정지
     public void StopBGM()
     {
         if (audioSource != null)
@@ -147,7 +187,6 @@ public class BGMManager : MonoBehaviour
         }
     }
 
-    // 볼륨 설정 저장
     private void SaveVolumeSettings()
     {
         PlayerPrefs.SetInt(VOLUME_PREFS_KEY, currentVolumeLevel);
@@ -155,7 +194,6 @@ public class BGMManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // 볼륨 설정 로드
     private void LoadVolumeSettings()
     {
         if (PlayerPrefs.HasKey(VOLUME_PREFS_KEY))
@@ -165,14 +203,11 @@ public class BGMManager : MonoBehaviour
         }
     }
 
-    // 플랫폼별 볼륨 배율 설정
     private void SetPlatformVolumeMultiplier()
     {
 #if UNITY_ANDROID || UNITY_IOS
-        // 모바일에서는 볼륨을 60%로 감소 (모바일 기기에서 소리가 더 크게 들림)
         platformVolumeMultiplier = 0.6f;
 #else
-        // 데스크톱(Windows, Mac, Linux)에서는 기본값 사용
         platformVolumeMultiplier = 1.0f;
 #endif
     }
