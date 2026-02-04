@@ -1849,6 +1849,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8623845500888963904}
+  - {fileID: 9098399296493035140}
   m_Father: {fileID: 175213100342746260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2780,8 +2781,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2293761805802925857}
+  m_Children: []
   m_Father: {fileID: 8043628646358711263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3100,12 +3100,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiContainer: {fileID: 7750130368097164316}
+  uiSlideDuration: 0.5
   titleImageRect: {fileID: 0}
   titleSlideDuration: 0.7
   helicopterRect: {fileID: 5007973831275750896}
   heliAudioSource: {fileID: 4548730914222032279}
   characterRect: {fileID: 5985724400462755356}
   characterAnimator: {fileID: 5362454504721658213}
+  Settings: {fileID: 0}
+  musicOnIcons: []
+  musicOffIcons: []
+  sfxOnIcons: []
+  sfxOffIcons: []
 --- !u!114 &5856591584808804507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5399,7 +5405,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -100, y: 4027}
+  m_AnchoredPosition: {x: -100, y: 5956}
   m_SizeDelta: {x: 8000, y: 8000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &21099818210099782

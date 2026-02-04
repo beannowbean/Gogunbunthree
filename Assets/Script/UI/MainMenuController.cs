@@ -35,6 +35,13 @@ public class MainMenuController : MonoBehaviour
     private Vector2 charFinalPos = new Vector2(390, 955);
     private Vector2 charSizeSmall = new Vector2(25, 25);
 
+    [Header("Settings & Audio UI")]
+    public GameObject Settings; // 설정 팝업창
+    public GameObject[] musicOnIcons; // 뮤직 켜짐 아이콘들
+    public GameObject[] musicOffIcons; // 뮤직 꺼짐 아이콘들
+    public GameObject[] sfxOnIcons;   // 효과음 켜짐 아이콘들
+    public GameObject[] sfxOffIcons;  // 효과음 꺼짐 아이콘들
+
     // 상태 변수
     private bool isLoadingScene = false;
 
@@ -99,6 +106,212 @@ public class MainMenuController : MonoBehaviour
             // 헬리콥터가 없으면 데이터 저장 후 바로 로딩
             ApplySavedCustomizeStaticsOnly();
             LoadInGameScene();
+        }
+    }
+
+    // 튜토리얼 버튼
+    public void StartTutorial()
+    {
+        if (isLoadingScene) return;
+
+        UIController.tutorialSkip = false;
+        UIController.isRestarting = false;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        // Start 버튼 클릭 시 Newbie 업적 달성
+        if (PlayerAchivementList.Instance != null)
+        {
+            PlayerAchivementList.Instance.Newbie();
+        }
+
+        // 1. 타이틀 이미지 내려오기
+        if (titleImageRect != null) StartCoroutine(SlideInTitle());
+
+        // 2. 버튼들 오른쪽으로 날리기 (SlideOutUI)
+        if (uiContainer != null) StartCoroutine(SlideOutUI());
+
+        // 3. 헬리콥터 시퀀스
+        if (helicopterRect != null)
+        {
+            StartCoroutine(HelicopterSequence());
+        }
+        else
+        {
+            // 헬리콥터가 없으면 데이터 저장 후 바로 로딩
+            ApplySavedCustomizeStaticsOnly();
+            LoadInGameScene();
+        }
+
+
+    }
+
+    // Achievement 버튼
+    public void OpenAchievement()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        // Achievement 모드로 설정
+        PlayerPrefs.SetString("AchievementCustomizeMode", "Achievement");
+        PlayerPrefs.Save();
+
+        isLoadingScene = true;
+        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
+    }
+
+    // Customize 버튼
+    public void OpenCustomize()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        // Customize 모드로 설정
+        PlayerPrefs.SetString("AchievementCustomizeMode", "Customize");
+        PlayerPrefs.Save();
+
+        isLoadingScene = true;
+        SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
+    }
+
+    // Settings 버튼
+    public void OpenSettings()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        Settings.SetActive(true);
+    }
+
+    // Settings 버튼
+    public void CloseSettings()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        Settings.SetActive(false);
+    }
+
+    // --- Audio Control Methods ---
+
+    public void DecreaseMusicVolume()
+    {
+        if (BGMManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            BGMManager.Instance.DecreaseVolume();
+            UpdateMusicIconUI();
+        }
+    }
+
+    public void IncreaseMusicVolume()
+    {
+        if (BGMManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            BGMManager.Instance.IncreaseVolume();
+            UpdateMusicIconUI();
+        }
+    }
+
+    public void DecreaseSFXVolume()
+    {
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            SFXManager.Instance.DecreaseVolume();
+            UpdateSFXIconUI();
+        }
+    }
+
+    public void IncreaseSFXVolume()
+    {
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            SFXManager.Instance.IncreaseVolume();
+            UpdateSFXIconUI();
+        }
+    }
+
+    public void ToggleMusicMute()
+    {
+        if (BGMManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            BGMManager.Instance.ToggleMute();
+            UpdateMusicIconUI();
+        }
+    }
+
+    public void ToggleSFXMute()
+    {
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+            SFXManager.Instance.ToggleMute();
+            UpdateSFXIconUI();
+        }
+    }
+
+    private void UpdateMusicIconUI()
+    {
+        bool isSoundOn = BGMManager.Instance != null && !BGMManager.Instance.IsMuted();
+
+        if (musicOnIcons != null)
+        {
+            foreach (GameObject icon in musicOnIcons)
+            {
+                if (icon != null) icon.SetActive(isSoundOn);
+            }
+        }
+
+        if (musicOffIcons != null)
+        {
+            foreach (GameObject icon in musicOffIcons)
+            {
+                if (icon != null) icon.SetActive(!isSoundOn);
+            }
+        }
+    }
+
+    private void UpdateSFXIconUI()
+    {
+        bool isSoundOn = SFXManager.Instance != null && !SFXManager.Instance.IsMuted();
+
+        if (sfxOnIcons != null)
+        {
+            foreach (GameObject icon in sfxOnIcons)
+            {
+                if (icon != null) icon.SetActive(isSoundOn);
+            }
+        }
+
+        if (sfxOffIcons != null)
+        {
+            foreach (GameObject icon in sfxOffIcons)
+            {
+                if (icon != null) icon.SetActive(!isSoundOn);
+            }
         }
     }
 
@@ -220,7 +433,7 @@ public class MainMenuController : MonoBehaviour
         titleImageRect.anchoredPosition = titleFinalPos;
     }
 
-    // [요청하신 부분] UI 버튼 퇴장 코루틴
+    // UI 버튼 퇴장 코루틴
     IEnumerator SlideOutUI()
     {
         float timer = 0f;
@@ -263,7 +476,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    // [수정됨] 커스터마이징 데이터 적용 함수 (Hook, Helicopter 로직 포함)
+    // 커스터마이징 데이터 적용 함수
     private void ApplySavedCustomizeStaticsOnly()
     {
         if (Customize.Instance == null) return;
@@ -283,7 +496,7 @@ public class MainMenuController : MonoBehaviour
         else
             Player.selectedPlayerSkinTexture = null;
 
-        // 2. Hook & Rope 스킨 (요청하신 부분)
+        // 2. Hook & Rope 스킨 
         if (hookIndex >= 0 && hookIndex < Customize.Instance.hookSkins.Count)
         {
             Hook.currentSkin = Customize.Instance.hookSkins[hookIndex];
@@ -299,7 +512,7 @@ public class MainMenuController : MonoBehaviour
             Player.currentRopeMaterial = null;
         }
 
-        // 3. Helicopter 스킨 (요청하신 부분)
+        // 3. Helicopter 스킨 
         if (heliIndex >= 0 && heliIndex < Customize.Instance.helicopterSkins.Count)
             Helicopter.currentSkin = Customize.Instance.helicopterSkins[heliIndex];
         else
