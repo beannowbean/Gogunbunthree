@@ -31,6 +31,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI gameOverCoinCountText; // GameOverPanel의 코인 개수 text (선택사항)
     public TextMeshProUGUI gameOverOrClearText; // "GAME OVER" or "GAME CLEAR" 텍스트
     public GameObject newRecordText;
+    public GameObject scoreLabelObject; 
 
     [Header("Other UI")]
     public TextMeshProUGUI countdownText;       // Text_ResumeDelay
@@ -247,14 +248,44 @@ public class UIController : MonoBehaviour
         // Game Over / Game Clear 텍스트 설정
         gameOverOrClearText.text = "GAME\nOVER";
 
+        ScoreManager.Instance.GetFinalScore();
+
+        bool isNewRecord = ScoreManager.Instance.GetIsNewRecord();
+
+        if (isNewRecord)
+        {
+            if (scoreLabelObject != null) scoreLabelObject.SetActive(false); // SCORE 끔
+            if (newRecordText != null) newRecordText.SetActive(true);        // NEW RECORD 켬
+
+            string hexColor = "#EA3D00";
+
+            Color newColor;
+            
+            if (ColorUtility.TryParseHtmlString(hexColor, out newColor))
+            {
+                gameOverScoreText.color = newColor;
+            }
+        }
+        else
+        {
+            if (scoreLabelObject != null) scoreLabelObject.SetActive(true);  // SCORE 켬
+            if (newRecordText != null) newRecordText.SetActive(false);       // NEW RECORD 끔
+
+            string hexColor = "#0DA594";
+
+            Color newColor;
+
+            if (ColorUtility.TryParseHtmlString(hexColor, out newColor))
+            {
+                gameOverScoreText.color = newColor;
+            }
+        }
+
         // 점수 애니메이션 시작 (애니메이션 완료 후 뉴 레코드 표시)
         StartCoroutine(ScoreManager.Instance.AnimateGameOverScore(
             gameOverScoreText,
             gameOverCoinCountText, // 인스펙터에서 할당 안 하면 null이어도 됨
             () => {
-                // 애니메이션 완료 후 뉴 레코드 메시지 표시
-                bool isNewRecord = ScoreManager.Instance != null && ScoreManager.Instance.GetIsNewRecord();
-                newRecordText.SetActive(isNewRecord);
                 
                 // 점수 초기화
                 ScoreManager.Instance.ResetScore();

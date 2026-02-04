@@ -37,6 +37,13 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI bestScoreText;   // 베스트 점수 표시용
     public TextMeshProUGUI bonusScoreText;  // 보너스 점수 표시용 (점수 위에 표시)
 
+    [Header("Score UI Effect")]
+    public float minFontSize = 100f;        // 시작 폰트 크기
+    public float maxFontSize = 180f;        // 최고 점수 도달 시 폰트 크기
+    public Color minScoreColor = Color.white;   // 시작 색상 (흰색)
+    public Color midScoreColor = Color.yellow;  // 50% 지점 색상 (노란색)
+    public Color maxScoreColor = Color.red;  // 최고 점수 도달 시 색상 (빨간색)
+    
     [Header("Achievement")]
     private bool hasAchievedBillionaire = false;    // [19. Billionaire] 업적 중복 체크
     private bool hasAchievedHustler = false;        // [16. Hustler] 업적 중복 체크
@@ -123,7 +130,28 @@ public class ScoreManager : MonoBehaviour
         // 현재 점수 표시
         if (inGameScoreText != null)
         {
-            inGameScoreText.text = $"SCORE:\t{currentScore}";;
+            inGameScoreText.text = $"SCORE:  {currentScore}";
+
+            // best 스코어 기준으로 크기와 색이 점점 바뀜
+            float progress = 0f;
+            if (bestScore > 0)
+            {
+                progress = (float)currentScore / (float)bestScore;
+            }
+
+            inGameScoreText.fontSize = Mathf.Lerp(minFontSize, maxFontSize, progress);
+
+            if (progress <=0.5f)
+            {
+                inGameScoreText.color = Color.Lerp(minScoreColor, midScoreColor, progress * 2);
+            }
+            else
+            {
+                inGameScoreText.color = Color.Lerp(midScoreColor, maxScoreColor, (progress - 0.5f) * 2);
+            }
+
+            
+        
         }
         
         // 현재 코인 수 표시
@@ -137,7 +165,7 @@ public class ScoreManager : MonoBehaviour
         {
             if (currentScore < bestScore)
             {
-                bestScoreText.text = $"BEST:\t{bestScore - currentScore}";
+                bestScoreText.text = $"BEST:  {bestScore - currentScore}";
             }
             else if (currentScore == bestScore)
             {
