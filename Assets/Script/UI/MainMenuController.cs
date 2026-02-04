@@ -315,18 +315,29 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    // 헬리콥터 + 캐릭터 + 오디오 + 로딩을 총괄하는 코루틴
+    private float GetTargetHelicopterVolume()
+    {
+        if (SFXManager.Instance == null) return 1.0f;
+
+        if (SFXManager.Instance.IsMuted()) return 0f;
+
+        float volumeRatio = (float)SFXManager.Instance.GetCurrentVolumeLevel() / 10f;
+
+        return volumeRatio;
+    }
+
     IEnumerator HelicopterSequence()
     {
         if (characterAnimator != null) characterAnimator.enabled = false;
 
-        // [오디오 Phase 1]
         if (BGMManager.Instance != null) BGMManager.Instance.FadeTo(0f, 2.0f);
+
         if (heliAudioSource != null)
         {
             heliAudioSource.volume = 0f;
             heliAudioSource.Play();
-            StartCoroutine(FadeAudioSource(heliAudioSource, 1.0f, 2.0f));
+            float targetVol = GetTargetHelicopterVolume();
+            StartCoroutine(FadeAudioSource(heliAudioSource, targetVol, 2.0f));
         }
 
         // 1단계: 대기
