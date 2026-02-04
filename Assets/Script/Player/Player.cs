@@ -1030,19 +1030,16 @@ public class Player : MonoBehaviour
 
                 if (carRootRb != null)
                 {
-                    // 부모에 Rigidbody가 있으면 그게 진짜 차!
                     currentCar = carRootRb.gameObject;
                 }
                 else
                 {
-                    // 혹시 Rigidbody가 없다면 그냥 부딪힌 놈을 차로 인식
                     currentCar = other.gameObject;
                 }
 
-                // 2. 방금 부딪힌 그 차인가?
                 if (currentCar == lastHitCar)
                 {
-                    return; // "아까(0.01초전) 바퀴 칠 때 감지된 그 차네. 무시."
+                    return; 
                 }
 
                 // 3. 새로운 차라면 기억!
@@ -1066,7 +1063,7 @@ public class Player : MonoBehaviour
                     }
                 }
 
-                Debug.Log("CarCrash!");
+                
 
                 // 별을 먹은 상태로 차를 튕겨낼 시 효과음 재생.
                 SFXManager.Instance.Play("CarBounceOff");
