@@ -79,6 +79,32 @@ public class Customize : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        
+        // 기본 스킨(0번) 초기화: 비니와 가방 제외
+        InitializeDefaultSkins();
+    }
+
+    private void InitializeDefaultSkins()
+    {
+        // Player 0번 스킨 unlock
+        if (PlayerPrefs.GetInt("PlayerSkin_0_Unlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt("PlayerSkin_0_Unlocked", 1);
+        }
+        
+        // Helicopter 0번 스킨 unlock
+        if (PlayerPrefs.GetInt("HelicopterSkin_0_Unlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt("HelicopterSkin_0_Unlocked", 1);
+        }
+        
+        // Hook 0번 스킨 unlock
+        if (PlayerPrefs.GetInt("HookSkin_0_Unlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt("HookSkin_0_Unlocked", 1);
+        }
+        
+        PlayerPrefs.Save();
     }
 
     [Header("PlayerSkin")]
@@ -239,7 +265,6 @@ public class Customize : MonoBehaviour
         {
             PlayerPrefs.SetInt($"PlayerSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Player skin index {index} unlocked");
         }
     }
 
@@ -249,7 +274,6 @@ public class Customize : MonoBehaviour
         {
             PlayerPrefs.SetInt($"BeanieSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Beanie skin index {index} unlocked");
         }
     }
 
@@ -259,7 +283,6 @@ public class Customize : MonoBehaviour
         {
             PlayerPrefs.SetInt($"BagSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Bag skin index {index} unlocked");
         }
     }
 
@@ -269,7 +292,6 @@ public class Customize : MonoBehaviour
         {
             PlayerPrefs.SetInt($"HelicopterSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Helicopter skin index {index} unlocked");
         }
     }
 
@@ -279,7 +301,6 @@ public class Customize : MonoBehaviour
         {
             PlayerPrefs.SetInt($"HookSkin_{index}_Unlocked", 1);
             PlayerPrefs.Save();
-            Debug.Log($"[Customize] Hook skin index {index} unlocked");
         }
     }
 

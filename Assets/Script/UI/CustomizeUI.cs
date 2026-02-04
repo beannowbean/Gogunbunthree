@@ -7,10 +7,8 @@ using UnityEngine.EventSystems;
 
 /// <summary>
 /// Customize UI 컨트롤러
-/// - Inspector에서 Cancel/Apply 버튼을 연결하세요.
-/// - 버튼 클릭 시 Inspector의 Button.OnClick에 메서드를 연결하거나 코드에서 리스너를 등록하세요.
-/// - Apply: 현재 적용된 스킨/아이템을 PlayerPrefs에 저장합니다.
-/// - Cancel: 패널 열기 시의 상태로 되돌립니다.
+/// - 스킨 버튼 클릭 시 바로 설정이 저장
+/// - Quit 버튼으로 메인 메뉴 돌아가기
 /// </summary>
 public class CustomizeUI : MonoBehaviour
 {
@@ -45,21 +43,37 @@ public class CustomizeUI : MonoBehaviour
 
         if (type == "Player") {
             spriteList = Customize.Instance.GetUnlockedPlayerSkinIcons();
-            onClick = (idx) => Customize.Instance.EquipPlayerSkinNumber(idx);
+            onClick = (idx) => {
+                Customize.Instance.EquipPlayerSkinNumber(idx);
+                PlayerPrefs.SetInt("SelectedPlayerSkinIndex", idx);
+                PlayerPrefs.Save();
+            };
         }
         else if (type == "Helicopter") {
             spriteList = Customize.Instance.GetUnlockedHelicopterSkinIcons();
-            onClick = (idx) => Customize.Instance.EquipHelicopterSkinNumber(idx);
+            onClick = (idx) => {
+                Customize.Instance.EquipHelicopterSkinNumber(idx);
+                PlayerPrefs.SetInt("SelectedHelicopterSkinIndex", idx);
+                PlayerPrefs.Save();
+            };
         }
         else if (type == "Hook") {
             spriteList = Customize.Instance.GetUnlockedHookSkinIcons();
-            onClick = (idx) => Customize.Instance.EquipHookSkinNumber(idx);
+            onClick = (idx) => {
+                Customize.Instance.EquipHookSkinNumber(idx);
+                PlayerPrefs.SetInt("SelectedHookSkinIndex", idx);
+                PlayerPrefs.SetInt("SelectedRopeSkinIndex", idx);
+                PlayerPrefs.Save();
+            };
         }
         else if (type == "Beanie") {
             spriteList = Customize.Instance.GetUnlockedBeanieSkinIcons();
             onClick = (idx) => {
                 Customize.Instance.EquipBeanie();
                 Customize.Instance.ChangeBeanieSkinNumber(idx);
+                PlayerPrefs.SetInt("SelectedBeanieEquipped", 1);
+                PlayerPrefs.SetInt("SelectedBeanieSkinIndex", idx);
+                PlayerPrefs.Save();
             };
         }
         else if (type == "Bag") {
@@ -67,6 +81,9 @@ public class CustomizeUI : MonoBehaviour
             onClick = (idx) => {
                 Customize.Instance.EquipBag();
                 Customize.Instance.EquipBagSkinNumber(idx);
+                PlayerPrefs.SetInt("SelectedBagEquipped", 1);
+                PlayerPrefs.SetInt("SelectedBagSkinIndex", idx);
+                PlayerPrefs.Save();
             };
         }
 
@@ -76,8 +93,8 @@ public class CustomizeUI : MonoBehaviour
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
             btnObj.name = "Beanie_UnequipButton";
             
-            var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
-            var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            var btn = btnObj.GetComponentInChildren<UnityEngine.UI.Button>();
+            var img = btn?.GetComponent<UnityEngine.UI.Image>();
             
             if (btnObj != null && !btnObj.activeSelf)
                 btnObj.SetActive(true);
@@ -92,7 +109,11 @@ public class CustomizeUI : MonoBehaviour
                 btn.interactable = true;
                 if (btn.targetGraphic == null && img != null)
                     btn.targetGraphic = img;
-                btn.onClick.AddListener(() => Customize.Instance.UnequipBeanie());
+                btn.onClick.AddListener(() => {
+                    Customize.Instance.UnequipBeanie();
+                    PlayerPrefs.SetInt("SelectedBeanieEquipped", 0);
+                    PlayerPrefs.Save();
+                });
             }
         }
         else if (type == "Bag" && Customize.Instance.bagUnequipIcon != null)
@@ -100,8 +121,8 @@ public class CustomizeUI : MonoBehaviour
             var btnObj = Instantiate(skinButtonPrefab, skinListContent);
             btnObj.name = "Bag_UnequipButton";
             
-            var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
-            var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            var btn = btnObj.GetComponentInChildren<UnityEngine.UI.Button>();
+            var img = btn?.GetComponent<UnityEngine.UI.Image>();
             
             if (btnObj != null && !btnObj.activeSelf)
                 btnObj.SetActive(true);
@@ -116,7 +137,11 @@ public class CustomizeUI : MonoBehaviour
                 btn.interactable = true;
                 if (btn.targetGraphic == null && img != null)
                     btn.targetGraphic = img;
-                btn.onClick.AddListener(() => Customize.Instance.UnequipBag());
+                btn.onClick.AddListener(() => {
+                    Customize.Instance.UnequipBag();
+                    PlayerPrefs.SetInt("SelectedBagEquipped", 0);
+                    PlayerPrefs.Save();
+                });
             }
         }
 
@@ -129,8 +154,8 @@ public class CustomizeUI : MonoBehaviour
             string spriteName = spriteList[i]?.name ?? "";
             btnObj.name = $"{type}_SkinButton_{spriteName}";
 
-            var btn = btnObj.GetComponent<UnityEngine.UI.Button>();
-            var img = btnObj.GetComponent<UnityEngine.UI.Image>();
+            var btn = btnObj.GetComponentInChildren<UnityEngine.UI.Button>();
+            var img = btn?.GetComponent<UnityEngine.UI.Image>();
 
             if (btnObj != null && !btnObj.activeSelf)
                 btnObj.SetActive(true);
@@ -234,8 +259,7 @@ public class CustomizeUI : MonoBehaviour
     public void OnBagButtonClicked() => ShowSkinList("Bag");
     // 옷(플레이어 스킨) 버튼은 OnPlayerButtonClicked() 재사용 가능
     [Header("Buttons")]
-    public Button cancelButton;
-    public Button applyButton;
+    public Button quitButton;
 
     [Header("Preview Controller")]
     public CustomizePreviewController previewController;
@@ -279,8 +303,7 @@ public class CustomizeUI : MonoBehaviour
 
     private void InitializeButtons()
     {
-        if (cancelButton != null) cancelButton.onClick.AddListener(OnCancelClicked);
-        if (applyButton != null) applyButton.onClick.AddListener(OnApplyClicked);
+        if (quitButton != null) quitButton.onClick.AddListener(OnCancelClicked);
 
         // Auto-wire common tab buttons (Player, Helicopter, Hook, Beanie, Bag) if present under this UI hierarchy.
         var childButtons = GetComponentsInChildren<Button>(true);
@@ -327,8 +350,7 @@ public class CustomizeUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (cancelButton != null) cancelButton.onClick.RemoveListener(OnCancelClicked);
-        if (applyButton != null) applyButton.onClick.RemoveListener(OnApplyClicked);
+        if (quitButton != null) quitButton.onClick.RemoveListener(OnCancelClicked);
 
         // Restore any modified preview physics when this UI is destroyed
         if (previewController != null)
@@ -459,48 +481,14 @@ public class CustomizeUI : MonoBehaviour
 
     /// <summary>
     /// Cancel 버튼 클릭 핸들러
-    /// - 현재 편집 중인 변경사항을 취소하고 패널이 열렸을 때 상태로 복구한 뒤 MainMenu로 전환
+    /// - 현재 적용된 상태 그대로 MainMenu로 이동
     /// </summary>
     public void OnCancelClicked()
     {
-        ApplySelectionsFromIndices(originalPlayerSkinIndex, originalRopeSkinIndex, originalHookSkinIndex, originalHelicopterSkinIndex, originalBeanieEquipped, originalBeanieSkinIndex, originalBagEquipped, originalBagSkinIndex);
         SceneManager.LoadScene("MainMenu");
     }
 
-    /// <summary>
-    /// Apply 버튼 클릭 핸들러
-    /// - 현재 적용된 설정을 PlayerPrefs에 저장하고 MainMenu로 전환
-    /// </summary>
-    public void OnApplyClicked()
-    {
-        if (Customize.Instance == null || Player.Instance == null)
-        {
-            SceneManager.LoadScene("MainMenu");
-            return;
-        }
 
-        int playerIndex = FindPlayerSkinIndex();
-        int ropeIndex = FindRopeSkinIndex();
-        int hookIndex = FindHookSkinIndex();
-        int heliIndex = FindHelicopterSkinIndex();
-        bool beanieEquipped = Player.Instance.IsBeanieEquipped();
-        int beanieSkinIndex = FindBeanieSkinIndex();
-        bool bagEquipped = Player.Instance.IsBagEquipped();
-        int bagSkinIndex = FindBagSkinIndex();
-
-        PlayerPrefs.SetInt("SelectedPlayerSkinIndex", playerIndex);
-        PlayerPrefs.SetInt("SelectedRopeSkinIndex", ropeIndex);
-        PlayerPrefs.SetInt("SelectedHookSkinIndex", hookIndex);
-        PlayerPrefs.SetInt("SelectedHelicopterSkinIndex", heliIndex);
-        PlayerPrefs.SetInt("SelectedBeanieEquipped", beanieEquipped ? 1 : 0);
-        PlayerPrefs.SetInt("SelectedBeanieSkinIndex", beanieSkinIndex);
-        PlayerPrefs.SetInt("SelectedBagEquipped", bagEquipped ? 1 : 0);
-        PlayerPrefs.SetInt("SelectedBagSkinIndex", bagSkinIndex);
-        PlayerPrefs.Save();
-        
-        // Apply 버튼 눌러도 MainMenu 이동 안 함
-        // SceneManager.LoadScene("MainMenu");
-    }
 
     // Update preview-specific UI (e.g., show player option buttons only when player preview is active)
     private void UpdatePreviewUI(GameObject active)
@@ -578,7 +566,6 @@ public class CustomizeUI : MonoBehaviour
     /// </summary>
     public void SetInteractable(bool interactable)
     {
-        if (cancelButton != null) cancelButton.interactable = interactable;
-        if (applyButton != null) applyButton.interactable = interactable;
+        if (quitButton != null) quitButton.interactable = interactable;
     }
 }

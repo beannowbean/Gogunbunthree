@@ -149,11 +149,6 @@ public class ItemUIController : MonoBehaviour
                 }
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.T)) // 테스트용: T 키를 누르면 아이템 활성화
-        {
-            ActivateNextAvailableItem(5f);
-        }
     }
 
     // 특정 인덱스의 슬롯을 제거하고 뒤의 슬롯들을 앞으로 당기는 함수
