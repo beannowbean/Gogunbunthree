@@ -102,7 +102,6 @@ public class RankManager : MonoBehaviour
 
             if (Application.internetReachability != NetworkReachability.NotReachable || debugOfflineMode)
             {
-                Debug.Log("네트워크 연결 감지, 재로그인 시도 중...");
                 yield return StartCoroutine(LoginRoutine());
             }
 
@@ -167,7 +166,6 @@ public class RankManager : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log($"[{key}] 점수 {score}점 업로드 성공");
                 onComplete?.Invoke(true);
             }
             else
