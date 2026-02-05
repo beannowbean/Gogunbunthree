@@ -71,6 +71,13 @@ public class RankTester : MonoBehaviour
             });
         }
 
+        // [8번 키] 오프라인 테스트
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            RankManager.Instance.debugOfflineMode = !RankManager.Instance.debugOfflineMode;
+            Debug.Log($"오프라인 모드 상태: {RankManager.Instance.debugOfflineMode}");
+        }
+
         // [0번 키] 가상 유저 20명 생성
         // if (Input.GetKeyDown(KeyCode.Alpha0))
         // {
