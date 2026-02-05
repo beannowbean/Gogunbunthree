@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   apiKey: dev_69d7a89d4b1441cb9e8499b8f20adc3a
   adminToken: 
-  domainKey: cmsezmx6
+  domainKey: 
   game_version: 1.0.0.0
   sdk_version: 7.0.0
   url: https://api.lootlocker.com/v1

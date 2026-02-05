@@ -12,6 +12,9 @@ public struct RankData
     public int score;   // 점수
 }
 
+/// <summary>
+/// 랭킹 및 업적 관리를 담당하는 매니저
+/// </summary>
 public class RankManager : MonoBehaviour
 {
     public static RankManager Instance { get; private set; }    // 싱글톤 인스턴스
@@ -95,7 +98,7 @@ public class RankManager : MonoBehaviour
 
         LootLockerSDKManager.SubmitScore("", score, key, (response) =>
         {
-            if (response.success) Debug.Log($"[{key}] 점수 업로드 성공: {score}");
+            if (response.success){}
             else Debug.LogError($"[{key}] 점수 업로드 실패: " + response.errorData.message);
         });
     }
@@ -130,6 +133,24 @@ public class RankManager : MonoBehaviour
                         onRateCalculated?.Invoke(rate);
                     }
                 });
+            }
+        });
+    }
+
+    // 업적 달성 등수 계산 함수
+    public void GetAchievementOrder(string achKey, System.Action<int> onOrderFound)
+    {
+        // 내 ID를 사용하여 해당 업적 리더보드에서의 내 등수를 조회
+        LootLockerSDKManager.GetMemberRank(achKey, currentLocalPlayerId, (response) =>
+        {
+            if (response.success)
+            {
+                int myOrder = response.rank;
+                onOrderFound?.Invoke(myOrder);
+            }
+            else
+            {
+                Debug.LogError($"업적 순서 조회 실패: {response.errorData.message}");
             }
         });
     }
