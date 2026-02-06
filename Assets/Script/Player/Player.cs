@@ -621,7 +621,7 @@ public class Player : MonoBehaviour
 
             float distance = Vector3.Distance(transform.position, targetPosition);
 
-            if (distance <= 1.0f)
+            if (distance <= 1.0f || transform.position.z >= targetPosition.z)
             {
                 transform.position = realTargetPosition;    // 정확한 위치 보정
                 ReleaseHook();

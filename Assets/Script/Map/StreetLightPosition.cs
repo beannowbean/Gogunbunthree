@@ -14,56 +14,56 @@ public class StreetLightPosition : MonoBehaviour
     void Awake()
     {
         tileGenerate = GameObject.FindGameObjectWithTag("TileGenerator").GetComponent<TileGenerate>();
-        initialPos = transform.position;
+        initialPos = transform.localPosition;
     }
 
     void OnEnable()
     {
-        transform.position = initialPos;
+        transform.localPosition = initialPos;
         if(isBus == true)
         {
             if(tileGenerate.carSpeed >= 40)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 16.1f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 17.1f);
             }
             else if(tileGenerate.carSpeed >= 35)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 14.6f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 14.6f);
             }
             else if(tileGenerate.carSpeed >= 30)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 13.1f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 13.1f);
             }
             else if(tileGenerate.carSpeed >= 25)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 11.6f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 11.6f);
             }
             else if(tileGenerate.carSpeed >= 20)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 10.1f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 10.1f);
             }
         }
         else if (isBus == false)
         {
             if(tileGenerate.carSpeed >= 40)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 12.85f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 13.85f);
             }
             else if(tileGenerate.carSpeed >= 35)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 11.45f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 11.45f);
             }
             else if(tileGenerate.carSpeed >= 30)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 10.05f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 10.05f);
             }
             else if(tileGenerate.carSpeed >= 25)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 8.65f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 8.65f);
             }
             else if(tileGenerate.carSpeed >= 20)
             {
-                transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z - 7.25f);
+                transform.localPosition = new Vector3(initialPos.x, initialPos.y, initialPos.z - 7.25f);
             }
         }
     }
