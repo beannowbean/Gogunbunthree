@@ -382,6 +382,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3059472298093741524}
     m_Modifications:
+    - target: {fileID: -2010667471775221226, guid: 75a7d134dd1848a45acc222fd73acc6c, type: 3}
+      propertyPath: isBus
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2563796805902272947, guid: 75a7d134dd1848a45acc222fd73acc6c, type: 3}
       propertyPath: m_Name
       value: Left_hanger2
@@ -400,7 +404,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2945282894717145865, guid: 75a7d134dd1848a45acc222fd73acc6c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.86
+      value: -1.96
       objectReference: {fileID: 0}
     - target: {fileID: 2945282894717145865, guid: 75a7d134dd1848a45acc222fd73acc6c, type: 3}
       propertyPath: m_LocalRotation.w
