@@ -138,7 +138,42 @@ public class AchievementManager : MonoBehaviour
 
         PlayerPrefs.SetInt($"Achievement_{achievementId}", 1);
         PlayerPrefs.Save();
+
+        // 매핑 테이블 참조하여 RankManager에 업적 완료 전송
+        if (idMapping.TryGetValue(achievementId, out string rankKey))
+        {
+            if (RankManager.Instance != null)
+            {
+                RankManager.Instance.CompleteAchievement(rankKey);
+                Debug.Log($"[업적 전송] {achievementId} -> {rankKey}");
+            }
+        }
     }
+
+    // 업적 스크립트 키와 리더보드 키 매핑 테이블
+    private readonly Dictionary<string, string> idMapping = new Dictionary<string, string>
+    {
+        { "Achieve_Newbie", "ach_01" },
+        { "Achieve_Dumb", "ach_02" },
+        { "Achieve_HitAndRun", "ach_03" },
+        { "Achieve_TreasureHunter", "ach_04" },
+        { "Achieve_Eagle", "ach_05" },
+        { "Achieve_Bunny", "ach_06" },
+        { "Achieve_Bruh", "ach_07" },
+        { "Achieve_Acrophobia", "ach_08" },
+        { "Achieve_TopGun", "ach_09" },
+        { "Achieve_HeliVIP", "ach_10" },
+        { "Achieve_Gentleman", "ach_11" },
+        { "Achieve_Wrecker", "ach_12" },
+        { "Achieve_Superstar", "ach_13" },
+        { "Achieve_Iceman", "ach_14" },
+        { "Achieve_Icarus", "ach_15" },
+        { "Achieve_Hustler", "ach_16" },
+        { "Achieve_SkyWalker", "ach_17" },
+        { "Achieve_Pennyless", "ach_18" },
+        { "Achieve_Billionaire", "ach_19" },
+        { "Achieve_Rapunzel", "ach_20" }
+    };
     
     /// <summary>
     /// 보상 수령

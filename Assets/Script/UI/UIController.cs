@@ -265,6 +265,10 @@ public class UIController : MonoBehaviour
             {
                 gameOverScoreText.color = newColor;
             }
+
+            // 최고 점수 전송
+            Debug.Log($"[테스트] 점수 전송 시도: {ScoreManager.Instance.GetCurrentScore()}");
+            RankManager.Instance.SubmitBestScore(ScoreManager.Instance.GetCurrentScore());
         }
         else
         {
