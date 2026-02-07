@@ -34,6 +34,7 @@ public class RankManager : MonoBehaviour
 
     private void Awake()
     {
+        LootLocker.LootLockerConfig.current.apiKey = "dev_69d7a89d4b1441cb9e8499b8f20adc3a";    // 임시용 삭제 예정
         // 싱글톤 패턴 구현
         if (Instance == null)
         {
