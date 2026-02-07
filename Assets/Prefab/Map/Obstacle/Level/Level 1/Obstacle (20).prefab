@@ -260,6 +260,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3059472298093741524}
     m_Modifications:
+    - target: {fileID: -5135404232576441012, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
+      propertyPath: isBus
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 136064325414844882, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_Name
       value: Right_hanger1
@@ -274,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 768063181531915112, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -8.25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 768063181531915112, guid: 8380aef308f45714fb94e0a85b337d1a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -522,7 +526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3619989658177253825, guid: f0fb742ec690eb443a2a21bf05f28630, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.96
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3619989658177253825, guid: f0fb742ec690eb443a2a21bf05f28630, type: 3}
       propertyPath: m_LocalRotation.w

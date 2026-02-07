@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 722260097192551820}
   - component: {fileID: 7740173777472461017}
   - component: {fileID: 9209360331467917039}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Helicopter
   m_TagString: Helicopter
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 9152262925688467029}
   - component: {fileID: 623573477182005761}
   - component: {fileID: 902783150046111860}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Blade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8880748561296496894}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AH64
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 4999382060897498415}
   - component: {fileID: 3190990361306599671}
   - component: {fileID: 6852435579001964595}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}

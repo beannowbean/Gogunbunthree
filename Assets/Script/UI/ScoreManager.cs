@@ -39,7 +39,7 @@ public class ScoreManager : MonoBehaviour
 
     [Header("Score UI Effect")]
     public float minFontSize = 100f;        // 시작 폰트 크기
-    public float maxFontSize = 180f;        // 최고 점수 도달 시 폰트 크기
+    public float maxFontSize = 140f;        // 최고 점수 도달 시 폰트 크기
     public Color minScoreColor = Color.white;   // 시작 색상 (흰색)
     public Color midScoreColor = Color.yellow;  // 50% 지점 색상 (노란색)
     public Color maxScoreColor = Color.red;  // 최고 점수 도달 시 색상 (빨간색)
@@ -124,8 +124,6 @@ public class ScoreManager : MonoBehaviour
                 progress = (float)currentScore / (float)bestScore;
             }
 
-            inGameScoreText.fontSize = Mathf.Lerp(minFontSize, maxFontSize, progress);
-
             if (progress <=0.5f)
             {
                 inGameScoreText.color = Color.Lerp(minScoreColor, midScoreColor, progress * 2);
@@ -133,10 +131,8 @@ public class ScoreManager : MonoBehaviour
             else
             {
                 inGameScoreText.color = Color.Lerp(midScoreColor, maxScoreColor, (progress - 0.5f) * 2);
+                inGameScoreText.fontSize = Mathf.Lerp(minFontSize, maxFontSize, progress);
             }
-
-            
-        
         }
         
         // 현재 코인 수 표시
@@ -271,62 +267,55 @@ public class ScoreManager : MonoBehaviour
             TextMeshProUGUI bonusText = bonusObj.GetComponent<TextMeshProUGUI>();
             bonusText.text = bonusAmount;
             bonusObj.SetActive(true);
-            
+
             // 초기 위치와 알파값 설정
             bonusText.transform.localPosition = bonusScoreText.transform.localPosition;
-            
+
             // 점수 텍스트의 너비를 계산하여 보너스 텍스트 위치를 오른쪽으로 이동
             if (inGameScoreText != null)
             {
-                // TextMeshPro의 textInfo를 사용하여 실제 문자 위치 기반으로 너비 계산
                 inGameScoreText.ForceMeshUpdate();
-                TMP_TextInfo textInfo = inGameScoreText.textInfo;
-                
-                float scoreTextWidth = 0f;
-                
-                // 문자가 있을 때만 계산
-                if (textInfo.characterCount > 0)
-                {
-                    // 마지막 문자의 오른쪽 끝 위치 찾기
-                    TMP_CharacterInfo lastChar = textInfo.characterInfo[textInfo.characterCount - 1];
-                    scoreTextWidth = lastChar.xAdvance;
-                }
-                
-                // 보너스 텍스트를 점수 텍스트의 오른쪽에 배치 (왼쪽 정렬 기준)
+
+                float scoreTextWidth = inGameScoreText.preferredWidth;
+
                 Vector3 adjustedPos = bonusText.transform.localPosition;
                 float baseX = inGameScoreText.transform.localPosition.x;
-                adjustedPos.x = baseX + scoreTextWidth + 130f; // 시작점 + 너비 + 여백
+
+                float dynamicPadding = inGameScoreText.fontSize * 0.5f;
+
+                adjustedPos.x = baseX + scoreTextWidth + dynamicPadding + 50f;
+
                 bonusText.transform.localPosition = adjustedPos;
             }
-            
+
             Color startColor = bonusText.color;
             startColor.a = 1f;
             bonusText.color = startColor;
-            
+
             Vector3 startPos = bonusText.transform.localPosition;
-            
+
             // 애니메이션 실행 (위로 올라가면서 페이드 아웃)
             float duration = 0.8f;
             float elapsed = 0f;
-            
+
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / duration;
-                
+
                 // 위로 이동
                 Vector3 newPos = startPos;
                 newPos.y = startPos.y + (t * 100f); // 100 픽셀 위로 이동
                 bonusText.transform.localPosition = newPos;
-                
+
                 // 페이드 아웃
                 Color newColor = startColor;
                 newColor.a = 1f - t;
                 bonusText.color = newColor;
-                
+
                 yield return null;
             }
-            
+
             // 애니메이션이 끝나면 오브젝트 삭제
             Destroy(bonusObj);
         }
@@ -342,10 +331,6 @@ public class ScoreManager : MonoBehaviour
         return IsNewRecord;
     }
 
-    // 게임오버 화면에서 점수를 단계적으로 표시하는 코루틴
-    // scoreTextUI: 점수를 표시할 TextMeshProUGUI (거리 점수 → 최종 점수)
-    // coinCountTextUI: 코인 개수를 표시할 TextMeshProUGUI (선택사항, null이면 코인 개수 미표시)
-    // onComplete: 애니메이션 완료 후 실행할 콜백
     public IEnumerator AnimateGameOverScore(TextMeshProUGUI scoreTextUI, TextMeshProUGUI coinCountTextUI = null, System.Action onComplete = null)
     {
         if (scoreTextUI == null) yield break;

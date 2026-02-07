@@ -599,6 +599,38 @@ PrefabInstance:
       propertyPath: Settings
       value: 
       objectReference: {fileID: 923735339}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: sfxOnIcons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: sfxOffIcons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: musicOnIcons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: musicOffIcons.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: 'sfxOnIcons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1890180817}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: 'sfxOffIcons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1285376617}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: 'musicOnIcons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 204949136}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: 'musicOffIcons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 600530864}
     - target: {fileID: 2921816090940000416, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1

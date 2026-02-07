@@ -1,7 +1,7 @@
 using UnityEngine;
 using LootLocker.Requests;
 using System.Collections;
-using System.Linq;
+using System.Linq;  // RankData 변환용 {.ToArray()}
 
 // 랭킹 정보를 담을 간단한 구조체 (UI 전달용)
 [System.Serializable]
@@ -12,10 +12,14 @@ public struct RankData
     public int score;   // 점수
 }
 
+/// <summary>
+/// 랭킹 및 업적 관리를 담당하는 매니저
+/// </summary>
 public class RankManager : MonoBehaviour
 {
     public static RankManager Instance { get; private set; }    // 싱글톤 인스턴스
     public bool IsLoggedIn { get; private set; }    // 로그인 상태 확인용
+    public bool debugOfflineMode = false; // 디버그용 오프라인 모드 토글
 
     [Header("리더보드 Keys")]
     public string globalRankingKey = "global_ranking"; // 메인 랭킹용
@@ -23,9 +27,14 @@ public class RankManager : MonoBehaviour
 
     // 내부 변수
     string currentLocalPlayerId = "";   // 현재 로컬 플레이어 ID
+    bool isRequesting = false;          // 중복 요청 방지용
+    const int MAX_SCORE_LIMIT = 1000000; // 최대 점수 제한
+    const string PENDING_SCORE_KEY = "PendingBestScore"; // 대기 중인 점수 저장용 키
+    const string PENDING_ACHIEVEMENTS_KEY = "PendingAchievements"; // 대기 중인 업적 저장용 키
 
     private void Awake()
     {
+        LootLocker.LootLockerConfig.current.apiKey = "dev_69d7a89d4b1441cb9e8499b8f20adc3a";    // 임시용 삭제 예정
         // 싱글톤 패턴 구현
         if (Instance == null)
         {
@@ -56,6 +65,8 @@ public class RankManager : MonoBehaviour
                 currentLocalPlayerId = response.player_id.ToString();
                 Debug.Log($"LootLocker 로그인 성공 ID: {currentLocalPlayerId}");
                 IsLoggedIn = true;
+
+                SyncPendingData(); // 대기 중인 데이터 동기화 시도
                 
                 // 닉네임이 없으면 랜덤 생성 (최초 1회)
                 if (string.IsNullOrEmpty(response.player_name))
@@ -70,43 +81,172 @@ public class RankManager : MonoBehaviour
             else
             {
                 Debug.LogError("로그인 실패: " + response.errorData.message);
+                IsLoggedIn = false;
             }
             connected = true;
         });
         yield return new WaitUntil(() => connected);
+        StartCoroutine(NetworkMonitorRoutine());
+    }
+
+    // 네트워크 상태 모니터링 코루틴
+    private IEnumerator NetworkMonitorRoutine()
+    {
+        while (true)
+        {
+            // 이미 로그인된 상태라면 대기
+            if (IsLoggedIn)
+            {
+                yield return new WaitForSeconds(5f);
+                continue;
+            }
+
+            if (Application.internetReachability != NetworkReachability.NotReachable || debugOfflineMode)
+            {
+                yield return StartCoroutine(LoginRoutine());
+            }
+
+            yield return new WaitForSeconds(5f);
+        }
     }
 
     // 점수 전송 함수 (메인 랭킹용)
     public void SubmitBestScore(int score)
     {
-        SubmitScoreToKey(globalRankingKey, score);
+        if (score > MAX_SCORE_LIMIT)
+        {
+            Debug.LogError($"점수 전송 실패: 점수 {score}가 허용 범위를 벗어났습니다.");
+            return;
+        }
+
+        // 오프라인 상태이거나 로그인되지 않은 경우 점수를 로컬에 저장
+        if (!IsLoggedIn || Application.internetReachability == NetworkReachability.NotReachable || debugOfflineMode)
+        {
+            int currentBestScore = PlayerPrefs.GetInt("BestScore", 0);
+            int currentPendingScore = PlayerPrefs.GetInt(PENDING_SCORE_KEY, 0);
+            if (score > currentPendingScore && score > currentBestScore)
+            {
+                PlayerPrefs.SetInt(PENDING_SCORE_KEY, score);
+                Debug.Log("오프라인 상태: 점수를 로컬에 저장했습니다");
+            }
+            return;
+        }
+        SubmitScoreToKey(globalRankingKey, score, (success) =>
+        {
+            if (!success) PlayerPrefs.SetInt(PENDING_SCORE_KEY, score); // 실패 시 로컬에 저장
+        });
     }
 
     // 업적 달성 전송 함수 (업적 리더보드에 1점 전송)
     public void CompleteAchievement(string achKey)
     {
+        if(!IsLoggedIn || Application.internetReachability == NetworkReachability.NotReachable || debugOfflineMode)
+        {
+            string currentPendingAchs = PlayerPrefs.GetString(PENDING_ACHIEVEMENTS_KEY, "");
+            if (!currentPendingAchs.Contains(achKey))   // 중복 저장 방지
+            {
+                string updated = string.IsNullOrEmpty(currentPendingAchs) ? achKey : currentPendingAchs + "," + achKey;
+                PlayerPrefs.SetString(PENDING_ACHIEVEMENTS_KEY, updated);
+                Debug.Log("오프라인 상태: 업적을 로컬에 저장했습니다");
+            }
+            return;
+        }
         SubmitScoreToKey(achKey, 1);
     }
 
     // 키를 사용한 점수 전송 함수
-    private void SubmitScoreToKey(string key, int score)
+    private void SubmitScoreToKey(string key, int score, System.Action<bool> onComplete = null)
     {
-        if (!IsLoggedIn) return;
+        if (!IsLoggedIn) {
+            StartCoroutine(LoginRoutine());
+            onComplete?.Invoke(false);
+            return;
+        }
 
         LootLockerSDKManager.SubmitScore("", score, key, (response) =>
         {
-            if (response.success) Debug.Log($"[{key}] 점수 업로드 성공: {score}");
-            else Debug.LogError($"[{key}] 점수 업로드 실패: " + response.errorData.message);
+            if (response.success)
+            {
+                onComplete?.Invoke(true);
+            }
+            else
+            {
+                Debug.LogError($"[{key}] 점수 업로드 실패: " + response.errorData.message);
+                onComplete?.Invoke(false);
+            }
         });
+    }
+
+    // 대기 중인 점수 및 업적 동기화 함수
+    private void SyncPendingData()
+    {
+        if (debugOfflineMode) return;
+
+        // 대기 중인 점수 동기화
+        int pendingScore = PlayerPrefs.GetInt(PENDING_SCORE_KEY, 0);
+        if (pendingScore > 0)
+        {
+            SubmitScoreToKey(globalRankingKey, pendingScore, (success) =>
+            {
+                if (success)
+                {
+                    PlayerPrefs.DeleteKey(PENDING_SCORE_KEY);
+                    Debug.Log("대기 중인 점수 동기화 완료");
+                }
+            });
+        }
+
+        // 대기 중인 업적 동기화
+        string pendingAchs = PlayerPrefs.GetString(PENDING_ACHIEVEMENTS_KEY, "");
+        if (!string.IsNullOrEmpty(pendingAchs))
+        {
+            PlayerPrefs.DeleteKey(PENDING_ACHIEVEMENTS_KEY);
+
+            string[] achKeys = pendingAchs.Split(',');
+            foreach (string achKey in achKeys)
+            {
+                if(string.IsNullOrEmpty(achKey)) continue;
+
+                SubmitScoreToKey(achKey, 1, (success) =>{
+                    if(!success)
+                    {
+                        // 실패 시 다시 로컬에 저장
+                        string currentPendingAchs = PlayerPrefs.GetString(PENDING_ACHIEVEMENTS_KEY, "");
+                        string updated = string.IsNullOrEmpty(currentPendingAchs) ? achKey : currentPendingAchs + "," + achKey;
+                        PlayerPrefs.SetString(PENDING_ACHIEVEMENTS_KEY, updated);
+                    }
+                    else
+                    {
+                        Debug.Log($"대기 중인 업적 [{achKey}] 동기화 완료");
+                    }
+                });
+            }
+        }
     }
 
     // 닉네임 변경 함수
     public void ChangeNickname(string newName)
     {
+        if(isRequesting) return;    // 중복 요청 방지
+        isRequesting = true;
+
         LootLockerSDKManager.SetPlayerName(newName, (response) =>
         {
+            isRequesting = false;
             if (response.success) Debug.Log("닉네임 변경 완료: " + newName);
-            else Debug.LogError("닉네임 변경 실패: " + response.errorData.message);
+            else {
+                // 에러 메시지에 'unique'나 'taken'이 포함되어 있으면 중복된 이름
+                string errorMsg = response.errorData.message.ToLower();
+                if(errorMsg.Contains("unique") || errorMsg.Contains("taken"))
+                {
+                    Debug.LogWarning("닉네임 변경 실패: 이미 사용 중인 닉네임입니다.");
+                    // 여기서 UI 관련 처리
+                }
+                else
+                {
+                    Debug.LogError("닉네임 변경 실패: " + response.errorData.message);
+                }
+            }
         });
     }
 
@@ -134,12 +274,34 @@ public class RankManager : MonoBehaviour
         });
     }
 
+    // 업적 달성 등수 계산 함수
+    public void GetAchievementOrder(string achKey, System.Action<int> onOrderFound)
+    {
+        // 내 ID를 사용하여 해당 업적 리더보드에서의 내 등수를 조회
+        LootLockerSDKManager.GetMemberRank(achKey, currentLocalPlayerId, (response) =>
+        {
+            if (response.success)
+            {
+                int myOrder = response.rank;
+                onOrderFound?.Invoke(myOrder);
+            }
+            else
+            {
+                Debug.LogError($"업적 순서 조회 실패: {response.errorData.message}");
+            }
+        });
+    }
+
     // 상위 랭크 가져오기
     public void GetTopRanking(System.Action<RankData[]> onLoaded)
     {
+        if(isRequesting) return;    // 중복 요청 방지
+        isRequesting = true;
+
         // globalRankingKey에서 상위 20명(0번 index부터 20개) 가져옴
         LootLockerSDKManager.GetScoreList(globalRankingKey, 20, 0, (response) =>
         {
+            isRequesting = false;
             if (response.success)
             {
                 // 서버 데이터를 RankData 구조체로 변환
@@ -162,9 +324,13 @@ public class RankManager : MonoBehaviour
     // 내 주변 등수 가져오기 (내 점수 기준 위아래)
     public void GetMyAroundRanking(System.Action<RankData[]> onLoaded)
     {
+        if(isRequesting) return;    // 중복 요청 방지
+        isRequesting = true;
+
         // 0은 본인 기준 위아래 10명을 자동으로 가져옴 (서버 기본 값)
         LootLockerSDKManager.GetMemberRank(globalRankingKey, currentLocalPlayerId, (response) =>
         {
+            isRequesting = false;
             if (response.success)
             {
                 // 성공 시 내 등수 출력

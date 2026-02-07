@@ -609,16 +609,21 @@ public class Player : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, currentHook.transform.position, hookPullSpeed * Time.deltaTime);
+            // 가로등 살짝 아래로 위치 조정
+            Vector3 targetPosition = currentHook.transform.position;
+            Vector3 realTargetPosition = new Vector3(targetPosition.x, targetPosition.y - 1f, targetPosition.z);
+
+            transform.position = Vector3.MoveTowards(transform.position, realTargetPosition, hookPullSpeed * Time.deltaTime);
 
             // 갈고리의 X위치를 기반으로 currentLane을 제일 가까운 곳으로 강제 변환.
             // 갈고리에서 떨어질 때 갈고리 걸기 전 Lane으로 자동 이동되어 부자연스러운 현상을 수정.
             UpdateLanePosition(currentHook.transform.position.x);
 
-            float distance = Vector3.Distance(transform.position, currentHook.transform.position);
+            float distance = Vector3.Distance(transform.position, targetPosition);
 
-            if (distance <= 1.0f)
+            if (distance <= 1.0f || transform.position.z >= targetPosition.z)
             {
+                transform.position = realTargetPosition;    // 정확한 위치 보정
                 ReleaseHook();
             }
         }
