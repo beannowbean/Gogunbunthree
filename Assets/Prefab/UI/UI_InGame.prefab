@@ -4885,7 +4885,7 @@ MonoBehaviour:
   inGameUIRoot: {fileID: 2449164994914824636}
   confirmationPanel: {fileID: 1961005557646840621}
   gameOverRoot: {fileID: 1632010869267955216}
-  pauseButton: {fileID: 1075126361331257631}
+  pauseButton: {fileID: 6237209074505152601}
   PasueScoreText: {fileID: 4209094532048469671}
   PauseCoinText: {fileID: 9167759493961205227}
   gameOverScoreText: {fileID: 1345641870013063716}
