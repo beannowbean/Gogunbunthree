@@ -68,7 +68,6 @@ public class RankManager : MonoBehaviour
             if (response.success)
             {
                 currentLocalPlayerId = response.player_id.ToString();
-                Debug.Log($"LootLocker 로그인 성공 ID: {currentLocalPlayerId}");
                 IsLoggedIn = true;
 
                 // 닉네임이 없으면 랜덤 생성 (최초 1회)
@@ -147,7 +146,6 @@ public class RankManager : MonoBehaviour
             if (score > currentPendingScore && score > currentBestScore)
             {
                 PlayerPrefs.SetInt(PENDING_SCORE_KEY, score);
-                Debug.Log("오프라인 상태: 점수를 로컬에 저장했습니다");
             }
             return;
         }
@@ -167,7 +165,6 @@ public class RankManager : MonoBehaviour
             {
                 string updated = string.IsNullOrEmpty(currentPendingAchs) ? achKey : currentPendingAchs + "," + achKey;
                 PlayerPrefs.SetString(PENDING_ACHIEVEMENTS_KEY, updated);
-                Debug.Log("오프라인 상태: 업적을 로컬에 저장했습니다");
             }
             return;
         }
@@ -211,7 +208,6 @@ public class RankManager : MonoBehaviour
                 if (success)
                 {
                     PlayerPrefs.DeleteKey(PENDING_SCORE_KEY);
-                    Debug.Log("대기 중인 점수 동기화 완료");
                 }
             });
         }
@@ -235,10 +231,6 @@ public class RankManager : MonoBehaviour
                         string updated = string.IsNullOrEmpty(currentPendingAchs) ? achKey : currentPendingAchs + "," + achKey;
                         PlayerPrefs.SetString(PENDING_ACHIEVEMENTS_KEY, updated);
                     }
-                    else
-                    {
-                        Debug.Log($"대기 중인 업적 [{achKey}] 동기화 완료");
-                    }
                 });
             }
         }
@@ -250,7 +242,6 @@ public class RankManager : MonoBehaviour
         LootLockerSDKManager.GetPlayerName((response) =>
         {
             if (response.success) onGet?.Invoke(response.name);
-            else Debug.LogError("닉네임 가져오기 실패");
         });
     }
 
@@ -265,7 +256,6 @@ public class RankManager : MonoBehaviour
             isRequesting = false;
             if (response.success)
             {
-                Debug.Log("닉네임 변경 완료: " + newName);
                 currentNickname = newName;
                 onComplete?.Invoke(true, "");
             }
@@ -274,8 +264,6 @@ public class RankManager : MonoBehaviour
                 // 중복된 이름인 경우 메시지 처리
                 string errorReason = response.errorData.message;
                 if (errorReason.Contains("unique")) errorReason = "This nickname is already taken";
-                
-                Debug.LogError("닉네임 변경 실패: " + errorReason);
                 onComplete?.Invoke(false, errorReason);
             }
         });
@@ -364,8 +352,6 @@ public class RankManager : MonoBehaviour
             isRequesting = false;
             if (response.success)
             {
-                // 성공 시 내 등수 출력
-                Debug.Log($"서버가 인식하는 내 등수: {response.rank}위");
                 int myRank = response.rank;
                 int startAfter = Mathf.Max(0, myRank - 6); // 내 등수 5명 위부터 가져옴
 

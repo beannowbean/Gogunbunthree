@@ -12,6 +12,7 @@ public class RankTester : MonoBehaviour
         {
             int randomScore = Random.Range(10, 1000);
             RankManager.Instance.SubmitBestScore(randomScore);
+            Debug.Log($"점수 {randomScore}점 전송");
         }
 
         // [2번 키] 닉네임 변경 테스트
@@ -19,12 +20,14 @@ public class RankTester : MonoBehaviour
         {
             string newName = "GogunUser_" + Random.Range(1, 100);
             RankManager.Instance.ChangeNickname(newName, (success, error) => {});
+            Debug.Log($"닉네임 변경 : {newName}");
         }
 
         // [3번 키] 업적 달성 보고 테스트 (ACH_01)
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             RankManager.Instance.CompleteAchievement("ach_01");
+            Debug.Log("업적 ACH_01 달성 보고");
         }
 
         // [4번 키] 업적 달성률 계산 테스트

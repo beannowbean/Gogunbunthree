@@ -53,7 +53,7 @@ public class NicknameUIController : MonoBehaviour
             else
             {
                 // 실패 시 에러 메시지 표시
-                if (statusText != null) statusText.text = error;
+                ShowStatusText(error);
             }
         });
     }
