@@ -18,7 +18,7 @@ public class RankTester : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             string newName = "GogunUser_" + Random.Range(1, 100);
-            RankManager.Instance.ChangeNickname(newName);
+            RankManager.Instance.ChangeNickname(newName, (success, error) => {});
         }
 
         // [3번 키] 업적 달성 보고 테스트 (ACH_01)

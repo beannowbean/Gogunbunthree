@@ -20,6 +20,11 @@ public class RankManager : MonoBehaviour
     public static RankManager Instance { get; private set; }    // 싱글톤 인스턴스
     public bool IsLoggedIn { get; private set; }    // 로그인 상태 확인용
     public bool debugOfflineMode = false; // 디버그용 오프라인 모드 토글
+    public string currentNickname   // 현재 닉네임
+    {
+        get => PlayerPrefs.GetString("LocalPlayerName", "Guest"); // 없으면 Guest 반환
+        private set => PlayerPrefs.SetString("LocalPlayerName", value);
+    }
 
     [Header("리더보드 Keys")]
     public string globalRankingKey = "global_ranking"; // 메인 랭킹용
@@ -66,17 +71,18 @@ public class RankManager : MonoBehaviour
                 Debug.Log($"LootLocker 로그인 성공 ID: {currentLocalPlayerId}");
                 IsLoggedIn = true;
 
-                SyncPendingData(); // 대기 중인 데이터 동기화 시도
-                
                 // 닉네임이 없으면 랜덤 생성 (최초 1회)
                 if (string.IsNullOrEmpty(response.player_name))
                 {
-                    string randomName = "GogunUser_" + Random.Range(1000, 9999);
-                    ChangeNickname(randomName);
+                    SetInitialNickname();
                 }
+                else
+                {
+                    currentNickname = response.player_name;
+                }   
 
-                // 전체 플레이어 카운트용 리더보드에 1점 전송 (통계용)
-                SubmitScoreToKey(allPlayersKey, 1);
+                SyncPendingData(); // 대기 중인 데이터 동기화 시도
+                SubmitScoreToKey(allPlayersKey, 1); // 전체 플레이어 카운트용 리더보드에 1점 전송 (통계용)
             }
             else
             {
@@ -87,6 +93,20 @@ public class RankManager : MonoBehaviour
         });
         yield return new WaitUntil(() => connected);
         StartCoroutine(NetworkMonitorRoutine());
+    }
+
+    // 최초 닉네임 설정 함수
+    private void SetInitialNickname()
+    {
+        string suffix = currentLocalPlayerId.Length > 3 ? currentLocalPlayerId.Substring(currentLocalPlayerId.Length - 3) : currentLocalPlayerId;
+        string randomName = "GogunUser_" + suffix + Random.Range(10, 99);
+        ChangeNickname(randomName, (success, error) => {
+            if (success)
+            {
+                currentNickname = randomName;
+            }
+            else{SetInitialNickname();} // 실패 시 재귀 호출
+        });
     }
 
     // 네트워크 상태 모니터링 코루틴
@@ -224,8 +244,18 @@ public class RankManager : MonoBehaviour
         }
     }
 
+    // 닉네임 가져오기 함수
+    public void GetNickname(System.Action<string> onGet)
+    {
+        LootLockerSDKManager.GetPlayerName((response) =>
+        {
+            if (response.success) onGet?.Invoke(response.name);
+            else Debug.LogError("닉네임 가져오기 실패");
+        });
+    }
+
     // 닉네임 변경 함수
-    public void ChangeNickname(string newName)
+    public void ChangeNickname(string newName, System.Action<bool, string> onComplete)
     {
         if(isRequesting) return;    // 중복 요청 방지
         isRequesting = true;
@@ -233,19 +263,20 @@ public class RankManager : MonoBehaviour
         LootLockerSDKManager.SetPlayerName(newName, (response) =>
         {
             isRequesting = false;
-            if (response.success) Debug.Log("닉네임 변경 완료: " + newName);
-            else {
-                // 에러 메시지에 'unique'나 'taken'이 포함되어 있으면 중복된 이름
-                string errorMsg = response.errorData.message.ToLower();
-                if(errorMsg.Contains("unique") || errorMsg.Contains("taken"))
-                {
-                    Debug.LogWarning("닉네임 변경 실패: 이미 사용 중인 닉네임입니다.");
-                    // 여기서 UI 관련 처리
-                }
-                else
-                {
-                    Debug.LogError("닉네임 변경 실패: " + response.errorData.message);
-                }
+            if (response.success)
+            {
+                Debug.Log("닉네임 변경 완료: " + newName);
+                currentNickname = newName;
+                onComplete?.Invoke(true, "");
+            }
+            else
+            {
+                // 중복된 이름인 경우 메시지 처리
+                string errorReason = response.errorData.message;
+                if (errorReason.Contains("unique")) errorReason = "This nickname is already taken";
+                
+                Debug.LogError("닉네임 변경 실패: " + errorReason);
+                onComplete?.Invoke(false, errorReason);
             }
         });
     }
