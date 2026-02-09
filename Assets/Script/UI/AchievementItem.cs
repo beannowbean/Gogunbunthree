@@ -86,9 +86,9 @@ public class AchievementItem : MonoBehaviour
             iconImage.sprite = iconSprite;
         }
 
-        // 완료 상태 표시 - 미완료 시 잠금 표시
+        // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)
-            lockOverlay.gameObject.SetActive(!data.IsCompleted);
+            lockOverlay.gameObject.SetActive(data.IsCompleted);
         
         // 진척도 UI 업데이트
         UpdateProgress(data);
@@ -231,9 +231,9 @@ public class AchievementItem : MonoBehaviour
     {
         currentData = data;
         
-        // 완료 상태 표시 - 미완료 시 잠금 표시
+        // 완료 상태 표시 - 진척도가 완료되면 잠금 표시
         if (lockOverlay != null)
-            lockOverlay.gameObject.SetActive(!data.IsCompleted);
+            lockOverlay.gameObject.SetActive(data.IsCompleted);
         
         // 진척도 UI 업데이트
         UpdateProgress(data);
