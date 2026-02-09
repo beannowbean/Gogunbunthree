@@ -78,6 +78,12 @@ public class RankTester : MonoBehaviour
             Debug.Log($"오프라인 모드 상태: {RankManager.Instance.debugOfflineMode}");
         }
 
+        // [9번 키] 랭크 씬 테스트
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Ranking");
+        }
+
         // [0번 키] 가상 유저 20명 생성
         // if (Input.GetKeyDown(KeyCode.Alpha0))
         // {
