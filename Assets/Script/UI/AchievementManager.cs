@@ -151,7 +151,7 @@ public class AchievementManager : MonoBehaviour
     }
 
     // 업적 스크립트 키와 리더보드 키 매핑 테이블
-    private readonly Dictionary<string, string> idMapping = new Dictionary<string, string>
+    public readonly Dictionary<string, string> idMapping = new Dictionary<string, string>
     {
         { "Achieve_Newbie", "ach_01" },
         { "Achieve_Dumb", "ach_02" },

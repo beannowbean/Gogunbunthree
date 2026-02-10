@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Globalization;
 
 public class AchievementItem : MonoBehaviour
 {
@@ -186,33 +187,38 @@ public class AchievementItem : MonoBehaviour
         {
             progressSlider.maxValue = 100f; // 퍼센트 값이므로 최대값 100
             
-            // RankManager에서 업적 달성률 가져오기
-            if (RankManager.Instance != null && RankManager.Instance.IsLoggedIn)
+            // 업적 id 서버 키 변환
+            string serverKey ="";
+            if(AchievementManager.Instance.idMapping.TryGetValue(data.id, out serverKey))
             {
-                RankManager.Instance.GetAchievementRate(data.id, (rate) =>
+                // RankManager에서 업적 달성률 가져오기
+                if (RankManager.Instance != null && RankManager.Instance.IsLoggedIn)
                 {
-                    progressSlider.value = rate;
-                    
-                    // progress text도 업데이트
-                    if (progressText != null)
+                    RankManager.Instance.GetAchievementRate(serverKey, (rate) =>
                     {
-                        progressText.enabled = true;
-                        progressText.gameObject.SetActive(true);
+                        progressSlider.value = rate;
                         
-                        // 업적 달성 시 등수도 함께 표시
-                        if (data.IsCompleted)
+                        // progress text도 업데이트
+                        if (progressText != null)
                         {
-                            RankManager.Instance.GetAchievementOrder(data.id, (order) =>
+                            progressText.enabled = true;
+                            progressText.gameObject.SetActive(true);
+                            
+                            // 업적 달성 시 등수도 함께 표시
+                            if (data.IsCompleted)
                             {
-                                progressText.text = $"Top {rate:F1}% (#{order})";
-                            });
+                                RankManager.Instance.GetAchievementOrder(serverKey, (order) =>
+                                {
+                                    progressText.text = $"Rank #{order} (Top {rate:F1}%)";
+                                });
+                            }
+                            else
+                            {
+                                progressText.text = $"{rate:F0}%";
+                            }
                         }
-                        else
-                        {
-                            progressText.text = $"{rate:F0}%";
-                        }
-                    }
-                });
+                    });
+                }
             }
         }
         
