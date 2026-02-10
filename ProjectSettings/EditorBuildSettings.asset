@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AchivementAndCustomize.unity
     guid: a53c9f6ea31654a4fbd546ca85b87fac
+  - enabled: 1
+    path: Assets/Scenes/Ranking.unity
+    guid: cce537c732e24f143861f3a358c63e35
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
