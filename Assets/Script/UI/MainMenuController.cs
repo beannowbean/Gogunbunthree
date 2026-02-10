@@ -558,4 +558,18 @@ public class MainMenuController : MonoBehaviour
             Player.selectedBagSkinTexture = null;
         Player.selectedBagPrefab = Customize.Instance.bagPrefab;
     }
+
+    // 애니메이션 시작, 종료 호출 함수 (클릭 방지)
+    public void SetUIInteractable(int state)
+    {
+        // state가 1이면 켜기, 0이면 끄기
+        bool isEnable = (state == 1);
+        
+        var group = uiContainer.GetComponent<CanvasGroup>();
+        if (group != null)
+        {
+            group.interactable = isEnable;
+            group.blocksRaycasts = isEnable;
+        }
+    }
 }
