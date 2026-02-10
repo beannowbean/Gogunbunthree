@@ -82,13 +82,17 @@ public class RankManager : MonoBehaviour
 
                 SyncPendingData(); // 대기 중인 데이터 동기화 시도
                 SubmitScoreToKey(allPlayersKey, 1); // 전체 플레이어 카운트용 리더보드에 1점 전송 (통계용)
+                AchievementManager.Instance.InitAchievementCache(() => {
+                    Debug.Log("업적 데이터 캐싱 완료 후 로그인 처리 완료");
+                    connected = true;
+                });
             }
             else
             {
                 Debug.LogError("로그인 실패: " + response.errorData.message);
                 IsLoggedIn = false;
+                connected = true;
             }
-            connected = true;
         });
         yield return new WaitUntil(() => connected);
         StartCoroutine(NetworkMonitorRoutine());
