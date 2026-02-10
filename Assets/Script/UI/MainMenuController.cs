@@ -185,6 +185,20 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("AchivementAndCustomize", LoadSceneMode.Single);
     }
 
+    public void OpenRanking()
+    {
+        if (isLoadingScene) return;
+
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.Play("Button");
+        }
+
+        isLoadingScene = true;
+
+        SceneManager.LoadScene("Ranking", LoadSceneMode.Single);
+    }
+
     // Settings 버튼
     public void OpenSettings()
     {
