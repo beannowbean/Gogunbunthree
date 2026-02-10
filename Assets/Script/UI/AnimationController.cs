@@ -16,4 +16,13 @@ public class AnimationController : MonoBehaviour
             mainController.SetUIInteractable(state);
         }
     }
+
+    // 닉네임 체크 애니메이션 이벤트에서 이 함수 호출
+    public void CallCheckFirstLoginNickname()
+    {
+        if (mainController != null)
+        {
+            mainController.CheckFirstLoginNickname();
+        }
+    }
 }

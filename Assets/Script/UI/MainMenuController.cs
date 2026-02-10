@@ -42,6 +42,8 @@ public class MainMenuController : MonoBehaviour
     public GameObject[] sfxOnIcons;   // 효과음 켜짐 아이콘들
     public GameObject[] sfxOffIcons;  // 효과음 꺼짐 아이콘들
 
+    public NicknameUIController nicknameUI; // 닉네임 변경 UI 컨트롤러
+
     // 상태 변수
     private bool isLoadingScene = false;
 
@@ -570,6 +572,22 @@ public class MainMenuController : MonoBehaviour
         {
             group.interactable = isEnable;
             group.blocksRaycasts = isEnable;
+        }
+    }
+
+    // 최초 로그인 시 닉네임 설정 체크 함수
+    public void CheckFirstLoginNickname()
+    {
+        // 닉네임 패널이 이미 켜져 있다면 중복 실행 방지
+        if (nicknameUI != null && nicknameUI.nicknamePanel.activeSelf) return;
+
+        // RankManager를 통해 닉네임 설정 여부 확인
+        if (!RankManager.Instance.HasSetNickname())
+        {
+            if (nicknameUI != null)
+            {
+                nicknameUI.OpenNicknamePanel();
+            }
         }
     }
 }
