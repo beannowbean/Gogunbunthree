@@ -222,6 +222,9 @@ public class MainMenuController : MonoBehaviour
         }
 
         Settings.SetActive(true);
+
+        UpdateMusicIconUI();
+        UpdateSFXIconUI();
     }
 
     // Settings 버튼
