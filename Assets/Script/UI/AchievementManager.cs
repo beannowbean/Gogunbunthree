@@ -148,6 +148,12 @@ public class AchievementManager : MonoBehaviour
                 Debug.Log($"[업적 전송] {achievementId} -> {rankKey}");
             }
         }
+
+        // InGame UI에 업적 달성 팝업 표시
+        if (UIController.Instance != null)
+        {
+            UIController.Instance.ShowAchievementPopup(achievement.title);
+        }
     }
 
     // 업적 스크립트 키와 리더보드 키 매핑 테이블
