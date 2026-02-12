@@ -14,16 +14,13 @@ public class NicknameUIController : MonoBehaviour
     public GameObject nicknamePanel;      // NickNamePanel 오브젝트
     public TMP_InputField nicknameInput; // 입력창 (InputField)
     public TextMeshProUGUI conditionLength;   // 길이 조건
-    public TextMeshProUGUI conditionAppropriateWord;  // 적절한 단어 조건
-    public TextMeshProUGUI conditionUnique;   // 중복 조건
+    public TextMeshProUGUI errorMessage;   // 중복 조건
     public Button applyButton;            // Apply 버튼
     public CanvasGroup applyButtonCanvasGroup;  // Apply 버튼의 CanvasGroup (투명도 조절용)
 
     [Header("Condition Settings")]
     private Color validColor;
     private Color invalidColor;
-    
-    private string[] bannedWords = { "admin", "moderator", "fuck", "shit", "damn", "tlqkf" };  // 금지어 리스트
 
     private void Awake()
     {
@@ -50,8 +47,8 @@ public class NicknameUIController : MonoBehaviour
         nicknameInput.text = RankManager.Instance.currentNickname;
         
         // 에러 메시지 초기화
-        if (conditionUnique != null)
-            conditionUnique.text = "";
+        if (errorMessage != null)
+            errorMessage.text = "";
         
         // 조건 체크
         ValidateNickname(nicknameInput.text, true);
@@ -66,33 +63,19 @@ public class NicknameUIController : MonoBehaviour
     // 닉네임 조건 검증 함수
     private void ValidateNickname(string nickname, bool isInitial)
     {
-        // 1. 길이 조건 체크 (2~15자)
+        // 길이 조건 체크 (2~15자)
         bool isLengthValid = nickname.Length >= 2 && nickname.Length <= 15;
         UpdateConditionText(conditionLength, "LENGTH between 2 and 15", isLengthValid);
         
-        // 2. 적절한 단어 조건 체크
-        bool isAppropriateWord = CheckAppropriateWord(nickname);
-        UpdateConditionText(conditionAppropriateWord, "Appropriate Word", isAppropriateWord);
-        
         // Apply 버튼 상태 업데이트
-        bool canApply = isLengthValid && isAppropriateWord;
+        bool canApply = isLengthValid;
         UpdateApplyButtonState(canApply);
     }
     
-    // 적절한 단어인지 확인
+    // 적절한 단어인지 확인 (형식만 체크, 금지어는 서버에서 검증)
     private bool CheckAppropriateWord(string nickname)
     {
         if (string.IsNullOrEmpty(nickname)) return false;
-        
-        // 소문자로 변환하여 체크
-        string lowerNickname = nickname.ToLower();
-        
-        // 금지어 포함 여부 체크
-        foreach (string banned in bannedWords)
-        {
-            if (lowerNickname.Contains(banned))
-                return false;
-        }
         
         // 특수문자 체크 (영문, 숫자, 공백, 일부 특수문자만 허용)
         if (!Regex.IsMatch(nickname, @"^[a-zA-Z0-9\s_\-]+$"))
@@ -152,13 +135,10 @@ public class NicknameUIController : MonoBehaviour
         RankManager.Instance.ChangeNickname(newName, (success, error) =>
         {
             if (success)
-            {
-                // 성공 시 Unique 조건도 O로 표시
-                UpdateConditionText(conditionUnique, "Unique", true);
-                
+            {                
                 // 에러 메시지 초기화
-                if (conditionUnique != null)
-                    conditionUnique.text = "";
+                if (errorMessage != null)
+                    errorMessage.text = "";
                 
                 // 패널 닫기
                 nicknamePanel.SetActive(false);
@@ -166,10 +146,10 @@ public class NicknameUIController : MonoBehaviour
             else
             {
                 // 에러 메시지 표시
-                if (conditionUnique != null)
+                if (errorMessage != null)
                 {
-                    conditionUnique.text = error;
-                    conditionUnique.color = invalidColor;
+                    errorMessage.text = error;
+                    errorMessage.color = invalidColor;
                 }
             }
         });
