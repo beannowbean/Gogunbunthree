@@ -497,11 +497,11 @@ public class UIController : MonoBehaviour
         achievementPopup.SetActive(true);
 
         // 시작 위치 (화면 위쪽 밖)
-        float startY = Screen.height / 2f + achievementPopupRect.rect.height;
+        float startY = achievementPopupRect.rect.height;
         // 목표 위치 (화면 위쪽에서 약간 아래)
-        float targetY = Screen.height / 2f - achievementPopupRect.rect.height - 150f;
+        float targetY = -50f;
         // 종료 위치 (화면 위쪽 밖)
-        float endY = Screen.height / 2f + achievementPopupRect.rect.height;
+        float endY = achievementPopupRect.rect.height;
 
         achievementPopupRect.anchoredPosition = new Vector2(0, startY);
 
@@ -522,8 +522,8 @@ public class UIController : MonoBehaviour
 
         achievementPopupRect.anchoredPosition = new Vector2(0, targetY);
 
-        // 2단계: 0.75초 대기
-        yield return new WaitForSecondsRealtime(0.75f);
+        // 2단계: 1초 대기
+        yield return new WaitForSecondsRealtime(1f);
 
         // 3단계: 화면 위로 올라가기 (0.3초)
         float slideOutDuration = 0.3f;
