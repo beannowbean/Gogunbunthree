@@ -20,8 +20,24 @@ public class RankingUIController : MonoBehaviour
 
     void Start()
     {
+        ClearList();
         loadingIndicator.SetActive(false);
         // 기본적으로 상위 랭킹 로드
+        StartCoroutine(SafeStartRanking());
+    }
+
+    // 씬 시작 시 서버 준비 상태를 체크하는 루틴
+    IEnumerator SafeStartRanking()
+    {
+        loadingIndicator.SetActive(true);
+        
+        // RankManager 인스턴스가 생성될 때까지 대기
+        yield return new WaitUntil(() => RankManager.Instance != null);
+
+        // 안드로이드 네트워크 모듈 및 세션 안정화를 위해 아주 잠깐 대기
+        yield return new WaitForSeconds(0.5f);
+
+        // 랭킹 로드 시도
         OnClickBestRank();
     }
 
@@ -33,6 +49,7 @@ public class RankingUIController : MonoBehaviour
 
         RankManager.Instance.GetTopRanking((rankDataArray) =>
         {
+            if (this == null) return;
             loadingIndicator.SetActive(false);
             DisplayRanking(rankDataArray);
         });
