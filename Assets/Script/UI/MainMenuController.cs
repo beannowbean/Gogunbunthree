@@ -40,10 +40,10 @@ public class MainMenuController : MonoBehaviour
     public Animator characterAnimator;  // 캐릭터 애니메이터
 
     // 캐릭터 좌표 및 크기 설정
-    private Vector2 charStartPos = new Vector2(-100, 0);
-    private Vector2 charSizeLarge = new Vector2(2000, 2000);
+    private Vector2 charStartPos = new Vector2(300, 0);
+    private Vector3 charSizeLarge = Vector3.one;
     private Vector2 charFinalPos = new Vector2(390, 955);
-    private Vector2 charSizeSmall = new Vector2(25, 25);
+    private Vector3 charSizeSmall = new Vector3(0.0125f, 0.0125f, 1f);
 
     [Header("Settings & Audio UI")]
     public GameObject Settings; // 설정 팝업창
@@ -81,7 +81,7 @@ public class MainMenuController : MonoBehaviour
         if (characterRect != null)
         {
             characterRect.anchoredPosition = charStartPos;
-            characterRect.sizeDelta = charSizeLarge;
+            characterRect.localScale = charSizeLarge;
         }
 
         // 4. 메인 BGM 재생
@@ -417,7 +417,7 @@ public class MainMenuController : MonoBehaviour
         Vector2 heliCurPos = helicopterRect.anchoredPosition;
         Vector2 heliCurSize = helicopterRect.sizeDelta;
         Vector2 charCurPos = characterRect != null ? characterRect.anchoredPosition : charStartPos;
-        Vector2 charCurSize = characterRect != null ? characterRect.sizeDelta : charSizeLarge;
+        Vector2 charCurSize = characterRect != null ? characterRect.localScale : charSizeLarge;
 
         while (timer < duration)
         {
@@ -431,7 +431,7 @@ public class MainMenuController : MonoBehaviour
             if (characterRect != null)
             {
                 characterRect.anchoredPosition = Vector2.Lerp(charCurPos, charFinalPos, easeT);
-                characterRect.sizeDelta = Vector2.Lerp(charCurSize, charSizeSmall, easeT);
+                characterRect.localScale = Vector3.Lerp(charCurSize, charSizeSmall, easeT);
             }
 
             yield return null;
@@ -443,7 +443,7 @@ public class MainMenuController : MonoBehaviour
         if (characterRect != null)
         {
             characterRect.anchoredPosition = charFinalPos;
-            characterRect.sizeDelta = charSizeSmall;
+            characterRect.localScale = charSizeSmall;
         }
     }
 

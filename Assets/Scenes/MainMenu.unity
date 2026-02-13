@@ -394,6 +394,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 386126283}
     - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: characterRect
+      value: 
+      objectReference: {fileID: 1497839158}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
       propertyPath: helicopterRect
       value: 
       objectReference: {fileID: 386126285}
@@ -409,6 +413,26 @@ PrefabInstance:
       propertyPath: helicopterImage
       value: 
       objectReference: {fileID: 386126286}
+    - target: {fileID: 2838578101405950426, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: characterAnimator
+      value: 
+      objectReference: {fileID: 1497839159}
+    - target: {fileID: 3393235732179173593, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393235732179173593, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393235732179173593, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3393235732179173593, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3818135970765590511, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1151,6 +1175,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainController: {fileID: 429430453}
+--- !u!224 &1497839158 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3393235732179173593, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+  m_PrefabInstance: {fileID: 386126279}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1497839159 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4342892287698428833, guid: d6ba4d99918aeb94e8c733173efc70d3, type: 3}
+  m_PrefabInstance: {fileID: 386126279}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1898362165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1332,7 +1366,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6571187577799118440, guid: f940bf076bd534dc5967712ea18a5b4c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
