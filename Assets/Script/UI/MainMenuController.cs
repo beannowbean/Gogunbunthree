@@ -604,6 +604,8 @@ public class MainMenuController : MonoBehaviour
                 nicknameUI.OpenNicknamePanel();
             }
         }
+    }
+    
     public void UpdateMainMenuCharacterSkin()
     {
         if (skinData == null)
