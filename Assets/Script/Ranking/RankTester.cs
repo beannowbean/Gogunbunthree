@@ -87,7 +87,7 @@ public class RankTester : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene("Ranking");
         }
 
-        // [0번 키] 가상 유저 20명 생성
+        // // [0번 키] 가상 유저 20명 생성
         // if (Input.GetKeyDown(KeyCode.Alpha0))
         // {
         //     RankManager.Instance.CreateFakeRankings();

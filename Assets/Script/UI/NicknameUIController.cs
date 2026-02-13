@@ -46,6 +46,7 @@ public class NicknameUIController : MonoBehaviour
         {
             // 최초 설정 시 랜덤 닉네임 생성
             nicknameInput.text = "GogunUser_" + Random.Range(0000, 9999).ToString("D4");
+            PlayerPrefs.DeleteAll();
         }
         else
         {
