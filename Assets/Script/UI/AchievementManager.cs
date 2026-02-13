@@ -14,6 +14,12 @@ public class AchievementManager : MonoBehaviour
     private List<AchievementData> achievements = new List<AchievementData>();
     private Dictionary<string, AchievementData> achievementDict = new Dictionary<string, AchievementData>();
 
+    // 서버 데이터 저장용 딕셔너리
+    public Dictionary<string, float> rateCache = new Dictionary<string, float>();   // 업적 달성률
+    public Dictionary<string, int> orderCache = new Dictionary<string, int>();  // 업적 등수
+    public bool IsDataReady { get; private set; } = false;  // 업적 호출 중복 실행 방지용
+    public System.Action OnDataReady; // 업적 데이터 준비 완료 콜백
+
     private void Awake()
     {
         if (Instance == null)
@@ -145,13 +151,30 @@ public class AchievementManager : MonoBehaviour
             if (RankManager.Instance != null)
             {
                 RankManager.Instance.CompleteAchievement(rankKey);
-                Debug.Log($"[업적 전송] {achievementId} -> {rankKey}");
+
+                StartCoroutine(WaitRefreshTime(rankKey));
             }
         }
     }
 
+    // 서버 반영 후 캐시 갱신 대기 코루틴
+    System.Collections.IEnumerator WaitRefreshTime(string rankKey)
+    {
+        yield return new WaitForSeconds(0.5f); // 서버 반영 시간 대기
+
+        RankManager.Instance.GetAchievementRate(rankKey, (rate) =>            
+        {
+            rateCache[rankKey] = rate;
+            RankManager.Instance.GetAchievementOrder(rankKey, (order) =>
+            {
+                orderCache[rankKey] = order;
+                OnDataReady?.Invoke();                
+            });
+        });
+    }
+
     // 업적 스크립트 키와 리더보드 키 매핑 테이블
-    private readonly Dictionary<string, string> idMapping = new Dictionary<string, string>
+    public readonly Dictionary<string, string> idMapping = new Dictionary<string, string>
     {
         { "Achieve_Newbie", "ach_01" },
         { "Achieve_Dumb", "ach_02" },
@@ -174,6 +197,47 @@ public class AchievementManager : MonoBehaviour
         { "Achieve_Billionaire", "ach_19" },
         { "Achieve_Rapunzel", "ach_20" }
     };
+
+    // 로그인 후 1번만 업적 데이터 동기화
+    public void InitAchievementCache(System.Action onComplete)
+    {
+        IsDataReady = false;
+        StartCoroutine( GetAllAchievementData(() => {
+            IsDataReady = true;
+            onComplete?.Invoke();
+            OnDataReady?.Invoke();
+        }));
+    }
+
+    // 모든 업적 데이터 서버에서 가져오는 함수
+    public System.Collections.IEnumerator GetAllAchievementData(System.Action onComplete)
+    {
+        int totalRequests = idMapping.Count;
+        int currentResponses = 0;
+
+        foreach (var pair in idMapping)
+        {
+            string serverKey = pair.Value;
+
+            // 달성률 가져오기
+            RankManager.Instance.GetAchievementRate(serverKey, (rate) =>
+            {
+                rateCache[serverKey] = rate;
+                
+                // 등수 가져오기
+                RankManager.Instance.GetAchievementOrder(serverKey, (order) =>
+                {
+                    orderCache[serverKey] = order;
+                    currentResponses++;
+                });
+            });
+        }
+
+        // 모든 데이터가 채워질 때까지 대기
+        yield return new WaitUntil(() => currentResponses >= totalRequests);
+        onComplete?.Invoke();
+    }
+    
     
     /// <summary>
     /// 보상 수령
