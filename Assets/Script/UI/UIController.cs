@@ -467,6 +467,8 @@ public class UIController : MonoBehaviour
         PlayerPrefs.SetInt("FirstTutorial", 1);
         PlayerPrefs.Save();
         tutorialSkip = true;
+
+        if (PlayerAchivementList.Instance != null) PlayerAchivementList.Instance.Newbie();
     }
 
     // --- Achievement Popup Methods ---
