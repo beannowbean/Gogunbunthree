@@ -140,7 +140,6 @@ public class NicknameUIController : MonoBehaviour
                 if (errorMessage != null)
                     errorMessage.text = "";
                 
-                // 패널 닫기
                 // 최초 닉네임 변경 시 플래그 저장
                 PlayerPrefs.SetInt("HasSetNickname", 1);
                 PlayerPrefs.Save();
@@ -166,7 +165,8 @@ public class NicknameUIController : MonoBehaviour
         if (RankManager.Instance != null && !RankManager.Instance.HasSetNickname())
         {
             // 최초 설정 전이라면 창을 닫지 않고 경고 메시지 표시
-            ShowStatusText("You must set a nickname to start!");
+            errorMessage.text = "You must set a nickname to start!";
+            errorMessage.color = invalidColor;
             return;
         }
         nicknamePanel.SetActive(false);
