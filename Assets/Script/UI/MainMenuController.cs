@@ -101,7 +101,7 @@ public class MainMenuController : MonoBehaviour
 
         // 버튼 클릭 효과음 & 업적
         if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
-        if (PlayerAchivementList.Instance != null) PlayerAchivementList.Instance.Newbie();
+        // if (PlayerAchivementList.Instance != null) PlayerAchivementList.Instance.Newbie();
 
 
         // 1. 타이틀 이미지 내려오기
