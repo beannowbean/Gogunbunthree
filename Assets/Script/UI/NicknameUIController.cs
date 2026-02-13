@@ -42,16 +42,26 @@ public class NicknameUIController : MonoBehaviour
     public void OpenNicknamePanel()
     {
         nicknamePanel.SetActive(true);
-        
-        // 서버에서 현재 닉네임을 받아와 입력창에 미리 채워넣기
-        nicknameInput.text = RankManager.Instance.currentNickname;
-        
+        if (RankManager.Instance != null && !RankManager.Instance.HasSetNickname())
+        {
+            // 최초 설정 시 랜덤 닉네임 생성
+            nicknameInput.text = "GogunUser_" + Random.Range(0000, 9999).ToString("D4");
+        }
+        else
+        {
+            // 서버에서 현재 닉네임을 받아와 입력창에 미리 채워넣기
+            nicknameInput.text = RankManager.Instance.currentNickname;
+        }
         // 에러 메시지 초기화
         if (errorMessage != null)
             errorMessage.text = "";
-        
+
         // 조건 체크
         ValidateNickname(nicknameInput.text, true);
+
+        // 입력창에 포커스 설정
+        nicknameInput.ActivateInputField();
+        nicknameInput.caretPosition = nicknameInput.text.Length;
     }
     
     // Input 필드 값이 변경될 때마다 호출
