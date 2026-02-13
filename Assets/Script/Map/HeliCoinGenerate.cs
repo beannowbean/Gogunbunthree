@@ -173,9 +173,7 @@ public class HeliCoinGenerate : MonoBehaviour
         for(int i = 0; i < tiles.Length; i++)
         {
             float worldZ = firstTileZ + (i * TileLength);
-            // 수정
-            //tiles[i].transform.localPosition = new Vector3(tiles[i].transform.localPosition.x, tiles[i].transform.localPosition.y, worldZ);
-            tiles[i].transform.position = new Vector3(tiles[i].transform.position.x, tiles[i].transform.position.y, worldZ);
+            tiles[i].transform.localPosition = new Vector3(tiles[i].transform.localPosition.x, tiles[i].transform.localPosition.y, worldZ);
         }
 
         MakeStartCoin();

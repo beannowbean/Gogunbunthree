@@ -71,24 +71,28 @@ public class RankManager : MonoBehaviour
                 IsLoggedIn = true;
 
                 // 닉네임이 없으면 랜덤 생성 (최초 1회)
-                if (string.IsNullOrEmpty(response.player_name))
-                {
-                    SetInitialNickname();
-                }
-                else
-                {
-                    currentNickname = response.player_name;
-                }   
+                // if (string.IsNullOrEmpty(response.player_name))
+                // {
+                //     SetInitialNickname();
+                // }
+                // else
+                // {
+                //     currentNickname = response.player_name;
+                // }
+                currentNickname = response.player_name;   
 
                 SyncPendingData(); // 대기 중인 데이터 동기화 시도
                 SubmitScoreToKey(allPlayersKey, 1); // 전체 플레이어 카운트용 리더보드에 1점 전송 (통계용)
+                AchievementManager.Instance.InitAchievementCache(() => {
+                    connected = true;
+                });
             }
             else
             {
                 Debug.LogError("로그인 실패: " + response.errorData.message);
                 IsLoggedIn = false;
+                connected = true;
             }
-            connected = true;
         });
         yield return new WaitUntil(() => connected);
         StartCoroutine(NetworkMonitorRoutine());
@@ -249,7 +253,28 @@ public class RankManager : MonoBehaviour
     public void ChangeNickname(string newName, System.Action<bool, string> onComplete)
     {
         if(isRequesting) return;    // 중복 요청 방지
+        StartCoroutine(WaitLoginAndChangeNickname(newName, onComplete));
+    }
+
+    // 닉네임 변경 대기 및 처리 코루틴
+    IEnumerator WaitLoginAndChangeNickname(string newName, System.Action<bool, string> onComplete)
+    {
         isRequesting = true;
+
+        // 로그인 대기 (최대 5초)
+        float timeout = 0f;
+        while (!IsLoggedIn && timeout < 5f)
+        {
+            timeout += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!IsLoggedIn)
+        {
+            isRequesting = false;
+            onComplete?.Invoke(false, "Network error. Please try again.");
+            yield break;
+        }
 
         LootLockerSDKManager.SetPlayerName(newName, (response) =>
         {
@@ -257,6 +282,8 @@ public class RankManager : MonoBehaviour
             if (response.success)
             {
                 currentNickname = newName;
+                PlayerPrefs.SetInt("HasSetNickname", 1);
+                PlayerPrefs.Save();
                 onComplete?.Invoke(true, "");
             }
             else
@@ -267,6 +294,12 @@ public class RankManager : MonoBehaviour
                 onComplete?.Invoke(false, errorReason);
             }
         });
+    }
+
+    // 최초 닉네임 설정 확인 함수
+    public bool HasSetNickname()
+    {
+        return PlayerPrefs.GetInt("HasSetNickname", 0) == 1;
     }
 
     // 업적 달성률(%) 계산 함수

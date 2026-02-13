@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Globalization;
 
 public class AchievementItem : MonoBehaviour
 {
@@ -20,6 +21,25 @@ public class AchievementItem : MonoBehaviour
 
     private string achievementId;
     private AchievementData currentData;
+
+    // 오브젝트가 켜질 때 매니저의 OnDataReady 신호를 기다림
+    private void OnEnable()
+    {
+        AchievementManager.Instance.OnDataReady += RefreshUI;
+    }
+
+    // 오브젝트가 꺼질 때 신호를 더 이상 받지 않음
+    private void OnDisable()
+    {
+        AchievementManager.Instance.OnDataReady -= RefreshUI;
+    }
+    private void RefreshUI()
+    {
+        if (currentData != null)
+        {
+            UpdateProgress(currentData);
+        }
+    }
 
     public void Initialize(AchievementData data, bool isUnlocked, System.Action<string, bool> callback)
     {
@@ -186,43 +206,26 @@ public class AchievementItem : MonoBehaviour
         {
             progressSlider.maxValue = 100f; // 퍼센트 값이므로 최대값 100
             
-            // RankManager에서 업적 달성률 가져오기
-            if (RankManager.Instance != null && RankManager.Instance.IsLoggedIn)
+            if(AchievementManager.Instance.idMapping.TryGetValue(data.id, out string serverKey))
             {
-                RankManager.Instance.GetAchievementRate(data.id, (rate) =>
+                if (AchievementManager.Instance.rateCache.TryGetValue(serverKey, out float rate))
                 {
                     progressSlider.value = rate;
-                    
-                    // progress text도 업데이트
-                    if (progressText != null)
+
+                    if (data.IsCompleted && AchievementManager.Instance.orderCache.TryGetValue(serverKey, out int order))
                     {
-                        progressText.enabled = true;
-                        progressText.gameObject.SetActive(true);
-                        
-                        // 업적 달성 시 등수도 함께 표시
-                        if (data.IsCompleted)
-                        {
-                            RankManager.Instance.GetAchievementOrder(data.id, (order) =>
-                            {
-                                progressText.text = $"Top {rate:F1}% (#{order})";
-                            });
-                        }
-                        else
-                        {
-                            progressText.text = $"{rate:F0}%";
-                        }
+                        progressText.text = $"{rate:F0}% (Rank #{order})";
                     }
-                });
+                    else
+                    {
+                        progressText.text = $"{rate:F0}%";
+                    }
+                    return; // 캐시 데이터가 있다면 여기서 종료
+                }
             }
-        }
-        
-        if (progressText != null)
-        {
-            progressText.enabled = true;
-            progressText.gameObject.SetActive(true);
-            
-            float percentage = (data.currentValue / (float)data.targetValue) * 100f;
-            progressText.text = $"{percentage:F0}%";
+            // 만약 캐시 데이터가 아직 없다면 로딩 표시
+            progressSlider.value = 0f;
+            progressText.text = "loading...";
         }
     }
     

@@ -14,6 +14,16 @@ public class MainMenuController : MonoBehaviour
     public float titleSlideDuration = 0.7f;
     private Vector2 titleFinalPos;
 
+    [Header("Skin UI References")]
+    public Image bodyImage;
+    public Image beanieImage;
+    public Image bagImage;
+    public Image hookImage;
+    public Image helicopterImage;
+
+    [Header("Data Reference")]
+    public SkinDatabase skinData;
+
     [Header("Helicopter Animation")]
     public RectTransform helicopterRect; // 헬리콥터 이미지
     public AudioSource heliAudioSource;  // 헬리콥터 소리가 나는 AudioSource
@@ -21,7 +31,7 @@ public class MainMenuController : MonoBehaviour
     // 헬리콥터 좌표 및 크기 설정
     private Vector2 heliStartPos = new Vector2(-100, 6000);
     private Vector2 heliSizeLarge = new Vector2(8000, 8000);
-    private Vector2 heliLandPos = new Vector2(-100, 3900);
+    private Vector2 heliLandPos = new Vector2(-100, 3100);
     private Vector2 heliFinalPos = new Vector2(400, 1000);
     private Vector2 heliSizeSmall = new Vector2(100, 100);
 
@@ -42,12 +52,16 @@ public class MainMenuController : MonoBehaviour
     public GameObject[] sfxOnIcons;   // 효과음 켜짐 아이콘들
     public GameObject[] sfxOffIcons;  // 효과음 꺼짐 아이콘들
 
+    public NicknameUIController nicknameUI; // 닉네임 변경 UI 컨트롤러
+
     // 상태 변수
     private bool isLoadingScene = false;
 
 
     void Start()
     {
+        UpdateMainMenuCharacterSkin();
+
         // 1. 타이틀 이미지 위치 초기화
         if (titleImageRect != null)
         {
@@ -210,6 +224,9 @@ public class MainMenuController : MonoBehaviour
         }
 
         Settings.SetActive(true);
+
+        UpdateMusicIconUI();
+        UpdateSFXIconUI();
     }
 
     // Settings 버튼
@@ -557,5 +574,116 @@ public class MainMenuController : MonoBehaviour
         else
             Player.selectedBagSkinTexture = null;
         Player.selectedBagPrefab = Customize.Instance.bagPrefab;
+    }
+
+    // 애니메이션 시작, 종료 호출 함수 (클릭 방지)
+    public void SetUIInteractable(int state)
+    {
+        // state가 1이면 켜기, 0이면 끄기
+        bool isEnable = (state == 1);
+        
+        var group = uiContainer.GetComponent<CanvasGroup>();
+        if (group != null)
+        {
+            group.interactable = isEnable;
+            group.blocksRaycasts = isEnable;
+        }
+    }
+
+    // 최초 로그인 시 닉네임 설정 체크 함수
+    public void CheckFirstLoginNickname()
+    {
+        // 닉네임 패널이 이미 켜져 있다면 중복 실행 방지
+        if (nicknameUI != null && nicknameUI.nicknamePanel.activeSelf) return;
+
+        // RankManager를 통해 닉네임 설정 여부 확인
+        if (!RankManager.Instance.HasSetNickname())
+        {
+            if (nicknameUI != null)
+            {
+                nicknameUI.OpenNicknamePanel();
+            }
+        }
+    public void UpdateMainMenuCharacterSkin()
+    {
+        if (skinData == null)
+        {
+            Debug.LogError("SkinDatabase가 연결되지 않았습니다!");
+            return;
+        }
+
+        int playerIndex = PlayerPrefs.GetInt("SelectedPlayerSkinIndex", 0);
+
+        if (playerIndex >= 0 && playerIndex < skinData.playerSkins.Count)
+        {
+            bodyImage.sprite = skinData.playerSkins[playerIndex];
+        }
+        else
+        {
+            bodyImage.sprite = skinData.playerSkins[0]; 
+        }
+
+        bool isBeanieEquipped = PlayerPrefs.GetInt("SelectedBeanieEquipped", 0) == 1;
+        int beanieIndex = PlayerPrefs.GetInt("SelectedBeanieSkinIndex", -1);
+
+        if (beanieImage != null)
+        {
+            if (isBeanieEquipped && beanieIndex >= 0 && beanieIndex < skinData.beanieSkins.Count)
+            {
+                beanieImage.gameObject.SetActive(true);
+                beanieImage.sprite = skinData.beanieSkins[beanieIndex];
+            }
+            else
+            {
+                beanieImage.gameObject.SetActive(false);
+            }
+        }
+
+        bool isBagEquipped = PlayerPrefs.GetInt("SelectedBagEquipped", 0) == 1;
+        int bagIndex = PlayerPrefs.GetInt("SelectedBagSkinIndex", -1);
+
+        if (bagImage != null)
+        {
+            if (isBagEquipped && bagIndex >= 0 && bagIndex < skinData.bagSkins.Count)
+            {
+                bagImage.gameObject.SetActive(true);
+                bagImage.sprite = skinData.bagSkins[bagIndex];
+            }
+            else
+            {
+                bagImage.gameObject.SetActive(false);
+            }
+        }
+
+        int hookIndex = PlayerPrefs.GetInt("SelectedHookSkinIndex", 0);
+        if (hookImage != null)
+        {
+            // 데이터베이스에 리스트가 있고, 인덱스가 유효한지 확인
+            if (skinData.hookSkins != null && hookIndex >= 0 && hookIndex < skinData.hookSkins.Count)
+            {
+                hookImage.sprite = skinData.hookSkins[hookIndex];
+            }
+            else if (skinData.hookSkins != null && skinData.hookSkins.Count > 0)
+            {
+                // 예외 상황(인덱스 오류 등) 시 기본값(0번) 적용
+                hookImage.sprite = skinData.hookSkins[0];
+            }
+        }
+
+        int heliIndex = PlayerPrefs.GetInt("SelectedHelicopterSkinIndex", 0);
+        if (helicopterImage != null)
+        {
+            // 데이터베이스에 리스트가 있고, 인덱스가 유효한지 확인
+            if (skinData.helicopterSkins != null && heliIndex >= 0 && heliIndex < skinData.helicopterSkins.Count)
+            {
+                helicopterImage.sprite = skinData.helicopterSkins[heliIndex];
+            }
+            else if (skinData.helicopterSkins != null && skinData.helicopterSkins.Count > 0)
+            {
+                // 예외 상황 시 기본값(0번) 적용
+                helicopterImage.sprite = skinData.helicopterSkins[0];
+            }
+        }
+
     }
 }
