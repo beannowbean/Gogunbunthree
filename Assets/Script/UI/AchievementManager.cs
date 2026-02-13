@@ -155,6 +155,12 @@ public class AchievementManager : MonoBehaviour
                 StartCoroutine(WaitRefreshTime(rankKey));
             }
         }
+
+        // InGame UI에 업적 달성 팝업 표시
+        if (UIController.Instance != null)
+        {
+            UIController.Instance.ShowAchievementPopup(achievement.title);
+        }
     }
 
     // 서버 반영 후 캐시 갱신 대기 코루틴

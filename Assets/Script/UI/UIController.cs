@@ -31,7 +31,12 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI gameOverCoinCountText; // GameOverPanel의 코인 개수 text (선택사항)
     public TextMeshProUGUI gameOverOrClearText; // "GAME OVER" or "GAME CLEAR" 텍스트
     public GameObject newRecordText;
-    public GameObject scoreLabelObject; 
+    public GameObject scoreLabelObject;
+
+    [Header("Achievement Popup")]
+    public GameObject achievementPopup;         // 업적 달성 팝업 Root
+    public TextMeshProUGUI achievementTitleText; // 업적 타이틀 텍스트
+    public RectTransform achievementPopupRect;  // 애니메이션을 위한 RectTransform 
 
     [Header("Other UI")]
     public TextMeshProUGUI countdownText;       // Text_ResumeDelay
@@ -462,5 +467,79 @@ public class UIController : MonoBehaviour
         PlayerPrefs.SetInt("FirstTutorial", 1);
         PlayerPrefs.Save();
         tutorialSkip = true;
+    }
+
+    // --- Achievement Popup Methods ---
+
+    /// <summary>
+    /// 업적 달성 팝업 표시
+    /// </summary>
+    public void ShowAchievementPopup(string achievementTitle)
+    {
+        if (achievementPopup == null || achievementPopupRect == null) return;
+        
+        StartCoroutine(AchievementPopupAnimation(achievementTitle));
+    }
+
+    /// <summary>
+    /// 업적 팝업 애니메이션 (화면 밖에서 내려오고 0.75초 후 위로 올라감)
+    /// </summary>
+    private IEnumerator AchievementPopupAnimation(string achievementTitle)
+    {
+        // 팝업 텍스트 설정
+        if (achievementTitleText != null)
+        {
+            achievementTitleText.text = achievementTitle;
+        }
+
+        // 팝업 활성화
+        achievementPopup.SetActive(true);
+
+        // 시작 위치 (화면 위쪽 밖)
+        float startY = achievementPopupRect.rect.height;
+        // 목표 위치 (화면 위쪽에서 약간 아래)
+        float targetY = -50f;
+        // 종료 위치 (화면 위쪽 밖)
+        float endY = achievementPopupRect.rect.height;
+
+        achievementPopupRect.anchoredPosition = new Vector2(0, startY);
+
+        // 1단계: 화면 안으로 내려오기 (0.5초)
+        float slideInDuration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < slideInDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / slideInDuration;
+            // EaseOut for smooth deceleration
+            float smoothT = 1f - Mathf.Pow(1f - t, 3f);
+            float currentY = Mathf.Lerp(startY, targetY, smoothT);
+            achievementPopupRect.anchoredPosition = new Vector2(0, currentY);
+            yield return null;
+        }
+
+        achievementPopupRect.anchoredPosition = new Vector2(0, targetY);
+
+        // 2단계: 1초 대기
+        yield return new WaitForSecondsRealtime(1f);
+
+        // 3단계: 화면 위로 올라가기 (0.3초)
+        float slideOutDuration = 0.3f;
+        elapsed = 0f;
+
+        while (elapsed < slideOutDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / slideOutDuration;
+            // EaseIn for smooth acceleration
+            float smoothT = Mathf.Pow(t, 2f);
+            float currentY = Mathf.Lerp(targetY, endY, smoothT);
+            achievementPopupRect.anchoredPosition = new Vector2(0, currentY);
+            yield return null;
+        }
+
+        // 팝업 비활성화
+        achievementPopup.SetActive(false);
     }
 }
