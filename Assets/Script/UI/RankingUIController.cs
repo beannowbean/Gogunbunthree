@@ -18,6 +18,9 @@ public class RankingUIController : MonoBehaviour
     public Sprite rank2Image;          // 2위 아이콘
     public Sprite rank3Image;          // 3위 아이콘
 
+    // 내부 변수
+    private int myIndex = -1;          // 내 랭킹 인덱스
+
     void Start()
     {
         ClearList();
@@ -79,6 +82,9 @@ public class RankingUIController : MonoBehaviour
     private void DisplayRanking(RankData[] dataArray)
     {
         if (this == null) return; // 오브젝트가 파괴된 경우 방지
+        myIndex = -1;
+        int currentIndex = 0;
+
         foreach (var data in dataArray)
         {
             if(rankItemPrefab == null || contentArea == null) break;
@@ -127,11 +133,13 @@ public class RankingUIController : MonoBehaviour
             if (data.name == RankManager.Instance.currentNickname)
             {
                 outline.enabled = true;
+                myIndex = currentIndex;
             }
             else
             {
                 outline.enabled = false;
             }
+            currentIndex++;
         }
     }
 
@@ -149,9 +157,18 @@ public class RankingUIController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         ScrollRect scrollRect = GetComponentInChildren<ScrollRect>();
-        if (scrollRect != null)
+        if (scrollRect != null && myIndex != -1)
         {
-            scrollRect.verticalNormalizedPosition = 0.5f;
+            int totalCount = contentArea.childCount;
+            if (totalCount > 1)
+            {
+                float targetPos = 1f - ((float)myIndex / (totalCount - 1));
+                scrollRect.verticalNormalizedPosition = targetPos;
+            }
+            else
+            {
+                scrollRect.verticalNormalizedPosition = 1f;
+            }
         }
     }
 }
