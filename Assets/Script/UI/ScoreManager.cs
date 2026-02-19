@@ -26,6 +26,7 @@ public class ScoreManager : MonoBehaviour
     private int bestScore = 0;          // 최고 점수
     private int lastDisplayedScore = -1; // 마지막으로 표시된 점수 (최적화용)
     private float survivalTime = 0f;    // 게임 생존 시간 (초 단위)
+    private float accumulatedDistanceScore = 0f; // 누적된 거리 점수
     
     [Header("State")]
     private bool IsNewRecord = false;   // 뉴 레코드 여부
@@ -78,6 +79,8 @@ public class ScoreManager : MonoBehaviour
 
         // 1. 시간 흐름 측정
         survivalTime += Time.deltaTime;
+
+        accumulatedDistanceScore += currentCarSpeed * Time.deltaTime;
         
         // 2. 점수 계산: 거리 점수 + 코인 점수
         currentScore = GetDistanceScore() + GetCoinScore();
@@ -163,7 +166,7 @@ public class ScoreManager : MonoBehaviour
     // 거리 점수만 반환 (시간 * 속도 + 차 날리기 * 가중치)
     public int GetDistanceScore()
     {
-        float rawDistanceScore = (survivalTime * currentCarSpeed) + (carKnockCount * CAR_KNOCK_SCORE_VALUE);
+        float rawDistanceScore = accumulatedDistanceScore + (carKnockCount * CAR_KNOCK_SCORE_VALUE);
         return Mathf.FloorToInt(rawDistanceScore);
     }
 
@@ -247,6 +250,7 @@ public class ScoreManager : MonoBehaviour
         carKnockCount = 0;
         currentScore = 0;
         survivalTime = 0f;
+        accumulatedDistanceScore = 0f;
         lastDisplayedScore = -1;
         IsNewRecord = false;
         isGameOver = false;

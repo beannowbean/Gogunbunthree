@@ -53,6 +53,7 @@ public class MainMenuController : MonoBehaviour
     public GameObject[] sfxOffIcons;  // 효과음 꺼짐 아이콘들
 
     public NicknameUIController nicknameUI; // 닉네임 변경 UI 컨트롤러
+    public GameObject achievementLoadingPanel; // 업적 로딩 인디케이터
 
     // 상태 변수
     private bool isLoadingScene = false;
@@ -173,7 +174,39 @@ public class MainMenuController : MonoBehaviour
             SFXManager.Instance.Play("Button");
         }
 
-        // Achievement 모드로 설정
+        if (AchievementManager.Instance != null && AchievementManager.Instance.IsDataReady)
+        {
+            ProceedToAchievementScene();
+        }
+        else
+        {
+            // 준비 안됐으면 로딩 UI 켜고 대기
+            if (achievementLoadingPanel != null) achievementLoadingPanel.SetActive(true);
+            
+            // 데이터 준비 완료 시 실행될 콜백 등록
+            AchievementManager.Instance.OnDataReady += HandleAchievementDataReady;
+            
+            // 혹시 모르니 데이터 동기화 다시 한 번 트리거 (이미 로딩 중이면 내부에서 무시됨)
+            AchievementManager.Instance.InitAchievementCache(null);
+        }
+    }
+
+    // 콜백 처리용 함수
+    private void HandleAchievementDataReady()
+    {
+        // 이벤트 중복 실행 방지
+        AchievementManager.Instance.OnDataReady -= HandleAchievementDataReady;
+        
+        // 로딩 패널 끄기
+        if (achievementLoadingPanel != null) achievementLoadingPanel.SetActive(false);
+        
+        // 씬 이동 진행
+        ProceedToAchievementScene();
+    }
+
+    // 공통 씬 이동 로직
+    private void ProceedToAchievementScene()
+    {
         PlayerPrefs.SetString("AchievementCustomizeMode", "Achievement");
         PlayerPrefs.Save();
 
