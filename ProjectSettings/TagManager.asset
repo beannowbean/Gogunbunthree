@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - TileGenerator
+  - Tile
+  - Car
+  - BackgroundTile
+  - Obstacle
+  - StreetLight
+  - Light
+  - Helicopter
+  - Coin
+  - FxTemporaire
+  - CarMove
+  - VanRoof
+  - TutorialDetector
+  - HeliCoinTile
+  - HeliCoinGenerator
+  - TouchIcon
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Ground
+  - Water
+  - UI
+  - Obstacle
+  - UI_Character
+  - Helicopter
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

@@ -1,0 +1,511 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerAchivementList : MonoBehaviour
+{
+    public static PlayerAchivementList Instance;
+
+    private List<AchievementDefinition> achievementDefinitions = new List<AchievementDefinition>();
+
+    private HashSet<string> sessionUnlockedIds = new HashSet<string>();
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        
+        // 업적 정의 초기화
+        InitializeAchievements();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // 업적 데이터를 AchievementManager에 등록
+        RegisterAchievementsToManager();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    
+    /// <summary>
+    /// 업적 정의 초기화
+    /// </summary>
+    private void InitializeAchievements()
+    {
+        // 난이도 1짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Newbie",                                  // PlayerPrefs 키
+            title = "Newbie",                                       // 업적 이름
+            description = "Welcome aboard!\nComplete your first tutorial",                                       // 업적 설명
+            //icon = PlayerSkin_1,                                            // 업적 보상 아이콘: 보상 이미지
+            conditionType = AchievementConditionType.Custom,        // 조건타입: 점수, 코인 등등
+            targetValue = 1,                                        // 달성조건: e.g. 갯수
+            rewardType = RewardType.PlayerSkin,                     // 보상타입: 스킨, 코인 등등
+            rewardIndex = 1                                         // e.g. Customize.playerSkins[0]을 보상으로 설정
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Dumb",
+            title = "Dumb",
+            description = "Wait, already?\nDie within the first 10 seconds",
+            //icon = PlayerSkin_12,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 10,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 12
+        });
+
+        // 난이도 2짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_HitAndRun",
+            title = "Hit And Run",
+            description = "Look both ways!\nGet hit by a moving vehicle",
+            //icon = PlayerSkin_3,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 3
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_TreasureHunter",
+            title = "Treasure Hunter",
+            description = "Magnetic attraction.\nCollect 30 coins using the Magnet",
+            //icon = PlayerSkin_8,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 30,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 8
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Eagle",
+            title = "Eagle",
+            description = "Eyes in the sky.\nCollect 30 coins while flying the helicopter",
+            //icon = PlayerSkin_9,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 30,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 9
+        });
+
+        // 난이도 3짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Bunny",
+            title = "Bunny",
+            description = "Hop, hop, hop!\nPerform 5 Quick Dives in 3 seconds",
+            //icon = PlayerSkin_4,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 5,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 4
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Bruh",
+            title = "Bruh",
+            description = "Are you serious?\nDie while an item is active",
+            //icon = PlayerSkin_6,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 6
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Acrophobia",
+            title = "Acrophobia",
+            description = "I'll take the stairs.\nPick up the Helicopter but don't ride it",
+            //icon = PlayerSkin_7,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 7
+        });
+
+        // 난이도 4짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_TopGun",
+            title = "Top Gun",
+            description = "Frequent flyer.\nBoard the helicopter 3 times in a single run",
+            //icon = PlayerSkin_1,
+            conditionType = AchievementConditionType.CollectItems,
+            targetValue = 3,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 1
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_HeliVIP",
+            title = "Heli VIP",
+            description = "Flying in style.\nBoard the helicopter with an active item",
+            //icon = PlayerSkin_5,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 5
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Gentleman",
+            title = "Gentleman",
+            description = "Peaceful power.\nDon't hit any cars while using the Star",
+            //icon = BagSkin_0,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.BagSkin,
+            rewardIndex = 0
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Wrecker",
+            title = "Wrecker",
+            description = "Road rage.\nSmash through 20 cars while using the Star",
+            //icon = BeanieSkin_0,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 20,
+            rewardType = RewardType.BeanieSkin,
+            rewardIndex = 0
+        });
+
+        // 난이도 5짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Superstar",
+            title = "Superstar",
+            description = "Star-studded.\nCollect 5 Star items in a single run",
+            //icon = PlayerSkin_10,
+            conditionType = AchievementConditionType.CollectItems,
+            targetValue = 5,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 10
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Iceman",
+            title = "Iceman",
+            description = "Don't blink.\nSurvive for 6 seconds without moving at the start",
+            //icon = PlayerSkin_11,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 6,
+            rewardType = RewardType.PlayerSkin,
+            rewardIndex = 11
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Icarus",
+            title = "Icarus",
+            description = "Mid-air maneuver.\nUse your hook after jumping off a car",
+            //icon = BagSkin_1,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 1,
+            rewardType = RewardType.BagSkin,
+            rewardIndex = 1
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Hustler",
+            title = "Hustler",
+            description = "High Roller.\nReach a score of 15,000 in one run",
+            //icon = BeanieSkin_1,
+            conditionType = AchievementConditionType.Score,
+            targetValue = 15000,
+            rewardType = RewardType.BeanieSkin,
+            rewardIndex = 1
+        });
+
+        // 난이도 6짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_SkyWalker",
+            title = "Sky Walker",
+            description = "The floor is lava.\nStay airborne for 10 seconds straight",
+            //icon = HookSkin_1,
+            conditionType = AchievementConditionType.PlayTime,
+            targetValue = 10,
+            rewardType = RewardType.HookSkin,
+            rewardIndex = 1
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Pennyless",
+            title = "Pennyless",
+            description = "Who needs money?\nScore 7,000 points without any coins",
+            //icon = HelicopterSkin_1,
+            conditionType = AchievementConditionType.Score,
+            targetValue = 7000,
+            rewardType = RewardType.HelicopterSkin,
+            rewardIndex = 1
+        });
+
+        // 난이도 7짜리 업적
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Billionaire",
+            title = "Billionaire",
+            description = "Filthy rich.\nCollect 200 coins in a single run",
+            //icon = HookSkin_2,
+            conditionType = AchievementConditionType.CollectCoins,
+            targetValue = 200,
+            rewardType = RewardType.HookSkin,
+            rewardIndex = 2
+        });
+
+        achievementDefinitions.Add(new AchievementDefinition
+        {
+            id = "Achieve_Rapunzel",
+            title = "Rapunzel",
+            description = "Long distance call.\nTravel over 35m in a single hook swing",
+            //icon = HelicopterSkin_2,
+            conditionType = AchievementConditionType.Custom,
+            targetValue = 35,
+            rewardType = RewardType.HelicopterSkin,
+            rewardIndex = 2
+        });
+    }
+    
+    /// <summary>
+    /// 정의된 업적들을 AchievementManager에 등록
+    /// </summary>
+    private void RegisterAchievementsToManager()
+    {
+
+        // 코드에서 정의된 업적들을 Manager에 등록
+        foreach (var definition in achievementDefinitions)
+        {
+            AchievementManager.Instance.RegisterAchievement(definition.ToAchievementData());
+        }
+    }
+
+    // 업적을 달성했는지 처리하는 함수
+    private void UnlockAchievement(string achievementId, string title)
+    {
+        if (sessionUnlockedIds.Contains(achievementId))
+        {
+            return; // 이미 처리된 업적이면 무시
+        }
+
+        sessionUnlockedIds.Add(achievementId);
+
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.UnlockAchievement(achievementId);
+        }
+        else
+        {
+            // Manager가 없을 경우 기존 방식 사용
+            if (PlayerPrefs.GetInt(achievementId, 0) == 1) return;
+            PlayerPrefs.SetInt(achievementId, 1);
+            PlayerPrefs.Save();
+            Debug.Log($"[업적 달성] {title}!");
+        }
+    } 
+
+    /* 
+     * * 난이도 1짜리 업적 목록
+     */
+
+    // IN
+    public void Newbie()
+    {
+        // key = Achieve_Newbie, 이름 = Newbie
+        UnlockAchievement("Achieve_Newbie", "Newbie");
+    }
+
+    //
+    public void Dumb()
+    {
+        // key = Achieve_Dumb, 이름 = Dumb
+        UnlockAchievement("Achieve_Dumb", "Dumb");
+    }
+
+    /* 
+     * * 난이도 2짜리 업적 목록
+     */
+
+    public void HitAndRun()
+    {
+        // key = Achieve_HitAndRun, 이름 = HitAndRun
+        UnlockAchievement("Achieve_HitAndRun", "Hit And Run");
+    }
+
+    public void TreasureHunter()
+    {
+        // key = Achieve_TreasureHunter, 이름 = TreasureHunter
+        UnlockAchievement("Achieve_TreasureHunter", "Treasure Hunter");
+    }
+
+    public void Eagle()
+    {
+        // key = Achieve_Eagle, 이름 = Eagle
+        UnlockAchievement("Achieve_Eagle", "Eagle");
+    }
+
+    /* 
+     * * 난이도 3짜리 업적 목록
+     */
+
+    public void Bunny()
+    {
+        // key = Achieve_Bunny, 이름 = Bunny
+        UnlockAchievement("Achieve_Bunny", "Bunny");
+    }
+
+    public void Bruh()
+    {
+        // key = Achieve_Bruh, 이름 = Bruh
+        UnlockAchievement("Achieve_Bruh", "Bruh");
+    }
+
+    public void Acrophobia()
+    {
+        // key = Achieve_Acrophobia, 이름 = Acrophobia
+        UnlockAchievement("Achieve_Acrophobia", "Acrophobia");
+    }
+
+    /* 
+     * * 난이도 4짜리 업적 목록
+     */
+
+    public void TopGun()
+    {
+        // key = Achieve_TopGun, 이름 = TopGun
+        UnlockAchievement("Achieve_TopGun", "Top Gun");
+    }
+
+    public void HeliVIP()
+    {
+        // key = Achieve_HeliVIP, 이름 = HeliVIP
+        UnlockAchievement("Achieve_HeliVIP", "Heli VIP");
+    }
+
+    public void Gentleman()
+    {
+        // key = Achieve_Gentleman, 이름 = Gentleman
+        UnlockAchievement("Achieve_Gentleman", "Gentleman");
+    }
+
+    public void Wrecker()
+    {
+        // key = Achieve_Wrecker, 이름 = Wrecker
+        UnlockAchievement("Achieve_Wrecker", "Wrecker");
+    }
+
+    /* 
+     * * 난이도 5짜리 업적 목록
+     */
+
+    public void Superstar()
+    {
+        // key = Achieve_Superstar, 이름 = Superstar
+        UnlockAchievement("Achieve_Superstar", "Superstar");
+    }
+
+    public void Iceman()
+    {
+        // key = Achieve_Iceman, 이름 = Iceman
+        UnlockAchievement("Achieve_Iceman", "Iceman");
+    }
+
+    public void Icarus()
+    {
+        // key = Achieve_Icarus, 이름 = Icarus
+        UnlockAchievement("Achieve_Icarus", "Icarus");
+    }
+
+    public void Hustler()
+    {
+        // key = Achieve_Hustler, 이름 = Hustler
+        UnlockAchievement("Achieve_Hustler", "Hustler");
+    }
+
+    /* 
+     * * 난이도 6짜리 업적 목록
+     */
+
+    public void SkyWalker()
+    {
+        // key = Achieve_SkyWalker, 이름 = SkyWalker
+        UnlockAchievement("Achieve_SkyWalker", "Sky Walker");
+    }
+
+    public void Pennyless()
+    {
+        // key = Achieve_Pennyless, 이름 = Pennyless
+        UnlockAchievement("Achieve_Pennyless", "Pennyless");
+    }
+
+    /* 
+     * * 난이도 7짜리 업적 목록
+     */
+
+    public void Billionaire()
+    {
+        // key = Achieve_Billionaire, 이름 = Billionaire
+        UnlockAchievement("Achieve_Billionaire", "Billionaire");
+    }
+
+    public void Rapunzel()
+    {
+        // key = Achieve_Rapunzel, 이름 = Rapunzel
+        UnlockAchievement("Achieve_Rapunzel", "Rapunzel");
+    }
+}
+
+/// <summary>
+/// Inspector에서 업적을 정의하기 위한 클래스
+/// </summary>
+[System.Serializable]
+public class AchievementDefinition
+{
+    public string id;
+    public string title;
+    [TextArea(2, 4)]
+    public string description;
+    public Sprite icon;
+    public AchievementConditionType conditionType;
+    public int targetValue;
+    
+    [Header("Reward Settings")]
+    public RewardType rewardType;
+    public int rewardIndex = -1; // Customize 리스트의 인덱스 (Inspector에서 설정)
+    
+    /// <summary>
+    /// AchievementData로 변환
+    /// </summary>
+    public AchievementData ToAchievementData()
+    {
+        return new AchievementData
+        {
+            id = this.id,
+            title = this.title,
+            description = this.description,
+            icon = this.icon,
+            conditionType = this.conditionType,
+            targetValue = this.targetValue,
+            currentValue = 0,
+            rewardType = this.rewardType,
+            rewardIndex = this.rewardIndex
+        };
+    }
+}
