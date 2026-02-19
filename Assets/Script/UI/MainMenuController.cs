@@ -52,6 +52,10 @@ public class MainMenuController : MonoBehaviour
     public GameObject[] sfxOnIcons;   // 효과음 켜짐 아이콘들
     public GameObject[] sfxOffIcons;  // 효과음 꺼짐 아이콘들
 
+    [Header("Data Reset UI")]
+    public GameObject deleteDataConfirmPanel;
+    public GameObject deleteDataCompletePanel;
+
     public NicknameUIController nicknameUI; // 닉네임 변경 UI 컨트롤러
     public GameObject achievementLoadingPanel; // 업적 로딩 인디케이터
 
@@ -377,6 +381,43 @@ public class MainMenuController : MonoBehaviour
                 if (icon != null) icon.SetActive(!isSoundOn);
             }
         }
+    }
+
+    public void OpenDeleteDataConfirmPanel()
+    {
+        if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
+
+        if (deleteDataConfirmPanel != null)
+        {
+            deleteDataConfirmPanel.SetActive(true);
+        }
+    }
+
+    public void CloseDeleteDataConfirmPanel()
+    {
+        if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
+
+        if (deleteDataConfirmPanel != null)
+        {
+            deleteDataConfirmPanel.SetActive(false);
+        }
+    }
+
+    public void OpenDeleteDataCompletePanel()
+    {
+        if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
+
+        if (deleteDataCompletePanel != null)
+        {
+            deleteDataCompletePanel.SetActive(true);
+        }
+    }
+
+    public void CloseDeleteDataConmpletePanel()
+    {
+        if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
+
+        SceneManager.LoadScene("MainMenu");
     }
 
     private float GetTargetHelicopterVolume()
