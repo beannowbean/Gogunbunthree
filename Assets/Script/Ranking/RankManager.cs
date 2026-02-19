@@ -412,6 +412,23 @@ public class RankManager : MonoBehaviour
         });
     }
 
+    // 회원 탈퇴
+    public void DeleteAccount(System.Action<bool> onComplete)
+    {
+        LootLockerSDKManager.DeletePlayer((response) =>
+        {
+            if (response.success)
+            {
+                onComplete?.Invoke(true); 
+            }
+            else
+            {
+                Debug.LogWarning("삭제 실패: " + response.errorData.message);
+                onComplete?.Invoke(false); 
+            }
+        });
+    }
+
     public void CreateFakeRankings()
     {
         StartCoroutine(FakeRankingRoutine());
