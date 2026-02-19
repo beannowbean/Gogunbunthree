@@ -214,7 +214,7 @@ public class AchievementItem : MonoBehaviour
 
                     if (data.IsCompleted && AchievementManager.Instance.orderCache.TryGetValue(serverKey, out int order))
                     {
-                        progressText.text = $"{rate:F0}% (Rank #{order})";
+                        progressText.text = $"{rate:F0}%";
                     }
                     else
                     {
