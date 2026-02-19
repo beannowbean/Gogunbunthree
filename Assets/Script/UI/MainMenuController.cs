@@ -407,17 +407,45 @@ public class MainMenuController : MonoBehaviour
     {
         if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
 
-        if (deleteDataCompletePanel != null)
-        {
-            deleteDataCompletePanel.SetActive(true);
-        }
+        ClickDeleteAccount();
     }
 
     public void CloseDeleteDataConmpletePanel()
     {
         if (SFXManager.Instance != null) SFXManager.Instance.Play("Button");
 
-        SceneManager.LoadScene("MainMenu");
+        Application.Quit();
+    }
+
+    // 계정 탈퇴 시도 함수
+    public void ClickDeleteAccount()
+    {        
+        // 로딩 창 켜기
+        if (achievementLoadingPanel != null)
+        {
+            achievementLoadingPanel.SetActive(true);
+        }
+
+        // RankManager를 통해 탈퇴 시도
+        RankManager.Instance.DeleteAccount((isSuccess) =>
+        {
+            // 작업 완료 후 로딩 창 끄기
+            if (achievementLoadingPanel != null)
+            {
+                achievementLoadingPanel.SetActive(false);
+            }
+
+            if (isSuccess)
+            {
+                // PlayerPrefs.SetInt("HasSetNickname", 0); // 닉네임 설정 플래그 초기화
+                PlayerPrefs.DeleteAll(); // PlayerPrefs의 모든 데이터 삭제
+                PlayerPrefs.Save();
+                if (deleteDataCompletePanel != null)
+                {
+                    deleteDataCompletePanel.SetActive(true);
+                }
+            }
+        });
     }
 
     private float GetTargetHelicopterVolume()

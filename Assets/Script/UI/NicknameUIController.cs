@@ -17,6 +17,7 @@ public class NicknameUIController : MonoBehaviour
     public TextMeshProUGUI errorMessage;   // 중복 조건
     public Button applyButton;            // Apply 버튼
     public CanvasGroup applyButtonCanvasGroup;  // Apply 버튼의 CanvasGroup (투명도 조절용)
+    public GameObject dataRemoveButton; // 데이터 삭제 버튼 (닉네임 변경 팝업)
 
     [Header("Condition Settings")]
     private Color validColor;
@@ -44,11 +45,13 @@ public class NicknameUIController : MonoBehaviour
         nicknamePanel.SetActive(true);
         if (RankManager.Instance != null && !RankManager.Instance.HasSetNickname())
         {
+            dataRemoveButton.SetActive(false); // 최초 설정 시 데이터 삭제 버튼 숨김
             // 최초 설정 시 랜덤 닉네임 생성
             nicknameInput.text = "GogunUser_" + Random.Range(0000, 9999).ToString("D4");
         }
         else
         {
+            dataRemoveButton.SetActive(true);
             // 서버에서 현재 닉네임을 받아와 입력창에 미리 채워넣기
             nicknameInput.text = RankManager.Instance.currentNickname;
         }
